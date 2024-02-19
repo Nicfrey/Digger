@@ -182,7 +182,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="TextObject.h" />
+    <ClInclude Include="TextManager.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
@@ -197,7 +197,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="TextObject.cpp" />
+    <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Transform.cpp" />

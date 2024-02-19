@@ -9,12 +9,12 @@ namespace dae
 	class Texture2D;
 
 	// todo: this should become final.
-	class GameObject 
+	class GameObject final
 	{
 	public:
-		virtual void Init();
-		virtual void Update();
-		virtual void Render() const;
+		void Init();
+		void Update();
+		void Render() const;
 
 		std::shared_ptr<TextureManager> GetComponent() const;
 
