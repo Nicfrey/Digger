@@ -33,6 +33,7 @@ namespace dae
 
 		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);
+		Transform GetTransform() const;
 
 		GameObject() = default;
 		~GameObject();
