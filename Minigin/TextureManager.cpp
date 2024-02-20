@@ -9,6 +9,10 @@ void TextureManager::Init()
 	m_PositionRender = glm::vec3{};
 }
 
+void TextureManager::Update()
+{
+}
+
 void TextureManager::SetTexture(const std::string& filename)
 {
 	m_Texture = dae::ResourceManager::GetInstance().LoadTexture(filename);

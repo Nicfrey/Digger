@@ -1,5 +1,8 @@
 #include <string>
 #include "GameObject.h"
+
+#include <iostream>
+
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "TextureManager.h"
@@ -8,37 +11,47 @@ dae::GameObject::~GameObject() = default;
 
 void dae::GameObject::Init()
 {
-	m_TextureManager->GetInstance().Init();
+	for (const std::shared_ptr<GameObjectComponent> goc : m_Components)
+	{
+		goc->Init();
+	}
 }
 
 void dae::GameObject::Update()
 {
-	m_TextureManager->UpdatePosition(m_transform.GetPosition());
+	for (const std::shared_ptr<GameObjectComponent> goc : m_Components)
+	{
+		goc->Update();
+	}
 }
 
 void dae::GameObject::Render() const
 {
-	m_TextureManager->Render();
+	for (const std::shared_ptr<GameObjectComponent> goc : m_Components)
+	{
+		goc->Render();
+	}
 }
 
-std::shared_ptr<TextureManager> dae::GameObject::GetComponent() const
+bool dae::GameObject::RemoveComponentAtIndex(size_t index)
 {
-	return m_TextureManager;
+	if(index < 0 || index >= m_Components.size())
+	{
+		std::cerr << index << " is out of range\n";
+		return false;
+	}
+	m_Components.erase(m_Components.begin() + index);
+	return true;
 }
 
-void dae::GameObject::SetTexture(const std::string& filename)
+std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
 {
-	m_TextureManager->SetTexture(filename);
+	return shared_from_this();
 }
+
 
 void dae::GameObject::SetPosition(float x, float y)
 {
 	m_transform.SetPosition(x, y, 0.0f);
 }
 
-dae::GameObject::GameObject()
-{
-	// TODO loop to all components and init them
-	m_TextureManager = std::make_shared<TextureManager>();
-	m_TextureManager->Init();
-}

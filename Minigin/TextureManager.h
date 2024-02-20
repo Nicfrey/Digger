@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/vec3.hpp>
 
+#include "GameObjectComponent.h"
 #include "Singleton.h"
 
 namespace dae
@@ -10,13 +11,14 @@ namespace dae
 	class Texture2D;
 }
 
-class TextureManager final: public dae::Singleton<TextureManager>
+class TextureManager final: public GameObjectComponent
 {
 public:
-	void Init();
+	void Init() override;
+	void Update() override;
 	void SetTexture(const std::string& filename);
 	void UpdatePosition(const glm::vec3& newPosition);
-	void Render() const;
+	void Render() const override;
 
 private:
 	glm::vec3 m_PositionRender{};
