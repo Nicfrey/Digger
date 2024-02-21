@@ -1,5 +1,8 @@
 #include <stdexcept>
-#define WIN32_LEAN_AND_MEAN 
+#define WIN32_LEAN_AND_MEAN
+#define MS_PER_FRAME 8
+#define FIXED_TIME_STEP 0.25f
+
 #include <windows.h>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -94,11 +97,12 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	while (doContinue)
 	{
 		time->Update();
+
 		doContinue = input.ProcessInput();
 		sceneManager.Update();
 		renderer.Render();
 
-		const std::chrono::duration<float> sleepTime{ Time::GetCurrent() + Time::GetFrameTime() - SDL_GetPerformanceCounter() };
+		const auto sleepTime{ Time::GetCurrent() + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
 		std::this_thread::sleep_for(sleepTime);
 	}
 }
