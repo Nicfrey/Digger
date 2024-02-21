@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "GameObjectComponent.h"
-#include "Singleton.h"
 #include "Transform.h"
 
 class GameObjectComponent;
@@ -13,7 +12,6 @@ namespace dae
 {
 	class Texture2D;
 
-	// todo: this should become final.
 	class GameObject final : public std::enable_shared_from_this<GameObject>
 	{
 	public:
@@ -28,10 +26,10 @@ namespace dae
 		bool RemoveComponentAtIndex(size_t index);
 		template<typename T>
 		std::shared_ptr<T> GetComponent() const;
+		template<typename T>
+		bool HasComponent() const;
 
 		std::shared_ptr<GameObject> GetThis();
-
-		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);
 		Transform GetTransform() const;
 
@@ -50,8 +48,7 @@ namespace dae
 	template <typename T>
 	bool GameObject::AddComponent(std::shared_ptr<T> component)
 	{
-		std::shared_ptr<GameObjectComponent> componentCaster{ std::dynamic_pointer_cast<GameObjectComponent>(component) };
-		if(componentCaster)
+		if(std::shared_ptr<GameObjectComponent> componentCaster{ std::dynamic_pointer_cast<GameObjectComponent>(component) })
 		{
 			component->SetGameObject(GetThis());
 			m_Components.emplace_back(component);
@@ -87,5 +84,18 @@ namespace dae
 			}
 		}
 		return std::shared_ptr<T>{};
+	}
+
+	template <typename T>
+	bool GameObject::HasComponent() const
+	{
+		for(auto& component: m_Components)
+		{
+			if(typeid(component) == typeid(T))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
