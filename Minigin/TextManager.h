@@ -11,7 +11,7 @@ namespace dae
 {
 	class Font;
 	class Texture2D;
-	class TextManager final : public GameObjectComponent
+	class TextManager : public GameObjectComponent
 	{
 	public:
 		TextManager(std::string text,const std::shared_ptr<Font>& font);

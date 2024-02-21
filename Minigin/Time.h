@@ -8,6 +8,7 @@ public:
 	Time(uint64_t targetFps);
 	void UpdateLastTime();
 	void Update();
+	static double GetFps();
 	static float GetDeltaTime();
 	static uint64_t GetLastTime();
 	static uint64_t GetCurrent();
@@ -17,7 +18,7 @@ public:
 private:
 	int m_CounterFrame{};
 	float m_TimerFps{};
-	double m_Fps{};
+	static double m_Fps;
 	uint64_t m_TargetFps;
 	static float m_FrameTime;
 	static float m_DeltaTime;

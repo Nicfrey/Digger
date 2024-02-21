@@ -7,6 +7,7 @@ uint64_t Time::m_CurrentTime = {};
 uint64_t Time::m_LastTime = {};
 float Time::m_DeltaTime = 0.f;
 float Time::m_FrameTime = {};
+double Time::m_Fps = 0.0;
 
 Time::Time(): Time{SDL_GetPerformanceFrequency()}
 {
@@ -31,10 +32,14 @@ void Time::Update()
 	if (m_TimerFps >= 1.f)
 	{
 		m_Fps = m_CounterFrame / m_TimerFps;
-		std::cout << "FPS: " << m_Fps << std::endl;
 		m_TimerFps = 0.f;
 		m_CounterFrame = 0;
 	}
+}
+
+double Time::GetFps()
+{
+	return m_Fps;
 }
 
 void Time::UpdateLastTime()
