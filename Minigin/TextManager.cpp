@@ -1,15 +1,24 @@
 #include <stdexcept>
 #include <SDL_ttf.h>
-#include "TextObject.h"
+#include "TextManager.h"
 #include "Renderer.h"
 #include "Font.h"
 #include "Texture2D.h"
 
-dae::TextObject::TextObject(const std::string& text, std::shared_ptr<Font> font) 
-	: m_needsUpdate(true), m_text(text), m_font(std::move(font)), m_textTexture(nullptr)
-{ }
+dae::TextManager::TextManager(std::string text, const std::shared_ptr<Font>& font):
+	m_needsUpdate{true}, m_text{std::move(text)}, m_font{font}, m_textTexture{nullptr}, m_Offset{}
+{
+}
 
-void dae::TextObject::Update()
+void dae::TextManager::Init()
+{
+	m_textTexture = nullptr;
+	m_font = nullptr;
+	m_needsUpdate = true;
+	m_text = "";
+}
+
+void dae::TextManager::Update()
 {
 	if (m_needsUpdate)
 	{
@@ -30,25 +39,30 @@ void dae::TextObject::Update()
 	}
 }
 
-void dae::TextObject::Render() const
+void dae::TextManager::Render() const
 {
 	if (m_textTexture != nullptr)
 	{
-		const auto& pos = m_transform.GetPosition();
+		const auto& pos = m_GameObject.lock()->GetTransform().GetPosition() + m_Offset.GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_textTexture, pos.x, pos.y);
 	}
 }
 
+void dae::TextManager::SetFont(std::shared_ptr<Font> font)
+{
+
+}
+
 // This implementation uses the "dirty flag" pattern
-void dae::TextObject::SetText(const std::string& text)
+void dae::TextManager::SetText(const std::string& text)
 {
 	m_text = text;
 	m_needsUpdate = true;
 }
 
-void dae::TextObject::SetPosition(const float x, const float y)
+void dae::TextManager::SetPositionOffset(const float x, const float y)
 {
-	m_transform.SetPosition(x, y, 0.0f);
+	m_Offset.SetPosition(x, y, 0.0f);
 }
 
 
