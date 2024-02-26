@@ -1,7 +1,7 @@
 #pragma once
-#include "GameObjectComponent.h"
+#include "BaseComponent.h"
 
-class FpsComponent final : GameObjectComponent
+class FpsComponent final : BaseComponent
 {
 public:
 	FpsComponent() = default;
@@ -10,6 +10,7 @@ public:
 	void Init() override;
 	void Render() const override;
 	float GetFps() const;
+	void FixedUpdate() override;
 
 private:
 	float m_Fps;

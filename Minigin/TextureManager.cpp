@@ -21,6 +21,10 @@ void TextureManager::SetTexture(const std::string& filename)
 
 void TextureManager::Render() const
 {
-	const auto& pos = m_GameObject.lock()->GetTransform().GetPosition();
+	const auto& pos = GetGameObject()->GetTransform().GetPosition();
 	dae::Renderer::GetInstance().RenderTexture(*m_Texture, pos.x, pos.y);
+}
+
+void TextureManager::FixedUpdate()
+{
 }

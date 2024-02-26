@@ -11,7 +11,7 @@ dae::GameObject::~GameObject() = default;
 
 void dae::GameObject::Init()
 {
-	for (const std::shared_ptr<GameObjectComponent> goc : m_Components)
+	for (const std::shared_ptr<BaseComponent> goc : m_Components)
 	{
 		goc->Init();
 	}
@@ -19,7 +19,7 @@ void dae::GameObject::Init()
 
 void dae::GameObject::Update()
 {
-	for (const std::shared_ptr<GameObjectComponent> goc : m_Components)
+	for (const std::shared_ptr<BaseComponent> goc : m_Components)
 	{
 		goc->Update();
 	}
@@ -27,7 +27,7 @@ void dae::GameObject::Update()
 
 void dae::GameObject::Render() const
 {
-	for (const std::shared_ptr<GameObjectComponent> goc : m_Components)
+	for (const std::shared_ptr<BaseComponent> goc : m_Components)
 	{
 		goc->Render();
 	}

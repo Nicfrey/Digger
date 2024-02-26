@@ -43,7 +43,7 @@ void dae::TextManager::Render() const
 {
 	if (m_textTexture != nullptr)
 	{
-		const auto& pos = m_GameObject.lock()->GetTransform().GetPosition() + m_Offset.GetPosition();
+		const auto& pos = GetGameObject()->GetTransform().GetPosition() + m_Offset.GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_textTexture, pos.x, pos.y);
 	}
 }
@@ -63,6 +63,10 @@ void dae::TextManager::SetText(const std::string& text)
 void dae::TextManager::SetPositionOffset(const float x, const float y)
 {
 	m_Offset.SetPosition(x, y, 0.0f);
+}
+
+void dae::TextManager::FixedUpdate()
+{
 }
 
 

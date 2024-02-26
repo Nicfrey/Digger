@@ -31,3 +31,7 @@ void FpsTextComponent::SetPrecision(int precision)
 {
 	m_Precision = precision;
 }
+
+void FpsTextComponent::FixedUpdate()
+{
+}

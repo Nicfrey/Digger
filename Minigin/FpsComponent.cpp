@@ -21,3 +21,7 @@ float FpsComponent::GetFps() const
 {
 	return m_Fps;
 }
+
+void FpsComponent::FixedUpdate()
+{
+}

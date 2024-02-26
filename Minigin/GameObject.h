@@ -2,10 +2,10 @@
 #include <memory>
 #include <vector>
 
-#include "GameObjectComponent.h"
+#include "BaseComponent.h"
 #include "Transform.h"
 
-class GameObjectComponent;
+class BaseComponent;
 class TextureManager;
 
 namespace dae
@@ -42,13 +42,13 @@ namespace dae
 
 	private:
 		Transform m_transform{};
-		std::vector<std::shared_ptr<GameObjectComponent>> m_Components;
+		std::vector<std::shared_ptr<BaseComponent>> m_Components;
 	};
 
 	template <typename T>
 	bool GameObject::AddComponent(std::shared_ptr<T> component)
 	{
-		if(std::shared_ptr<GameObjectComponent> componentCaster{ std::dynamic_pointer_cast<GameObjectComponent>(component) })
+		if(std::shared_ptr<BaseComponent> componentCaster{ std::dynamic_pointer_cast<BaseComponent>(component) })
 		{
 			component->SetGameObject(GetThis());
 			m_Components.emplace_back(component);
@@ -60,7 +60,7 @@ namespace dae
 	template <typename T>
 	bool GameObject::RemoveComponent(std::shared_ptr<T> component)
 	{
-		auto it{ std::find_if(m_Components.begin(),m_Components.end(), [component](const std::shared_ptr<GameObjectComponent> &other)
+		auto it{ std::find_if(m_Components.begin(),m_Components.end(), [component](const std::shared_ptr<BaseComponent> &other)
 		{
 				return component.get() == other.get();
 		}) };
@@ -75,7 +75,7 @@ namespace dae
 	template <typename T>
 	std::shared_ptr<T> GameObject::GetComponent() const
 	{
-		for(std::shared_ptr<GameObjectComponent> component: m_Components)
+		for(std::shared_ptr<BaseComponent> component: m_Components)
 		{
 			std::shared_ptr<T> componentGot{ dynamic_cast<T>(component) };
 			if(componentGot != nullptr)
