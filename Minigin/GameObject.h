@@ -23,7 +23,7 @@ namespace dae
 		template<typename T>
 		bool AddComponent(std::shared_ptr<T> component);
 		template<typename T>
-		bool RemoveComponent(std::shared_ptr<T> component);
+		bool RemoveComponent(const std::shared_ptr<T>& component);
 		bool RemoveComponentAtIndex(size_t index);
 		template<typename T>
 		std::shared_ptr<T> GetComponent() const;
@@ -59,7 +59,7 @@ namespace dae
 	}
 
 	template <typename T>
-	bool GameObject::RemoveComponent(std::shared_ptr<T> component)
+	bool GameObject::RemoveComponent(const std::shared_ptr<T>& component)
 	{
 		auto it{ std::find_if(m_Components.begin(),m_Components.end(), [component](const std::shared_ptr<BaseComponent> &other)
 		{
@@ -67,6 +67,7 @@ namespace dae
 		}) };
 		if(it != m_Components.end())
 		{
+			component->RemoveGameObject();
 			m_Components.erase(it);
 			return true;
 		}

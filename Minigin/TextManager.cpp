@@ -5,8 +5,8 @@
 #include "Font.h"
 #include "Texture2D.h"
 
-dae::TextManager::TextManager(std::string text, const std::shared_ptr<Font>& font):
-	m_needsUpdate{true}, m_text{std::move(text)}, m_font{font}, m_textTexture{nullptr}, m_Offset{}
+dae::TextManager::TextManager(std::string text, const std::shared_ptr<Font>& font) : BaseComponent{},
+	m_needsUpdate{true}, m_text{std::move(text)}, m_Offset{}, m_font{font}, m_textTexture{nullptr}
 {
 }
 

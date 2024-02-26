@@ -8,7 +8,7 @@ namespace dae
 	class GameObject;
 }
 
-class BaseComponent
+class BaseComponent : public::std::enable_shared_from_this<BaseComponent>
 {
 public:
 	BaseComponent() = default;
@@ -24,11 +24,13 @@ public:
 	virtual void Init() = 0;
 	virtual void Render() const = 0;
 	void SetGameObject(const std::shared_ptr<dae::GameObject>& go);
+	void RemoveGameObject();
 protected:
 	dae::GameObject* GetGameObject() const
 	{
 		return m_GameObject;
 	}
+	std::shared_ptr<BaseComponent> GetThis();
 private:
 	dae::GameObject* m_GameObject;
 };
