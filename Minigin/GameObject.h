@@ -17,6 +17,7 @@ namespace dae
 	public:
 		void Init();
 		void Update();
+		void FixedUpdate();
 		void Render() const;
 
 		template<typename T>

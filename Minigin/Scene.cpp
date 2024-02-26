@@ -11,6 +11,14 @@ Scene::Scene(const std::string& name) : m_name(name) {}
 
 Scene::~Scene() = default;
 
+void Scene::FixedUpdate()
+{
+	for (const auto& object : m_objects)
+	{
+		object->FixedUpdate();
+	}
+}
+
 void Scene::Add(std::shared_ptr<GameObject> object)
 {
 	m_objects.emplace_back(std::move(object));

@@ -25,6 +25,14 @@ void dae::GameObject::Update()
 	}
 }
 
+void dae::GameObject::FixedUpdate()
+{
+	for (const std::shared_ptr<BaseComponent> goc : m_Components)
+	{
+		goc->FixedUpdate();
+	}
+}
+
 void dae::GameObject::Render() const
 {
 	for (const std::shared_ptr<BaseComponent> goc : m_Components)
