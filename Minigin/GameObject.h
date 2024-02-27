@@ -34,8 +34,9 @@ namespace dae
 		void SetPosition(float x, float y);
 		Transform GetTransform() const;
 
-		bool AddChild(const std::shared_ptr<GameObject>& newParent);
 		bool SetParent(const std::shared_ptr<GameObject>& newParent);
+		std::shared_ptr<GameObject> GetParent() const;
+ 
 
 		GameObject() = default;
 		~GameObject();
@@ -47,8 +48,12 @@ namespace dae
 	private:
 		Transform m_transform{};
 		std::vector<std::shared_ptr<BaseComponent>> m_Components;
-		std::shared_ptr<GameObject> m_ParentObject;
-		std::vector<std::shared_ptr<GameObject>> m_ChildrenObject;
+		std::shared_ptr<GameObject> m_ParentObject{};
+		std::vector<std::shared_ptr<GameObject>> m_ChildrenObject{};
+
+		bool AddChild(const std::shared_ptr<GameObject>& child);
+		bool RemoveChild(const std::shared_ptr<GameObject>& child);
+		bool IsEqualToParent(const std::shared_ptr<GameObject>& child);
 	};
 
 	template <typename T>
