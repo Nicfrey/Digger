@@ -37,7 +37,7 @@ void TextureComponent::Render() const
 		glm::vec3 pos{};
 		if(transform != nullptr)
 		{
-			pos = transform->GetPosition();
+			pos = transform->GetLocalPosition();
 		}
 		dae::Renderer::GetInstance().RenderTexture(*m_Texture, pos.x, pos.y);
 	}

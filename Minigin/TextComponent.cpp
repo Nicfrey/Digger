@@ -58,7 +58,7 @@ void dae::TextComponent::SetText(const std::string& text)
 
 void dae::TextComponent::SetPositionOffset(const float x, const float y)
 {
-	m_Offset.SetPosition(x, y, 0.0f);
+	m_Offset.SetLocalPosition(x, y, 0.0f);
 }
 
 void dae::TextComponent::FixedUpdate()

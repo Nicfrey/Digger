@@ -14,11 +14,10 @@ namespace dae
 		void Init() override {}
 		void Render() const override {}
 
-		const glm::vec3& GetLocalPosition() const;
 		glm::vec3 GetWorldPosition() const;
-		const glm::vec3& GetPosition() const { return m_Position; }
-		void SetPosition(float x, float y, float z);
-		void SetPosition(float x, float y);
+		const glm::vec3& GetLocalPosition() const { return m_Position; }
+		void SetLocalPosition(float x, float y, float z);
+		void SetLocalPosition(float x, float y);
 		const glm::vec3& GetRotation() const { return m_Rotation; }
 		void SetRotation(float x, float y, float z);
 		void SetRotation(float x, float y);
