@@ -1,10 +1,10 @@
 #pragma once
-#include "TextManager.h"
+#include "TextComponent.h"
 
 
 class FpsComponent;
 
-class FpsTextComponent : public dae::TextManager
+class FpsTextComponent : public dae::TextComponent
 {
 public:
 	FpsTextComponent(const std::shared_ptr<dae::Font>& font);

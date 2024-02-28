@@ -14,6 +14,8 @@ namespace dae
 		void Init() override {}
 		void Render() const override {}
 
+		const glm::vec3& GetLocalPosition() const;
+		glm::vec3 GetWorldPosition() const;
 		const glm::vec3& GetPosition() const { return m_Position; }
 		void SetPosition(float x, float y, float z);
 		void SetPosition(float x, float y);

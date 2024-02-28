@@ -1,5 +1,23 @@
 #include "Transform.h"
 
+#include "GameObject.h"
+
+const glm::vec3& dae::Transform::GetLocalPosition() const
+{
+	return m_Position;
+}
+
+glm::vec3 dae::Transform::GetWorldPosition() const
+{
+	if(GetGameObject()->GetParent() != nullptr)
+	{
+		const glm::vec3 posParent{ GetGameObject()->GetParent()->GetComponent<Transform>()->GetWorldPosition() };
+
+		return posParent + m_Position;
+	}
+	return GetLocalPosition();
+}
+
 void dae::Transform::SetPosition(const float x, const float y, const float z)
 {
 	m_Position.x = x;

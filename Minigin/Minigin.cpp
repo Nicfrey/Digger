@@ -86,8 +86,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 
-	std::shared_ptr time{std::make_shared<Time>()};
-	time->UpdateLastTime();
+	Time::UpdateLastTime();
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
@@ -97,7 +96,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	bool doContinue = true;
 	while (doContinue)
 	{
-		time->Update();
+		Time::Update();
 		lag += Time::GetDeltaTime();
 
 		doContinue = input.ProcessInput();

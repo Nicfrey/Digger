@@ -5,7 +5,7 @@
 
 #include "ResourceManager.h"
 #include "Renderer.h"
-#include "TextureManager.h"
+#include "TextureComponent.h"
 
 dae::GameObject::~GameObject() = default;
 

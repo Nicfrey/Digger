@@ -6,7 +6,7 @@
 #include "Transform.h"
 
 class BaseComponent;
-class TextureManager;
+class TextureComponent;
 
 namespace dae
 {
