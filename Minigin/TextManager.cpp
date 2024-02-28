@@ -43,7 +43,7 @@ void dae::TextManager::Render() const
 {
 	if (m_textTexture != nullptr)
 	{
-		const auto& pos = GetGameObject()->GetTransform().GetPosition() + m_Offset.GetPosition();
+		const auto& pos = GetGameObject()->GetComponent<dae::Transform>()->GetPosition() + m_Offset.GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_textTexture, pos.x, pos.y);
 	}
 }

@@ -31,8 +31,6 @@ namespace dae
 		bool HasComponent() const;
 
 		std::shared_ptr<GameObject> GetThis();
-		void SetPosition(float x, float y);
-		Transform GetTransform() const;
 
 		bool SetParent(const std::shared_ptr<GameObject>& newParent);
 		std::shared_ptr<GameObject> GetParent() const;
@@ -46,7 +44,6 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	private:
-		Transform m_transform{};
 		std::vector<std::shared_ptr<BaseComponent>> m_Components;
 		std::shared_ptr<GameObject> m_ParentObject{};
 		std::vector<std::shared_ptr<GameObject>> m_ChildrenObject{};
@@ -89,7 +86,7 @@ namespace dae
 	{
 		for(std::shared_ptr<BaseComponent> component: m_Components)
 		{
-			std::shared_ptr<T> componentGot{ dynamic_cast<T>(component) };
+			std::shared_ptr<T> componentGot{ std::dynamic_pointer_cast<T>(component) };
 			if(componentGot != nullptr)
 			{
 				return componentGot;

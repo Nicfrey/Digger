@@ -71,17 +71,6 @@ std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
 	return shared_from_this();
 }
 
-
-void dae::GameObject::SetPosition(float x, float y)
-{
-	m_transform.SetPosition(x, y, 0.0f);
-}
-
-dae::Transform dae::GameObject::GetTransform() const
-{
-	return m_transform;
-}
-
 bool dae::GameObject::AddChild(const std::shared_ptr<GameObject>& child)
 {
 	assert(child);
