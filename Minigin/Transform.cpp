@@ -12,7 +12,6 @@ glm::vec3 dae::Transform::GetWorldPosition() const
 	if(GetGameObject()->GetParent() != nullptr)
 	{
 		const glm::vec3 posParent{ GetGameObject()->GetParent()->GetComponent<Transform>()->GetWorldPosition() };
-
 		return posParent + m_Position;
 	}
 	return GetLocalPosition();

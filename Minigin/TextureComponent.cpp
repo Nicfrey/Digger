@@ -33,7 +33,12 @@ void TextureComponent::Render() const
 {
 	if(m_Texture != nullptr)
 	{
-		const auto& pos = GetGameObject()->GetComponent<dae::Transform>()->GetPosition();
+		const auto transform{ GetGameObject()->GetComponent<dae::Transform>() };
+		glm::vec3 pos{};
+		if(transform != nullptr)
+		{
+			pos = transform->GetPosition();
+		}
 		dae::Renderer::GetInstance().RenderTexture(*m_Texture, pos.x, pos.y);
 	}
 }
