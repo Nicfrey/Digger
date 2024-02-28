@@ -11,10 +11,10 @@ dae::GameObject::~GameObject() = default;
 
 bool dae::GameObject::IsEqualToParent(const std::shared_ptr<GameObject>& child)
 {
-	std::shared_ptr parent{ child->GetParent() };
+	GameObject* parent{ child->GetParent() };
 	while(parent != nullptr)
 	{
-		if(parent == child)
+		if(parent == child.get())
 		{
 			return true;
 		}
@@ -84,7 +84,7 @@ bool dae::GameObject::AddChild(const std::shared_ptr<GameObject>& child)
 	child->GetParent()->RemoveChild(child);
 
 	// Add the child to the list of children
-	m_ChildrenObject.emplace_back(child);
+	m_ChildrenObject.emplace_back(child.get());
 
 	// TODO update transform
 
@@ -97,11 +97,11 @@ bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent)
 	// Check if newParent is equal to current parent or if newParent is present in the children list
 	const auto newParentInChildren{
 		std::ranges::find_if(m_ChildrenObject,
-		                     [newParent](const std::shared_ptr<GameObject>& other)
+		                     [newParent](const GameObject* other)
 		                     {
-			                     return newParent == other;
+			                     return newParent.get() == other;
 		                     })};
-	if (m_ParentObject == shared_from_this() || newParentInChildren != m_ChildrenObject.end())
+	if (m_ParentObject == this || newParentInChildren != m_ChildrenObject.end())
 	{
 		return false;
 	}
@@ -112,7 +112,7 @@ bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent)
 		m_ParentObject->RemoveChild(shared_from_this());
 	}
 
-	m_ParentObject = newParent;
+	m_ParentObject = newParent.get();
 
 	// If the parent is not nullptr
 	if(m_ParentObject)
@@ -125,7 +125,7 @@ bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent)
 	return true;
 }
 
-std::shared_ptr<dae::GameObject> dae::GameObject::GetParent() const
+dae::GameObject* dae::GameObject::GetParent() const
 {
 	return m_ParentObject;
 }
@@ -141,7 +141,7 @@ bool dae::GameObject::RemoveChild(const std::shared_ptr<GameObject>& child)
 
 	const auto it = std::ranges::find_if(m_ChildrenObject, [child](const auto& other)
 	{
-		return child == other;
+		return child.get() == other;
 	});
 
 	if(it != m_ChildrenObject.end())

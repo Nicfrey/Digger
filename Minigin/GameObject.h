@@ -20,21 +20,21 @@ namespace dae
 		void FixedUpdate();
 		void Render() const;
 
-		template<typename T>
+		template <typename T>
 		bool AddComponent(std::shared_ptr<T> component);
-		template<typename T>
+		template <typename T>
 		bool RemoveComponent(const std::shared_ptr<T>& component);
 		bool RemoveComponentAtIndex(size_t index);
-		template<typename T>
+		template <typename T>
 		std::shared_ptr<T> GetComponent() const;
-		template<typename T>
+		template <typename T>
 		bool HasComponent() const;
 
 		std::shared_ptr<GameObject> GetThis();
 
 		bool SetParent(const std::shared_ptr<GameObject>& newParent);
-		std::shared_ptr<GameObject> GetParent() const;
- 
+		GameObject* GetParent() const;
+
 
 		GameObject() = default;
 		~GameObject();
@@ -45,8 +45,8 @@ namespace dae
 
 	private:
 		std::vector<std::shared_ptr<BaseComponent>> m_Components;
-		std::shared_ptr<GameObject> m_ParentObject{};
-		std::vector<std::shared_ptr<GameObject>> m_ChildrenObject{};
+		GameObject* m_ParentObject{nullptr};
+		std::vector<GameObject*> m_ChildrenObject{};
 
 		bool AddChild(const std::shared_ptr<GameObject>& child);
 		bool RemoveChild(const std::shared_ptr<GameObject>& child);
@@ -56,7 +56,7 @@ namespace dae
 	template <typename T>
 	bool GameObject::AddComponent(std::shared_ptr<T> component)
 	{
-		if(std::shared_ptr<BaseComponent> componentCaster{ std::dynamic_pointer_cast<BaseComponent>(component) })
+		if (std::shared_ptr<BaseComponent> componentCaster{std::dynamic_pointer_cast<BaseComponent>(component)})
 		{
 			component->SetGameObject(GetThis());
 			m_Components.emplace_back(component);
@@ -68,11 +68,14 @@ namespace dae
 	template <typename T>
 	bool GameObject::RemoveComponent(const std::shared_ptr<T>& component)
 	{
-		auto it{ std::find_if(m_Components.begin(),m_Components.end(), [component](const std::shared_ptr<BaseComponent> &other)
-		{
-				return component.get() == other.get();
-		}) };
-		if(it != m_Components.end())
+		auto it{
+			std::find_if(m_Components.begin(), m_Components.end(),
+			             [component](const std::shared_ptr<BaseComponent>& other)
+			             {
+				             return component.get() == other.get();
+			             })
+		};
+		if (it != m_Components.end())
 		{
 			component->RemoveGameObject();
 			m_Components.erase(it);
@@ -84,10 +87,10 @@ namespace dae
 	template <typename T>
 	std::shared_ptr<T> GameObject::GetComponent() const
 	{
-		for(std::shared_ptr<BaseComponent> component: m_Components)
+		for (std::shared_ptr<BaseComponent> component : m_Components)
 		{
-			std::shared_ptr<T> componentGot{ std::dynamic_pointer_cast<T>(component) };
-			if(componentGot != nullptr)
+			std::shared_ptr<T> componentGot{std::dynamic_pointer_cast<T>(component)};
+			if (componentGot != nullptr)
 			{
 				return componentGot;
 			}
@@ -98,9 +101,9 @@ namespace dae
 	template <typename T>
 	bool GameObject::HasComponent() const
 	{
-		for(auto& component: m_Components)
+		for (auto& component : m_Components)
 		{
-			if(typeid(component) == typeid(T))
+			if (typeid(component) == typeid(T))
 			{
 				return true;
 			}
