@@ -1,21 +1,8 @@
 #include "Transform.h"
 
-#include "GameObject.h"
 
-
-glm::vec3 dae::Transform::GetWorldPosition() const
+dae::Transform::Transform(const glm::vec3& pos) : m_Position{ pos }, m_Rotation{}, m_Scale{1.f}
 {
-	if(GetGameObject()->GetParent() != nullptr)
-	{
-		const auto transformParent{ GetGameObject()->GetParent()->GetComponent<Transform>() };
-		glm::vec3 posParent{};
-		if(transformParent != nullptr)
-		{
-			posParent = transformParent->GetWorldPosition();
-		}
-		return posParent + GetLocalPosition();
-	}
-	return GetLocalPosition();
 }
 
 void dae::Transform::SetLocalPosition(const float x, const float y, const float z)
@@ -28,6 +15,16 @@ void dae::Transform::SetLocalPosition(const float x, const float y, const float 
 void dae::Transform::SetLocalPosition(float x, float y)
 {
 	SetLocalPosition(x, y, 0.f);
+}
+
+void dae::Transform::SetLocalPosition(const glm::vec3& pos)
+{
+	SetLocalPosition(pos.x, pos.y, pos.z);
+}
+
+void dae::Transform::SetLocalPosition(const glm::vec2& pos)
+{
+	SetLocalPosition(pos.x, pos.y);
 }
 
 void dae::Transform::SetRotation(float x, float y, float z)

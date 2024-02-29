@@ -5,19 +5,17 @@
 
 namespace dae
 {
-	class Transform final : public BaseComponent
+	class Transform final
 	{
 	public:
 		Transform() = default;
-		void Update() override {}
-		void FixedUpdate() override {}
-		void Init() override {}
-		void Render() const override {}
+		Transform(const glm::vec3& pos);
 
-		glm::vec3 GetWorldPosition() const;
 		const glm::vec3& GetLocalPosition() const { return m_Position; }
 		void SetLocalPosition(float x, float y, float z);
 		void SetLocalPosition(float x, float y);
+		void SetLocalPosition(const glm::vec3& pos);
+		void SetLocalPosition(const glm::vec2& pos);
 		const glm::vec3& GetRotation() const { return m_Rotation; }
 		void SetRotation(float x, float y, float z);
 		void SetRotation(float x, float y);

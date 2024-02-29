@@ -30,6 +30,13 @@ namespace dae
 		template <typename T>
 		bool HasComponent() const;
 
+		glm::vec3 GetWorldPosition() const;
+		const glm::vec3& GetLocalPosition() const;
+		void SetLocalPosition(const glm::vec3& pos);
+		void SetLocalPosition(const glm::vec2& pos);
+		void SetLocalPosition(float x, float y, float z);
+		void SetLocalPosition(float x, float y);
+
 		std::shared_ptr<GameObject> GetThis();
 
 		bool SetParent(const std::shared_ptr<GameObject>& newParent);
@@ -37,6 +44,7 @@ namespace dae
 
 
 		GameObject() = default;
+		GameObject(const glm::vec3& pos);
 		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -44,8 +52,9 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	private:
+		Transform m_Transform{};
 		std::vector<std::shared_ptr<BaseComponent>> m_Components;
-		GameObject* m_ParentObject{nullptr};
+		GameObject* m_ParentObject{};
 		std::vector<GameObject*> m_ChildrenObject{};
 
 		bool AddChild(const std::shared_ptr<GameObject>& child);

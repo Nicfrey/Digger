@@ -23,6 +23,10 @@ bool dae::GameObject::IsEqualToParent(const std::shared_ptr<GameObject>& child)
 	return false;
 }
 
+dae::GameObject::GameObject(const glm::vec3& pos): m_Transform{pos}
+{
+}
+
 void dae::GameObject::Init()
 {
 	for (const std::shared_ptr<BaseComponent>& goc : m_Components)
@@ -64,6 +68,42 @@ bool dae::GameObject::RemoveComponentAtIndex(size_t index)
 	}
 	m_Components.erase(m_Components.begin() + index);
 	return true;
+}
+
+
+glm::vec3 dae::GameObject::GetWorldPosition() const
+{
+	if (GetParent() != nullptr)
+	{
+		const glm::vec3 posParent{ m_ParentObject->GetWorldPosition() };
+		return posParent + GetLocalPosition();
+	}
+	return GetLocalPosition();
+}
+
+const glm::vec3& dae::GameObject::GetLocalPosition() const
+{
+	return m_Transform.GetLocalPosition();
+}
+
+void dae::GameObject::SetLocalPosition(const glm::vec3& pos)
+{
+	m_Transform.SetLocalPosition(pos);
+}
+
+void dae::GameObject::SetLocalPosition(const glm::vec2& pos)
+{
+	m_Transform.SetLocalPosition(pos);
+}
+
+void dae::GameObject::SetLocalPosition(float x, float y, float z)
+{
+	m_Transform.SetLocalPosition(x, y, z);
+}
+
+void dae::GameObject::SetLocalPosition(float x, float y)
+{
+	m_Transform.SetLocalPosition(x, y);
 }
 
 std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
