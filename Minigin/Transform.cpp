@@ -5,26 +5,26 @@ dae::Transform::Transform(const glm::vec3& pos) : m_Position{ pos }, m_Rotation{
 {
 }
 
-void dae::Transform::SetLocalPosition(const float x, const float y, const float z)
+void dae::Transform::SetPosition(const float x, const float y, const float z)
 {
 	m_Position.x = x;
 	m_Position.y = y;
 	m_Position.z = z;
 }
 
-void dae::Transform::SetLocalPosition(float x, float y)
+void dae::Transform::SetPosition(float x, float y)
 {
-	SetLocalPosition(x, y, 0.f);
+	SetPosition(x, y, 0.f);
 }
 
-void dae::Transform::SetLocalPosition(const glm::vec3& pos)
+void dae::Transform::SetPosition(const glm::vec3& pos)
 {
-	SetLocalPosition(pos.x, pos.y, pos.z);
+	SetPosition(pos.x, pos.y, pos.z);
 }
 
-void dae::Transform::SetLocalPosition(const glm::vec2& pos)
+void dae::Transform::SetPosition(const glm::vec2& pos)
 {
-	SetLocalPosition(pos.x, pos.y);
+	SetPosition(pos.x, pos.y);
 }
 
 void dae::Transform::SetRotation(float x, float y, float z)

@@ -11,11 +11,11 @@ namespace dae
 		Transform() = default;
 		Transform(const glm::vec3& pos);
 
-		const glm::vec3& GetLocalPosition() const { return m_Position; }
-		void SetLocalPosition(float x, float y, float z);
-		void SetLocalPosition(float x, float y);
-		void SetLocalPosition(const glm::vec3& pos);
-		void SetLocalPosition(const glm::vec2& pos);
+		const glm::vec3& GetPosition() const { return m_Position; }
+		void SetPosition(float x, float y, float z);
+		void SetPosition(float x, float y);
+		void SetPosition(const glm::vec3& pos);
+		void SetPosition(const glm::vec2& pos);
 		const glm::vec3& GetRotation() const { return m_Rotation; }
 		void SetRotation(float x, float y, float z);
 		void SetRotation(float x, float y);

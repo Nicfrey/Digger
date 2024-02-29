@@ -23,8 +23,20 @@ bool dae::GameObject::IsEqualToParent(const std::shared_ptr<GameObject>& child)
 	return false;
 }
 
-dae::GameObject::GameObject(const glm::vec3& pos): m_Transform{pos}
+bool dae::GameObject::IsChild(const std::shared_ptr<GameObject>& parent)
 {
+	const auto it{
+		std::ranges::find_if(m_ChildrenObject,
+							 [parent](const GameObject* other)
+							 {
+								 return parent.get() == other;
+							 }) };
+	return it != m_ChildrenObject.end();
+}
+
+dae::GameObject::GameObject(const glm::vec3& pos): GameObject{}
+{
+	SetLocalPosition(pos);
 }
 
 void dae::GameObject::Init()
@@ -71,39 +83,39 @@ bool dae::GameObject::RemoveComponentAtIndex(size_t index)
 }
 
 
-glm::vec3 dae::GameObject::GetWorldPosition() const
+glm::vec3 dae::GameObject::GetWorldPosition()
 {
-	if (GetParent() != nullptr)
+	if(m_PositionIsDirty)
 	{
-		const glm::vec3 posParent{ m_ParentObject->GetWorldPosition() };
-		return posParent + GetLocalPosition();
+		UpdateWorldPosition();
 	}
-	return GetLocalPosition();
+	return m_WorldTransform.GetPosition();
 }
 
 const glm::vec3& dae::GameObject::GetLocalPosition() const
 {
-	return m_Transform.GetLocalPosition();
+	return m_LocalTransform.GetPosition();
 }
 
 void dae::GameObject::SetLocalPosition(const glm::vec3& pos)
 {
-	m_Transform.SetLocalPosition(pos);
+	SetPositionIsDirty();
+	m_LocalTransform.SetPosition(pos);
 }
 
 void dae::GameObject::SetLocalPosition(const glm::vec2& pos)
 {
-	m_Transform.SetLocalPosition(pos);
+	SetLocalPosition(glm::vec3{ pos.x,pos.y,0.f });
 }
 
 void dae::GameObject::SetLocalPosition(float x, float y, float z)
 {
-	m_Transform.SetLocalPosition(x, y, z);
+	SetLocalPosition(glm::vec3{ x,y,z });
 }
 
 void dae::GameObject::SetLocalPosition(float x, float y)
 {
-	m_Transform.SetLocalPosition(x, y);
+	SetLocalPosition(glm::vec3{ x,y,0.f });
 }
 
 std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
@@ -111,11 +123,32 @@ std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
 	return shared_from_this();
 }
 
+void dae::GameObject::SetPositionIsDirty()
+{
+	m_PositionIsDirty = true;
+}
+
+void dae::GameObject::UpdateWorldPosition()
+{
+	if(m_PositionIsDirty)
+	{
+		if(m_ParentObject == nullptr)
+		{
+			m_WorldTransform.SetPosition(GetLocalPosition());
+		}
+		else
+		{
+			m_WorldTransform.SetPosition(m_ParentObject->GetWorldPosition() + GetLocalPosition());
+		}
+		m_PositionIsDirty = false;
+	}
+}
+
 bool dae::GameObject::AddChild(const std::shared_ptr<GameObject>& child)
 {
 	assert(child);
 	// Check if child is equal to parent or if it's nullptr
-	if(IsEqualToParent(child) && !child)
+	if(IsEqualToParent(child) || !child)
 	{
 		return false;
 	}
@@ -131,22 +164,29 @@ bool dae::GameObject::AddChild(const std::shared_ptr<GameObject>& child)
 	return true;
 }
 
-bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent)
+bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent, bool keepWorldPosition)
 {
 	assert(newParent);
 	// Check if newParent is equal to current parent or if newParent is present in the children list
-	const auto newParentInChildren{
-		std::ranges::find_if(m_ChildrenObject,
-		                     [newParent](const GameObject* other)
-		                     {
-			                     return newParent.get() == other;
-		                     })};
-	if (m_ParentObject == this || newParentInChildren != m_ChildrenObject.end())
+	
+	if (m_ParentObject == newParent.get() || IsChild(newParent) || newParent == GetThis())
 	{
 		return false;
 	}
 
 	// Remove itself from previous parent if exists
+	if(newParent == nullptr)
+	{
+		SetLocalPosition(GetWorldPosition());
+	}
+	else
+	{
+		if(keepWorldPosition)
+		{
+			SetLocalPosition(GetWorldPosition() - newParent->GetWorldPosition());
+		}
+		SetPositionIsDirty();
+	}
 	if(m_ParentObject)
 	{
 		m_ParentObject->RemoveChild(shared_from_this());
@@ -159,8 +199,6 @@ bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent)
 	{
 		m_ParentObject->AddChild(shared_from_this());
 	}
-
-	// TODO Update position
 
 	return true;
 }
