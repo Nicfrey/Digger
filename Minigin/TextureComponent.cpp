@@ -5,7 +5,7 @@
 #include "ResourceManager.h"
 #include "Texture2D.h"
 
-TextureComponent::TextureComponent(const std::string& filename)
+TextureComponent::TextureComponent(const std::string& filename): BaseComponent{nullptr}
 {
 	SetTexture(filename);
 }
