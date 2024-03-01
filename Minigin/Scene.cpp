@@ -19,6 +19,14 @@ void Scene::FixedUpdate()
 	}
 }
 
+void Scene::Init()
+{
+	for (const auto& object : m_objects)
+	{
+		object->Init();
+	}
+}
+
 void Scene::Add(std::shared_ptr<GameObject> object)
 {
 	m_objects.emplace_back(std::move(object));

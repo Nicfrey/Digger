@@ -12,7 +12,6 @@ TextureComponent::TextureComponent(const std::string& filename): BaseComponent{n
 
 void TextureComponent::Init()
 {
-
 }
 
 void TextureComponent::Update()

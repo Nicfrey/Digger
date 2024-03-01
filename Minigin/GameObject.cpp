@@ -126,6 +126,10 @@ std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
 void dae::GameObject::SetPositionIsDirty()
 {
 	m_PositionIsDirty = true;
+	for(const auto& child: m_ChildrenObject)
+	{
+		child->SetPositionIsDirty();
+	}
 }
 
 void dae::GameObject::UpdateWorldPosition()
@@ -206,6 +210,11 @@ bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent, bo
 dae::GameObject* dae::GameObject::GetParent() const
 {
 	return m_ParentObject;
+}
+
+std::vector<dae::GameObject*> dae::GameObject::GetChildren() const
+{
+	return m_ChildrenObject;
 }
 
 bool dae::GameObject::RemoveChild(const std::shared_ptr<GameObject>& child)

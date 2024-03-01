@@ -90,6 +90,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	sceneManager.Init();
 	float lag{0.f};
 
 	// todo: this update loop could use some work.

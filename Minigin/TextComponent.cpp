@@ -13,9 +13,6 @@ dae::TextComponent::TextComponent(std::string text, const std::shared_ptr<Font>&
 
 void dae::TextComponent::Init()
 {
-	m_Font = nullptr;
-	m_needsUpdate = true;
-	m_text = "";
 }
 
 void dae::TextComponent::Update()
