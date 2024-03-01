@@ -2,11 +2,11 @@
 #include <memory>
 #include <vector>
 
-#include "GameObjectComponent.h"
+#include "BaseComponent.h"
 #include "Transform.h"
 
-class GameObjectComponent;
-class TextureManager;
+class BaseComponent;
+class TextureComponent;
 
 namespace dae
 {
@@ -17,23 +17,35 @@ namespace dae
 	public:
 		void Init();
 		void Update();
+		void FixedUpdate();
 		void Render() const;
 
-		template<typename T>
+		template <typename T>
 		bool AddComponent(std::shared_ptr<T> component);
-		template<typename T>
-		bool RemoveComponent(std::shared_ptr<T> component);
+		template <typename T>
+		bool RemoveComponent(const std::shared_ptr<T>& component);
 		bool RemoveComponentAtIndex(size_t index);
-		template<typename T>
+		template <typename T>
 		std::shared_ptr<T> GetComponent() const;
-		template<typename T>
+		template <typename T>
 		bool HasComponent() const;
 
+		glm::vec3 GetWorldPosition();
+		const glm::vec3& GetLocalPosition() const;
+		void SetLocalPosition(const glm::vec3& pos);
+		void SetLocalPosition(const glm::vec2& pos);
+		void SetLocalPosition(float x, float y, float z);
+		void SetLocalPosition(float x, float y);
+
 		std::shared_ptr<GameObject> GetThis();
-		void SetPosition(float x, float y);
-		Transform GetTransform() const;
+
+		bool SetParent(const std::shared_ptr<GameObject>& newParent, bool keepWorldPosition = true);
+		GameObject* GetParent() const;
+		std::vector<GameObject*> GetChildren() const;
+
 
 		GameObject() = default;
+		GameObject(const glm::vec3& pos);
 		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -41,14 +53,25 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	private:
-		Transform m_transform{};
-		std::vector<std::shared_ptr<GameObjectComponent>> m_Components;
+		Transform m_LocalTransform{};
+		Transform m_WorldTransform{};
+		bool m_PositionIsDirty;
+		std::vector<std::shared_ptr<BaseComponent>> m_Components;
+		GameObject* m_ParentObject{};
+		std::vector<GameObject*> m_ChildrenObject{};
+
+		void SetPositionIsDirty();
+		void UpdateWorldPosition();
+		bool AddChild(const std::shared_ptr<GameObject>& child);
+		bool RemoveChild(const std::shared_ptr<GameObject>& child);
+		bool IsEqualToParent(const std::shared_ptr<GameObject>& child);
+		bool IsChild(const std::shared_ptr<GameObject>& parent);
 	};
 
 	template <typename T>
 	bool GameObject::AddComponent(std::shared_ptr<T> component)
 	{
-		if(std::shared_ptr<GameObjectComponent> componentCaster{ std::dynamic_pointer_cast<GameObjectComponent>(component) })
+		if (std::shared_ptr<BaseComponent> componentCaster{std::dynamic_pointer_cast<BaseComponent>(component)})
 		{
 			component->SetGameObject(GetThis());
 			m_Components.emplace_back(component);
@@ -58,14 +81,18 @@ namespace dae
 	}
 
 	template <typename T>
-	bool GameObject::RemoveComponent(std::shared_ptr<T> component)
+	bool GameObject::RemoveComponent(const std::shared_ptr<T>& component)
 	{
-		auto it{ std::find_if(m_Components.begin(),m_Components.end(), [component](const std::shared_ptr<GameObjectComponent> &other)
+		auto it{
+			std::find_if(m_Components.begin(), m_Components.end(),
+			             [component](const std::shared_ptr<BaseComponent>& other)
+			             {
+				             return component.get() == other.get();
+			             })
+		};
+		if (it != m_Components.end())
 		{
-				return component.get() == other.get();
-		}) };
-		if(it != m_Components.end())
-		{
+			component->RemoveGameObject();
 			m_Components.erase(it);
 			return true;
 		}
@@ -75,10 +102,10 @@ namespace dae
 	template <typename T>
 	std::shared_ptr<T> GameObject::GetComponent() const
 	{
-		for(std::shared_ptr<GameObjectComponent> component: m_Components)
+		for (std::shared_ptr<BaseComponent> component : m_Components)
 		{
-			std::shared_ptr<T> componentGot{ dynamic_cast<T>(component) };
-			if(componentGot != nullptr)
+			std::shared_ptr<T> componentGot{std::dynamic_pointer_cast<T>(component)};
+			if (componentGot != nullptr)
 			{
 				return componentGot;
 			}
@@ -89,9 +116,9 @@ namespace dae
 	template <typename T>
 	bool GameObject::HasComponent() const
 	{
-		for(auto& component: m_Components)
+		for (auto& component : m_Components)
 		{
-			if(typeid(component) == typeid(T))
+			if (typeid(component) == typeid(T))
 			{
 				return true;
 			}

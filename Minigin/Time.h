@@ -4,8 +4,8 @@
 class Time final
 {
 public:
-	void UpdateLastTime();
-	void Update();
+	static void UpdateLastTime();
+	static void Update();
 	static float GetDeltaTime();
 	static std::chrono::steady_clock::time_point GetLastTime();
 	static std::chrono::steady_clock::time_point GetCurrent();

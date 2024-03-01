@@ -16,6 +16,8 @@ namespace dae
 		void Render() const;
 
 		~Scene();
+		void FixedUpdate();
+		void Init();
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
 		Scene& operator=(const Scene& other) = delete;
