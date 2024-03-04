@@ -125,6 +125,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
@@ -173,6 +174,14 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\backends\imgui_impl_sdl2.h" />
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\imconfig.h" />
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\imgui.h" />
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\imgui_internal.h" />
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\imstb_rectpack.h" />
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\imstb_textedit.h" />
+    <ClInclude Include="..\3rdParty\imgui-1.90.4\imstb_truetype.h" />
     <ClInclude Include="FpsComponent.h" />
     <ClInclude Include="FpsTextComponent.h" />
     <ClInclude Include="BaseComponent.h" />
@@ -193,6 +202,13 @@
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdParty\imgui-1.90.4\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-1.90.4\backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-1.90.4\imgui.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-1.90.4\imgui_demo.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-1.90.4\imgui_draw.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-1.90.4\imgui_tables.cpp" />
+    <ClCompile Include="..\3rdParty\imgui-1.90.4\imgui_widgets.cpp" />
     <ClCompile Include="FpsComponent.cpp" />
     <ClCompile Include="FpsTextComponent.cpp" />
     <ClCompile Include="BaseComponent.cpp" />
