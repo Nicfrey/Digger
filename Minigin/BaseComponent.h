@@ -23,6 +23,7 @@ public:
 	virtual void FixedUpdate() = 0;
 	virtual void Init() = 0;
 	virtual void Render() const = 0;
+	virtual void RenderGUI() = 0;
 	void SetGameObject(const std::shared_ptr<dae::GameObject>& go);
 	void RemoveGameObject();
 protected:

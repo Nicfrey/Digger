@@ -24,6 +24,7 @@ namespace dae
 		void SetText(const std::string& text);
 		void SetPositionOffset(float x, float y);
 		void FixedUpdate() override;
+		void RenderGUI() override;
 
 	private:
 		bool m_needsUpdate{};

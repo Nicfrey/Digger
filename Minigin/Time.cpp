@@ -1,8 +1,5 @@
 #include "Time.h"
 
-#include <iostream>
-#include <SDL_timer.h>
-
 std::chrono::steady_clock::time_point Time::m_CurrentTime = {};
 std::chrono::steady_clock::time_point Time::m_LastTime = {};
 float Time::m_DeltaTime = 0.f;

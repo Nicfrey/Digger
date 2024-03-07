@@ -40,3 +40,7 @@ void TextureComponent::Render() const
 void TextureComponent::FixedUpdate()
 {
 }
+
+void TextureComponent::RenderGUI()
+{
+}

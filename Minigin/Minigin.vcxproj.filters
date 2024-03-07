@@ -96,7 +96,7 @@
     <ClInclude Include="..\3rdParty\imgui\backends\imgui_impl_sdl2.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="TrashTheCanComponent.h">
+    <ClInclude Include="TrashTheCacheComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdParty\imgui\implot.h">
@@ -107,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="..\3rdParty\imgui\imgui_plot.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="TrashTheCacheGOComponent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -185,7 +188,7 @@
     <ClCompile Include="..\3rdParty\imgui\backends\imgui_impl_sdl2.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="TrashTheCanComponent.cpp">
+    <ClCompile Include="TrashTheCacheComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\imgui\implot.cpp">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="..\3rdParty\imgui\imgui_plot.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="TrashTheCacheGOComponent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#include "TrashTheCanComponent.h"
+#include "TrashTheCacheComponent.h"
 
 #include <chrono>
 #include <future>
@@ -7,28 +7,43 @@
 
 #include "imgui_plot.h"
 #include "implot.h"
+#include "Renderer.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl2.h"
 
 
-TrashTheCanComponent::~TrashTheCanComponent()
+TrashTheCacheComponent::~TrashTheCacheComponent()
+{
+
+}
+
+void TrashTheCacheComponent::Update()
 {
 }
 
-void TrashTheCanComponent::Update()
+void TrashTheCacheComponent::FixedUpdate()
 {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
-	bool windowActive{true};
+}
 
+void TrashTheCacheComponent::Init()
+{
+}
+
+void TrashTheCacheComponent::Render() const
+{
+	
+}
+
+void TrashTheCacheComponent::RenderGUI()
+{
+	bool windowActive{ true };
 	ImGui::Begin("Exercice 1", &windowActive);
 	ImGui::InputInt("sample", &m_Sample);
-	if (ImGui::Button("Trash The can"))
+	if (ImGui::Button("Trash The cache"))
 	{
 		ClearAverage();
 		m_IsComputing = true;
-		std::thread asyncThread{&TrashTheCanComponent::Exercise01, this};
+		std::thread asyncThread{ &TrashTheCacheComponent::ComputeResult, this };
 		asyncThread.detach();
 	}
 	if (m_IsComputing)
@@ -49,37 +64,21 @@ void TrashTheCanComponent::Update()
 		conf.grid_y.show = true;
 		conf.frame_size = ImVec2(400.f, 400.f);
 		conf.line_thickness = 2.f;
-		ImGui::Plot("Salut", conf);
-		ImGui::PlotLines("Result", m_AverageResults, 11, 0, nullptr, -1.0f, -1.0f, ImVec2(100, 100));
-		ImGui::Text("I'm full");
+		ImGui::Plot("Result", conf);
 	}
 
 	ImGui::End();
 }
 
-void TrashTheCanComponent::FixedUpdate()
+void TrashTheCacheComponent::ClearAverage()
 {
-}
-
-void TrashTheCanComponent::Init()
-{
-}
-
-void TrashTheCanComponent::Render() const
-{
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void TrashTheCanComponent::ClearAverage()
-{
-	for(int i{}; i < 11; ++i)
+	for(int i{}; i < STEPS; ++i)
 	{
 		m_AverageResults[i] = 0;
 	}
 }
 
-void TrashTheCanComponent::Exercise01()
+void TrashTheCacheComponent::ComputeResult()
 {
 	if(m_Sample == 0)
 	{
@@ -108,7 +107,7 @@ void TrashTheCanComponent::Exercise01()
 	}
 	const int divider{ m_Sample - 2 };
 	// Remove the min and max for each
-	for (int i{}; i < 11; ++i)
+	for (int i{}; i < STEPS; ++i)
 	{
 		// Go through 1 - 2 - 4 - 8 - 16 - 32 - 64 - 128 - 256 - 512 - 1024
 		float max{FLT_MIN};
@@ -126,8 +125,4 @@ void TrashTheCanComponent::Exercise01()
 		m_AverageResults[i] /= divider;
 	}
 	m_IsComputing = false;
-}
-
-void TrashTheCanComponent::Exercise02()
-{
 }

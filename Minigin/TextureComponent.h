@@ -22,6 +22,7 @@ public:
 	void SetTexture(const std::shared_ptr<dae::Texture2D>& texture);
 	void Render() const override;
 	void FixedUpdate() override;
+	void RenderGUI() override;
 
 private:
 	std::shared_ptr<dae::Texture2D> m_Texture{};

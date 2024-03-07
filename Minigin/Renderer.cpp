@@ -46,15 +46,16 @@ void dae::Renderer::Render() const
 
 	SceneManager::GetInstance().Render();
 
+
 	// Display Demo ImGui
-	/* 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
+	SceneManager::GetInstance().RenderGUI();
 	ImGui::ShowDemoWindow();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	*/
+
 
 	SDL_RenderPresent(m_renderer);
 }
@@ -93,3 +94,8 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 }
 
 SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }
+
+SDL_Window* dae::Renderer::GetWindow() const
+{
+	return m_window;
+}

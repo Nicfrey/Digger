@@ -12,6 +12,7 @@ public:
 	void FixedUpdate() override;
 	void Init() override;
 	void Render() const override;
+	void RenderGUI() override;
 
 private:
 	glm::vec3 m_PointToRotate;

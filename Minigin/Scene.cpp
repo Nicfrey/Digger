@@ -27,6 +27,14 @@ void Scene::Init()
 	}
 }
 
+void Scene::RenderGUI()
+{
+	for (const auto& object : m_objects)
+	{
+		object->RenderGUI();
+	}
+}
+
 void Scene::Add(std::shared_ptr<GameObject> object)
 {
 	m_objects.emplace_back(std::move(object));
