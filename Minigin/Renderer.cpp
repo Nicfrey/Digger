@@ -2,6 +2,7 @@
 #include "Renderer.h"
 
 #include "imgui.h"
+#include "implot.h"
 #include "SceneManager.h"
 #include "Texture2D.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -32,6 +33,7 @@ void dae::Renderer::Init(SDL_Window* window)
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 	ImGui_ImplSDL2_InitForOpenGL(window, SDL_GL_GetCurrentContext());
 	ImGui_ImplOpenGL3_Init();
 }
@@ -44,13 +46,16 @@ void dae::Renderer::Render() const
 
 	SceneManager::GetInstance().Render();
 
+	// Display Demo ImGui
+	/* 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 	ImGui::ShowDemoWindow();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	
+	*/
+
 	SDL_RenderPresent(m_renderer);
 }
 
@@ -59,6 +64,7 @@ void dae::Renderer::Destroy()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+	ImPlot::DestroyContext();
 
 	if (m_renderer != nullptr)
 	{
