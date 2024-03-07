@@ -5,7 +5,7 @@
 #include <iostream>
 #include <thread>
 
-#include "imgui.h"
+#include "imgui_plot.h"
 #include "implot.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl2.h"
@@ -36,12 +36,20 @@ void TrashTheCanComponent::Update()
 	}
 	else if (!m_IsComputing && m_AverageResults[0] != 0.f)
 	{
-		if(ImPlot::BeginPlot("Result"))
-		{
-			ImPlot::PlotLine("Salut", m_Step,m_AverageResults,11);
-			ImPlot::EndPlot();
-		}
-		ImGui::PlotLines("Result", m_AverageResults, 11,0,nullptr,-1.0f,-1.0f,ImVec2(100,100));
+		ImGui::PlotConfig conf;
+		conf.values.xs = m_Step;
+		conf.values.ys = m_AverageResults;
+		conf.values.count = 11;
+		conf.scale.max = 100.f;
+		conf.scale.min = -1.f;
+		conf.tooltip.show = true;
+		conf.tooltip.format = "x=%.2f, y=%.2f";
+		conf.grid_x.show = true;
+		conf.grid_y.show = true;
+		conf.frame_size = ImVec2(400.f, 400.f);
+		conf.line_thickness = 2.f;
+		ImGui::Plot("Salut", conf);
+		ImGui::PlotLines("Result", m_AverageResults, 11, 0, nullptr, -1.0f, -1.0f, ImVec2(100, 100));
 		ImGui::Text("I'm full");
 	}
 
