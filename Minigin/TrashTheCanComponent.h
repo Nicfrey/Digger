@@ -15,6 +15,7 @@ public:
 	void Render() const override;
 
 private:
+	void ClearAverage();
 	void Exercise01();
 	void Exercise02();
 	int m_Sample;

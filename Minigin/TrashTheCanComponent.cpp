@@ -20,17 +20,18 @@ void TrashTheCanComponent::Update()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
-	bool windowActive{ true };
+	bool windowActive{true};
 
 	ImGui::Begin("Exercice 1", &windowActive);
 	ImGui::InputInt("sample", &m_Sample);
 	if (ImGui::Button("Trash The can"))
 	{
+		ClearAverage();
 		m_IsComputing = true;
-		std::thread asyncThread{ &TrashTheCanComponent::Exercise01, this };
+		std::thread asyncThread{&TrashTheCanComponent::Exercise01, this};
 		asyncThread.detach();
 	}
-	if(m_IsComputing)
+	if (m_IsComputing)
 	{
 		ImGui::Text("Wait for it");
 	}
@@ -70,42 +71,60 @@ void TrashTheCanComponent::Render() const
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+void TrashTheCanComponent::ClearAverage()
+{
+	for(int i{}; i < 11; ++i)
+	{
+		m_AverageResults[i] = 0;
+	}
+}
+
 void TrashTheCanComponent::Exercise01()
 {
+	if(m_Sample == 0)
+	{
+		m_IsComputing = false;
+		return;
+	}
 	std::map<int, std::vector<float>> timeCalculation{};
-	const int length{ static_cast<int>(pow(2,26)) };
-	for(int j{}; j <= m_Sample; ++j)
+	const int length{static_cast<int>(pow(2, 26))};
+	for (int j{}; j < m_Sample; ++j)
 	{
 		std::vector<float> calculations{};
-		int* arr{ new int[length] };
-		for (int step{ 1 }; step <= 1024; step *= 2)
+		int* arr{new int[length]};
+		for (int step{1}; step <= 1024; step *= 2)
 		{
-			auto start{ std::chrono::high_resolution_clock::now() };
+			auto start{std::chrono::high_resolution_clock::now()};
 			for (int i{}; i < length; i += step)
 			{
 				arr[i] *= 2;
 			}
-			auto end{ std::chrono::high_resolution_clock::now() };
-			const auto elapsedTime{ std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() };
+			auto end{std::chrono::high_resolution_clock::now()};
+			const auto elapsedTime{std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()};
 			calculations.emplace_back(elapsedTime / 1000.f);
 		}
 		timeCalculation.emplace(j, calculations);
 		delete[] arr;
 	}
-
-	for(const auto& pair: timeCalculation)
+	const int divider{ m_Sample - 2 };
+	// Remove the min and max for each
+	for (int i{}; i < 11; ++i)
 	{
-		auto result{ pair.second };
-		for(int i{}; i < m_Sample; ++i)
+		// Go through 1 - 2 - 4 - 8 - 16 - 32 - 64 - 128 - 256 - 512 - 1024
+		float max{FLT_MIN};
+		float min{FLT_MAX};
+		for (const auto& pair : timeCalculation)
 		{
+			// Go through every sample
+			auto result{pair.second};
 			m_AverageResults[i] += result[i];
+			max = std::max(max, result[i]);
+			min = std::min(min, result[i]);
 		}
+		m_AverageResults[i] -= max;
+		m_AverageResults[i] -= min;
+		m_AverageResults[i] /= divider;
 	}
-	for (int i{}; i < m_Sample; ++i)
-	{
-		m_AverageResults[i] /= m_Sample;
-	}
-
 	m_IsComputing = false;
 }
 
