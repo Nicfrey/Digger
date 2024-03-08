@@ -11,6 +11,7 @@ public:
 	void Render() const override;
 	float GetFps() const;
 	void FixedUpdate() override;
+	void RenderGUI() override;
 
 private:
 	float m_Fps;

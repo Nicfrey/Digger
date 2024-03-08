@@ -62,4 +62,8 @@ void dae::TextComponent::FixedUpdate()
 {
 }
 
+void dae::TextComponent::RenderGUI()
+{
+}
+
 

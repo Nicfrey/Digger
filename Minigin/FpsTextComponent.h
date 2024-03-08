@@ -13,6 +13,7 @@ public:
 	void Render() const override;
 	void SetPrecision(int precision);
 	void FixedUpdate() override;
+	void RenderGUI() override;
 
 private:
 	int m_Precision{1};

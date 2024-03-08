@@ -39,3 +39,7 @@ void RotateComponent::Init()
 void RotateComponent::Render() const
 {
 }
+
+void RotateComponent::RenderGUI()
+{
+}

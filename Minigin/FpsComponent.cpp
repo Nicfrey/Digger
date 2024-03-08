@@ -25,3 +25,7 @@ float FpsComponent::GetFps() const
 void FpsComponent::FixedUpdate()
 {
 }
+
+void FpsComponent::RenderGUI()
+{
+}

@@ -15,6 +15,7 @@ namespace dae
 		void Init();
 		void Update();
 		void Render();
+		void RenderGUI();
 		void FixedUpdate();
 
 	private:

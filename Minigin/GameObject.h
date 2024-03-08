@@ -19,6 +19,8 @@ namespace dae
 		void Update();
 		void FixedUpdate();
 		void Render() const;
+		void RenderGUI();
+
 
 		template <typename T>
 		bool AddComponent(std::shared_ptr<T> component);

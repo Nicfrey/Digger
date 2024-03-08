@@ -35,3 +35,7 @@ void FpsTextComponent::SetPrecision(int precision)
 void FpsTextComponent::FixedUpdate()
 {
 }
+
+void FpsTextComponent::RenderGUI()
+{
+}

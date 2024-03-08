@@ -71,6 +71,14 @@ void dae::GameObject::Render() const
 	}
 }
 
+void dae::GameObject::RenderGUI()
+{
+	for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+	{
+		goc->RenderGUI();
+	}
+}
+
 bool dae::GameObject::RemoveComponentAtIndex(size_t index)
 {
 	if (index < 0 || index >= m_Components.size())
