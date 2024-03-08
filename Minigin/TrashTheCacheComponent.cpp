@@ -39,12 +39,16 @@ void TrashTheCacheComponent::RenderGUI()
 	bool windowActive{ true };
 	ImGui::Begin("Exercice 1", &windowActive);
 	ImGui::InputInt("sample", &m_Sample);
-	if (ImGui::Button("Trash The cache"))
+	if (!m_IsComputing && ImGui::Button("Trash The cache"))
 	{
 		ClearAverage();
 		m_IsComputing = true;
 		std::thread asyncThread{ &TrashTheCacheComponent::ComputeResult, this };
 		asyncThread.detach();
+		if (asyncThread.joinable())
+		{
+			asyncThread.join();
+		}
 	}
 	if (m_IsComputing)
 	{
@@ -56,13 +60,13 @@ void TrashTheCacheComponent::RenderGUI()
 		conf.values.xs = m_Step;
 		conf.values.ys = m_AverageResults;
 		conf.values.count = 11;
-		conf.scale.max = 100.f;
+		conf.scale.max = m_AverageResults[0];
 		conf.scale.min = -1.f;
 		conf.tooltip.show = true;
 		conf.tooltip.format = "x=%.2f, y=%.2f";
 		conf.grid_x.show = true;
 		conf.grid_y.show = true;
-		conf.frame_size = ImVec2(400.f, 400.f);
+		conf.frame_size = ImVec2(200.f, 100.f);
 		conf.line_thickness = 2.f;
 		ImGui::Plot("Result", conf);
 	}
@@ -104,6 +108,7 @@ void TrashTheCacheComponent::ComputeResult()
 		}
 		timeCalculation.emplace(j, calculations);
 		delete[] arr;
+		arr = nullptr;
 	}
 	const int divider{ m_Sample - 2 };
 	// Remove the min and max for each
