@@ -12,24 +12,24 @@ void Gamepad::ProcessInput()
 	m_ButtonsPressedThisFrame = buttonChanges & m_CurrentState.Gamepad.wButtons;
 	m_ButtonsReleasedThisFrame = buttonChanges & (~m_CurrentState.Gamepad.wButtons);
 
-	for(const InputAction& inputAction: m_InputActions)
+	for(const InputActionController& inputAction: m_InputActions)
 	{
 		switch (inputAction.triggerType)
 		{
-		case Down:
-			if(IsDownThisFrame(inputAction.button))
+		case KeyDown:
+			if(IsDown(inputAction.button))
 			{
 				inputAction.pCommand->Execute();
 			}
 			break;
-		case Up:
+		case KeyUp:
 			if(IsUpThisFrame(inputAction.button))
 			{
 				inputAction.pCommand->Execute();
 			}
 			break;
-		case Pressed:
-			if(IsPressed(inputAction.button))
+		case KeyPressed:
+			if(IsPressedThisFrame(inputAction.button))
 			{
 				inputAction.pCommand->Execute();
 			}
@@ -44,7 +44,7 @@ void Gamepad::ProcessInput()
 	}
 }
 
-void Gamepad::BindCommand(Command* pCommand,unsigned int button, const TriggerTypeXInput& triggerType)
+void Gamepad::BindCommand(const std::shared_ptr<Command>& pCommand,unsigned int button, const TriggerType& triggerType)
 {
 	if(pCommand != nullptr)
 	{
@@ -52,7 +52,7 @@ void Gamepad::BindCommand(Command* pCommand,unsigned int button, const TriggerTy
 	}
 }
 
-bool Gamepad::IsDownThisFrame(unsigned button) const
+bool Gamepad::IsPressedThisFrame(unsigned button) const
 {
 	return m_ButtonsPressedThisFrame & button;
 }
@@ -62,7 +62,7 @@ bool Gamepad::IsUpThisFrame(unsigned button) const
 	return m_ButtonsReleasedThisFrame & button;
 }
 
-bool Gamepad::IsPressed(unsigned button) const
+bool Gamepad::IsDown(unsigned button) const
 {
 	return m_CurrentState.Gamepad.wButtons & button;
 }

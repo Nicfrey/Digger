@@ -22,6 +22,12 @@
     <Filter Include="Source Files\Commands">
       <UniqueIdentifier>{9bc2e90f-6110-4d5f-a96e-8724c6fd4b02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Movements">
+      <UniqueIdentifier>{fde9443d-7147-4fee-95fd-bf7d215bfa74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Movements">
+      <UniqueIdentifier>{15a5df28-7b9c-4d94-a2fb-65de9395fd8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -70,9 +76,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FpsComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RotateComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdParty\imgui\imconfig.h">
@@ -126,6 +129,12 @@
     <ClInclude Include="GameObjectCommand.h">
       <Filter>Header Files\Commands</Filter>
     </ClInclude>
+    <ClInclude Include="RotateComponent.h">
+      <Filter>Header Files\Movements</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementComponent.h">
+      <Filter>Header Files\Movements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceManager.cpp">
@@ -174,9 +183,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FpsComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RotateComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\imgui\imgui.cpp">
@@ -229,6 +235,12 @@
     </ClCompile>
     <ClCompile Include="GameObjectCommand.cpp">
       <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="RotateComponent.cpp">
+      <Filter>Source Files\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="MovementComponent.cpp">
+      <Filter>Source Files\Movements</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
