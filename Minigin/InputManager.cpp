@@ -2,9 +2,12 @@
 #include <backends/imgui_impl_sdl2.h>
 #include "InputManager.h"
 
+#include "Gamepad.h"
+
 
 bool dae::InputManager::ProcessInput()
 {
+	Gamepad::GetInstance().ProcessInput();
 	SDL_Event e;
 	while (SDL_PollEvent(&e)) {
 		if (e.type == SDL_QUIT) {
