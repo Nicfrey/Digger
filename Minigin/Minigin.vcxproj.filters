@@ -123,9 +123,6 @@
     <ClInclude Include="InputManager.h">
       <Filter>Header Files\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="Gamepad.h">
-      <Filter>Header Files\Commands</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectCommand.h">
       <Filter>Header Files\Commands</Filter>
     </ClInclude>
@@ -134,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="MovementComponent.h">
       <Filter>Header Files\Movements</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Header Files\Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -230,9 +230,6 @@
     <ClCompile Include="Command.cpp">
       <Filter>Source Files\Commands</Filter>
     </ClCompile>
-    <ClCompile Include="Gamepad.cpp">
-      <Filter>Source Files\Commands</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjectCommand.cpp">
       <Filter>Source Files\Commands</Filter>
     </ClCompile>
@@ -241,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="MovementComponent.cpp">
       <Filter>Source Files\Movements</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>Source Files\Commands</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

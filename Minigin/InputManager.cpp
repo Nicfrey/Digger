@@ -2,14 +2,15 @@
 #include <backends/imgui_impl_sdl2.h>
 #include "InputManager.h"
 
-#include <iostream>
-
-#include "Gamepad.h"
+#include "Command.h"
 
 
 bool dae::InputManager::ProcessInput()
 {
-	Gamepad::GetInstance().ProcessInput();
+	for(const auto& controller: m_Controllers)
+	{
+		controller->ProcessInput();
+	}
 	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
 	SDL_Event e;
 	while (SDL_PollEvent(&e)) {
