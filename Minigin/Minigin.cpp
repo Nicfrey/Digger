@@ -9,6 +9,7 @@
 #include <SDL_ttf.h>
 #include "Minigin.h"
 
+#include <steam_api_common.h>
 #include <thread>
 
 #include "InputManager.h"
@@ -97,6 +98,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	bool doContinue = true;
 	while (doContinue)
 	{
+		SteamAPI_RunCallbacks();
 		Time::Update();
 		lag += Time::GetDeltaTime();
 
