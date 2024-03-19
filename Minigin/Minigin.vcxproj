@@ -196,9 +196,11 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectCommand.h" />
+    <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="MovementComponent.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RotateComponent.h" />
@@ -212,6 +214,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TrashTheCacheComponent.h" />
     <ClInclude Include="TrashTheCacheGOComponent.h" />
+    <ClInclude Include="UIPlayerComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\imgui\backends\imgui_impl_opengl3.cpp" />
@@ -233,10 +236,12 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectCommand.cpp" />
+    <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="MovementComponent.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RotateComponent.cpp" />
@@ -249,6 +254,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TrashTheCacheComponent.cpp" />
     <ClCompile Include="TrashTheCacheGOComponent.cpp" />
+    <ClCompile Include="UIPlayerComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

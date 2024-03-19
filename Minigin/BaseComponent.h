@@ -1,8 +1,6 @@
 #pragma once
 #include <memory>
 
-#include "Singleton.h"
-
 namespace dae
 {
 	class GameObject;

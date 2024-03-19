@@ -50,3 +50,10 @@ public:
 	MoveLeftCommand(dae::GameObject* go);
 	void Execute() override;
 };
+
+class KillPlayerCommand : public GameObjectCommand
+{
+public:
+	KillPlayerCommand(dae::GameObject* go);
+	void Execute() override;
+};

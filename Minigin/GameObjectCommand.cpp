@@ -1,6 +1,7 @@
 #include "GameObjectCommand.h"
 
 #include "GameObject.h"
+#include "HealthComponent.h"
 #include "MovementComponent.h"
 
 GameObjectCommand::GameObjectCommand(dae::GameObject* go): m_GameObject{go}
@@ -57,5 +58,17 @@ void MoveLeftCommand::Execute()
 	if (const std::shared_ptr movComponent{ GetGameObject()->GetComponent<MovementComponent>() })
 	{
 		movComponent->Move(Direction::Left);
+	}
+}
+
+KillPlayerCommand::KillPlayerCommand(dae::GameObject* go): GameObjectCommand{go}
+{
+}
+
+void KillPlayerCommand::Execute()
+{
+	if(const auto healthComponent{GetGameObject()->GetComponent<HealthComponent>()})
+	{
+		healthComponent->LoseOneLife();
 	}
 }

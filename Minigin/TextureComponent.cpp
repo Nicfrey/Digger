@@ -28,11 +28,21 @@ void TextureComponent::SetTexture(const std::shared_ptr<dae::Texture2D>& texture
 	m_Texture = texture;
 }
 
+void TextureComponent::SetPositionOffset(float x, float y)
+{
+	m_Offset.SetPosition(x, y, 0);
+}
+
 void TextureComponent::Render() const
 {
 	if(m_Texture != nullptr)
 	{
-		const glm::vec3 pos{GetGameObject()->GetWorldPosition()};
+		glm::vec3 pos{};
+		if(const auto go{GetGameObject()})
+		{
+			pos = go->GetWorldPosition();
+		}
+		pos += m_Offset.GetPosition();
 		dae::Renderer::GetInstance().RenderTexture(*m_Texture, pos.x, pos.y);
 	}
 }
