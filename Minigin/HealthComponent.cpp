@@ -29,6 +29,11 @@ int HealthComponent::GetLifeRemaining() const
 	return m_LifeRemaining;
 }
 
+bool HealthComponent::IsDead() const
+{
+	return m_LifeRemaining == 0;
+}
+
 void HealthComponent::Update()
 {
 }

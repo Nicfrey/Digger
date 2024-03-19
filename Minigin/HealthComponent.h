@@ -8,6 +8,7 @@ public:
 	void LoseOneLife();
 	void GainOneLife();
 	int GetLifeRemaining() const;
+	bool IsDead() const;
 
 	void Update() override;
 	void FixedUpdate() override;

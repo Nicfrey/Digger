@@ -57,3 +57,10 @@ public:
 	KillPlayerCommand(dae::GameObject* go);
 	void Execute() override;
 };
+
+class AddScorePlayerCommand : public GameObjectCommand
+{
+public:
+	AddScorePlayerCommand(dae::GameObject* go);
+	void Execute() override;
+};
