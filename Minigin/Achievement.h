@@ -1,6 +1,7 @@
 #pragma once
 #include <steamtypes.h>
 #include <steam_api_common.h>
+#include <isteamuserstats.h>
 
 #include "Singleton.h"
 
@@ -25,18 +26,13 @@ struct Achievement_t
 	int m_iIconImage;
 };
 
-struct UserStatsReceived_t;
-struct UserStatsStored_t;
-struct UserAchievementStored_t;
-
-
 
 class Achievement
 {
 public:
 	Achievement(Achievement_t* Achievements, int NumAchievements);
-	~Achievement();
 
+	void WinAchievement();
 	bool RequestStats();
 	bool SetAchievement(const char* ID);
 

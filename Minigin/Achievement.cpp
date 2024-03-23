@@ -6,24 +6,28 @@
 #include <cstdio>
 #include <isteamuser.h>
 
+#include "Observer.h"
 
-Achievement::Achievement(Achievement_t* Achievements, int NumAchievements):
-    m_CallbackUserStatsReceived(this, &Achievement::OnUserStatsReceived),
-    m_CallbackUserStatsStored(this, &Achievement::OnUserStatsStored),
-    m_CallbackAchievementStored(this, &Achievement::OnAchievementStored),
-    m_iAppID(0),
-    m_bInitialized(false)
+
+Achievement::Achievement(Achievement_t* Achievements, int NumAchievements) :
+	m_CallbackUserStatsReceived(this, &Achievement::OnUserStatsReceived),
+	m_CallbackUserStatsStored(this, &Achievement::OnUserStatsStored),
+	m_CallbackAchievementStored(this, &Achievement::OnAchievementStored),
+	m_iAppID(0),
+	m_bInitialized(false)
 {
-    m_iAppID = SteamUtils()->GetAppID();
-    m_pAchievements = Achievements;
-    m_iNumAchievements = NumAchievements;
-    RequestStats();
+	m_iAppID = SteamUtils()->GetAppID();
+	m_pAchievements = Achievements;
+	m_iNumAchievements = NumAchievements;
+	RequestStats();
+
+	EventManager::GetInstance().AddEvent("WinTheGame", [this]() { WinAchievement(); });
 }
 
-Achievement::~Achievement()
+
+void Achievement::WinAchievement()
 {
-	delete[] m_pAchievements;
-	m_pAchievements = nullptr;
+	SetAchievement("ACH_WIN_ONE_GAME");
 }
 
 bool Achievement::RequestStats()
@@ -57,7 +61,7 @@ bool Achievement::SetAchievement(const char* ID)
 void Achievement::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
 	// we may get callbacks for other games' stats arriving, ignore them
-	if (m_iAppID == pCallback->m_nGameID)
+	if (static_cast<uint64>(m_iAppID) == pCallback->m_nGameID)
 	{
 		if (k_EResultOK == pCallback->m_eResult)
 		{
@@ -70,10 +74,10 @@ void Achievement::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 				Achievement_t& ach = m_pAchievements[iAch];
 
 				SteamUserStats()->GetAchievement(ach.m_pchAchievementID, &ach.m_bAchieved);
-				_snprintf(ach.m_rgchName, sizeof(ach.m_rgchName), "%s",
+				_snprintf_s(ach.m_rgchName, sizeof(ach.m_rgchName), "%s",
 					SteamUserStats()->GetAchievementDisplayAttribute(ach.m_pchAchievementID,
 						"name"));
-				_snprintf(ach.m_rgchDescription, sizeof(ach.m_rgchDescription), "%s",
+				_snprintf_s(ach.m_rgchDescription, sizeof(ach.m_rgchDescription), "%s",
 					SteamUserStats()->GetAchievementDisplayAttribute(ach.m_pchAchievementID,
 						"desc"));
 			}
@@ -81,7 +85,7 @@ void Achievement::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 		else
 		{
 			char buffer[128];
-			_snprintf(buffer, 128, "RequestStats - failed, %d\n", pCallback->m_eResult);
+			_snprintf_s(buffer, 128, "RequestStats - failed, %d\n", pCallback->m_eResult);
 			OutputDebugString(buffer);
 		}
 	}
@@ -90,7 +94,7 @@ void Achievement::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 void Achievement::OnUserStatsStored(UserStatsStored_t* pCallback)
 {
 	// we may get callbacks for other games' stats arriving, ignore them
-	if (m_iAppID == pCallback->m_nGameID)
+	if (static_cast<uint64>(m_iAppID) == pCallback->m_nGameID)
 	{
 		if (k_EResultOK == pCallback->m_eResult)
 		{
@@ -99,7 +103,7 @@ void Achievement::OnUserStatsStored(UserStatsStored_t* pCallback)
 		else
 		{
 			char buffer[128];
-			_snprintf(buffer, 128, "StatsStored - failed, %d\n", pCallback->m_eResult);
+			_snprintf_s(buffer, 128, "StatsStored - failed, %d\n", pCallback->m_eResult);
 			OutputDebugString(buffer);
 		}
 	}
@@ -108,7 +112,7 @@ void Achievement::OnUserStatsStored(UserStatsStored_t* pCallback)
 void Achievement::OnAchievementStored(UserAchievementStored_t* pCallback)
 {
 	// we may get callbacks for other games' stats arriving, ignore them
-	if (m_iAppID == pCallback->m_nGameID)
+	if (static_cast<uint64>(m_iAppID) == pCallback->m_nGameID)
 	{
 		OutputDebugString("Stored Achievement for Steam\n");
 	}

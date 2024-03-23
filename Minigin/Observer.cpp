@@ -16,9 +16,12 @@ void EventManager::NotifyEvent(const EventID& eventID) const
 	{
 		for(const auto& pair: m_EventHandler)
 		{
-			for(const auto& handler: pair.second)
+			if(pair.first == eventID)
 			{
-				handler();
+				for (const auto& handler : pair.second)
+				{
+					handler();
+				}
 			}
 		}
 	}
