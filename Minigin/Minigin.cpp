@@ -12,6 +12,7 @@
 #include <steam_api_common.h>
 #include <thread>
 
+#include "Achievement.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
@@ -91,6 +92,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	auto achievement = new Achievement();
 	sceneManager.Init();
 	float lag{0.f};
 

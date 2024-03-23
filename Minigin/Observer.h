@@ -7,6 +7,7 @@
 
 typedef std::string EventID;
 using EventHandler = std::function<void()>;
+
 class EventManager : public dae::Singleton<EventManager>
 {
 public:
