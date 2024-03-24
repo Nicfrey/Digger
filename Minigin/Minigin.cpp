@@ -9,8 +9,10 @@
 #include <SDL_ttf.h>
 #include "Minigin.h"
 
+#include <steam_api_common.h>
 #include <thread>
 
+#include "Achievement.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
@@ -90,6 +92,15 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	Achievement_t g_Achievements[] =
+	{
+		_ACH_ID(ACH_WIN_ONE_GAME, "Vainqueur"),
+		_ACH_ID(ACH_WIN_100_GAMES, "Champion"),
+		_ACH_ID(ACH_TRAVEL_FAR_ACCUM, "Interstellaire"),
+		_ACH_ID(ACH_TRAVEL_FAR_SINGLE, "Étoile"),
+	};
+
+	auto achievement = new Achievement(g_Achievements,4);
 	sceneManager.Init();
 	float lag{0.f};
 
@@ -97,6 +108,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	bool doContinue = true;
 	while (doContinue)
 	{
+		SteamAPI_RunCallbacks();
 		Time::Update();
 		lag += Time::GetDeltaTime();
 
@@ -113,4 +125,5 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		const auto sleepTime{ Time::GetCurrent() + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
 		std::this_thread::sleep_for(sleepTime);
 	}
+	delete achievement;
 }

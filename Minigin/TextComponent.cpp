@@ -6,7 +6,7 @@
 #include "Texture2D.h"
 
 dae::TextComponent::TextComponent(std::string text, const std::shared_ptr<Font>& font) : TextureComponent{},
-	m_needsUpdate{true}, m_text{std::move(text)}, m_Offset{}, m_Font{font}
+	m_needsUpdate{true}, m_text{std::move(text)}, m_Font{font}
 {
 	
 }
@@ -51,11 +51,6 @@ void dae::TextComponent::SetText(const std::string& text)
 {
 	m_text = text;
 	m_needsUpdate = true;
-}
-
-void dae::TextComponent::SetPositionOffset(const float x, const float y)
-{
-	m_Offset.SetPosition(x, y, 0.0f);
 }
 
 void dae::TextComponent::FixedUpdate()

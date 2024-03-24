@@ -28,6 +28,12 @@
     <Filter Include="Source Files\Movements">
       <UniqueIdentifier>{15a5df28-7b9c-4d94-a2fb-65de9395fd8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\TrashTheCacheExercises">
+      <UniqueIdentifier>{5cde0179-88ed-42ca-bae4-4481c29f4422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TrashTheCacheExercises">
+      <UniqueIdentifier>{5bfdade9-6418-4661-ac22-72dcb540bc59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -102,9 +108,6 @@
     <ClInclude Include="..\3rdParty\imgui\backends\imgui_impl_sdl2.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="TrashTheCacheComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3rdParty\imgui\implot.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -113,9 +116,6 @@
     </ClInclude>
     <ClInclude Include="..\3rdParty\imgui\imgui_plot.h">
       <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="TrashTheCacheGOComponent.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>Header Files\Commands</Filter>
@@ -134,6 +134,27 @@
     </ClInclude>
     <ClInclude Include="Controller.h">
       <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="TrashTheCacheComponent.h">
+      <Filter>Header Files\TrashTheCacheExercises</Filter>
+    </ClInclude>
+    <ClInclude Include="TrashTheCacheGOComponent.h">
+      <Filter>Header Files\TrashTheCacheExercises</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UIPlayerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Achievement.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -206,9 +227,6 @@
     <ClCompile Include="..\3rdParty\imgui\backends\imgui_impl_sdl2.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="TrashTheCacheComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3rdParty\imgui\implot.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -220,9 +238,6 @@
     </ClCompile>
     <ClCompile Include="..\3rdParty\imgui\imgui_plot.cpp">
       <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="TrashTheCacheGOComponent.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Source Files\Commands</Filter>
@@ -241,6 +256,27 @@
     </ClCompile>
     <ClCompile Include="Controller.cpp">
       <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="TrashTheCacheComponent.cpp">
+      <Filter>Source Files\TrashTheCacheExercises</Filter>
+    </ClCompile>
+    <ClCompile Include="TrashTheCacheGOComponent.cpp">
+      <Filter>Source Files\TrashTheCacheExercises</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIPlayerComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Achievement.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
