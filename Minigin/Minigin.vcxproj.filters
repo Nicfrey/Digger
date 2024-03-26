@@ -34,6 +34,18 @@
     <Filter Include="Source Files\TrashTheCacheExercises">
       <UniqueIdentifier>{5bfdade9-6418-4661-ac22-72dcb540bc59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{3725d1f6-4a6b-429b-982c-99f273498e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Digger">
+      <UniqueIdentifier>{100f1319-4196-4b58-af10-e2dfd10c93b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files">
+      <UniqueIdentifier>{175f4935-dec0-4622-9e6e-0d6107fa112d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files">
+      <UniqueIdentifier>{a0ddbd3a-545d-48f3-8c00-3b6965a480e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -67,9 +79,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Minigin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseComponent.h">
@@ -156,6 +165,15 @@
     <ClInclude Include="Achievement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureComponent.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceManager.cpp">
@@ -189,9 +207,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Minigin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseComponent.cpp">
@@ -277,6 +292,15 @@
     </ClCompile>
     <ClCompile Include="Achievement.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Engine\Sources Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Engine\Sources Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureComponent.cpp">
+      <Filter>Engine\Sources Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
