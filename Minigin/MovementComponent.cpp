@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "imgui.h"
-#include "Time.h"
+#include "TimeEngine.h"
 
 MovementComponent::MovementComponent(float speed): BaseComponent(nullptr), m_IsMoving{}, m_Speed{speed}, m_DesiredVelocity{}, m_DesiredVelocityDebug{m_DesiredVelocity}
 {
@@ -44,19 +44,19 @@ void MovementComponent::Move(const Direction& direction)
 	switch (direction)
 	{
 	case Up:
-		m_DesiredVelocity += glm::vec3{ 0,-m_Speed * Time::GetDeltaTime(),0 };
+		m_DesiredVelocity += glm::vec3{ 0,-m_Speed * TimeEngine::GetInstance().GetDeltaTime(),0 };
 		m_IsMoving = true;
 		break;
 	case Down:
-		m_DesiredVelocity += glm::vec3{ 0,m_Speed * Time::GetDeltaTime(),0 };
+		m_DesiredVelocity += glm::vec3{ 0,m_Speed * TimeEngine::GetInstance().GetDeltaTime(),0 };
 		m_IsMoving = true;
 		break;
 	case Left:
-		m_DesiredVelocity += glm::vec3{ -m_Speed * Time::GetDeltaTime(),0,0 };
+		m_DesiredVelocity += glm::vec3{ -m_Speed * TimeEngine::GetInstance().GetDeltaTime(),0,0 };
 		m_IsMoving = true;
 		break;
 	case Right:
-		m_DesiredVelocity += glm::vec3{ m_Speed * Time::GetDeltaTime(),0,0 };
+		m_DesiredVelocity += glm::vec3{ m_Speed * TimeEngine::GetInstance().GetDeltaTime(),0,0 };
 		m_IsMoving = true;
 		break;
 	}

@@ -1,7 +1,7 @@
 #include "RotateComponent.h"
 
 #include "GameObject.h"
-#include "Time.h"
+#include "TimeEngine.h"
 
 RotateComponent::RotateComponent(const glm::vec3& pointToRotate,float speed ,float startAngle) : BaseComponent{nullptr},
 	m_PointToRotate{pointToRotate}, m_CurrentAngle{0.f}, m_StartAngle{startAngle}, m_Speed{speed}, m_StartPoint{}
@@ -10,7 +10,7 @@ RotateComponent::RotateComponent(const glm::vec3& pointToRotate,float speed ,flo
 
 void RotateComponent::Update()
 {
-	m_CurrentAngle += Time::GetDeltaTime() * m_Speed;
+	m_CurrentAngle += TimeEngine::GetInstance().GetDeltaTime() * m_Speed;
 	const float sin{ sinf(m_CurrentAngle) };
 	const float cos{ cosf(m_CurrentAngle) };
 	const float distance{ length(m_StartPoint - m_PointToRotate) };

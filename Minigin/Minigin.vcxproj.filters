@@ -84,7 +84,7 @@
     <ClInclude Include="BaseComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Time.h">
+    <ClInclude Include="TimeEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FpsTextComponent.h">
@@ -203,16 +203,13 @@
     <ClCompile Include="Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Minigin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Time.cpp">
+    <ClCompile Include="TimeEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FpsTextComponent.cpp">

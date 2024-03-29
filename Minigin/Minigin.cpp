@@ -1,3 +1,5 @@
+#include "Minigin.h"
+
 #include <stdexcept>
 #define WIN32_LEAN_AND_MEAN
 #define MS_PER_FRAME 8
@@ -7,7 +9,6 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "Minigin.h"
 
 #include <steam_api_common.h>
 #include <thread>
@@ -17,7 +18,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
-#include "Time.h"
+#include "TimeEngine.h"
 
 SDL_Window* g_window{};
 
@@ -88,7 +89,8 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 
-	Time::UpdateLastTime();
+	const auto lastTime{ std::chrono::high_resolution_clock::now() };
+
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
@@ -109,8 +111,9 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	while (doContinue)
 	{
 		SteamAPI_RunCallbacks();
-		Time::Update();
-		lag += Time::GetDeltaTime();
+		const auto currentTime{ std::chrono::high_resolution_clock::now() };
+		TimeEngine::GetInstance().SetDeltaTime(std::chrono::duration<float>(currentTime - lastTime).count());
+		lag += TimeEngine::GetInstance().GetDeltaTime();
 
 		doContinue = input.ProcessInput();
 
@@ -122,7 +125,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		sceneManager.Update();
 		renderer.Render();
 
-		const auto sleepTime{ Time::GetCurrent() + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
+		const auto sleepTime{ currentTime + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
 		std::this_thread::sleep_for(sleepTime);
 	}
 	delete achievement;

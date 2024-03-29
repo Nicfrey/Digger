@@ -3,8 +3,6 @@
 #include <steam_api_common.h>
 #include <isteamuserstats.h>
 
-#include "Singleton.h"
-
 #define _ACH_ID( id, name ) { id, #id, name, "", 0, 0 }
 
 

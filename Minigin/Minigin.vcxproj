@@ -26,26 +26,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -111,11 +111,12 @@
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\*.dll" "$(OutputPath)" /Y
-xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -124,9 +125,9 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y</Com
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,11 +137,12 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y</Com
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(OutputPath)" /Y
-xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -165,11 +167,12 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\*.dll" "$(OutputPath)" /Y
-xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -180,9 +183,9 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y</Com
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -194,11 +197,12 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)" /R /Y</Com
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(OutputPath)" /Y
-xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\imgui\backends\imgui_impl_opengl3.h" />
@@ -237,7 +241,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="TextureComponent.h" />
-    <ClInclude Include="Time.h" />
+    <ClInclude Include="TimeEngine.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TrashTheCacheComponent.h" />
     <ClInclude Include="TrashTheCacheGOComponent.h" />
@@ -266,7 +270,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     <ClCompile Include="GameObjectCommand.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="MovementComponent.cpp" />
     <ClCompile Include="Observer.cpp" />
@@ -281,7 +284,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(OutputPath)" /R /Y</Com
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="TextureComponent.cpp" />
-    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="TimeEngine.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TrashTheCacheComponent.cpp" />
     <ClCompile Include="TrashTheCacheGOComponent.cpp" />

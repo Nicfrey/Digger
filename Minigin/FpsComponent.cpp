@@ -1,12 +1,12 @@
 #include "FpsComponent.h"
 
-#include "Time.h"
+#include "TimeEngine.h"
 
 FpsComponent::~FpsComponent() = default;
 
 void FpsComponent::Update()
 {
-	m_Fps = 1.f / Time::GetDeltaTime();
+	m_Fps = 1.f / TimeEngine::GetInstance().GetDeltaTime();
 }
 
 void FpsComponent::Init()

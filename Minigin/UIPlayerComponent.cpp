@@ -1,5 +1,6 @@
 #include "UIPlayerComponent.h"
 
+#include "GameObject.h"
 #include "HealthComponent.h"
 #include "Observer.h"
 #include "ScoreComponent.h"
