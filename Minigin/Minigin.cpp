@@ -89,7 +89,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 
-	const auto lastTime{ std::chrono::high_resolution_clock::now() };
+	auto lastTime{ std::chrono::high_resolution_clock::now() };
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
@@ -113,6 +113,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		SteamAPI_RunCallbacks();
 		const auto currentTime{ std::chrono::high_resolution_clock::now() };
 		TimeEngine::GetInstance().SetDeltaTime(std::chrono::duration<float>(currentTime - lastTime).count());
+		lastTime = currentTime;
 		lag += TimeEngine::GetInstance().GetDeltaTime();
 
 		doContinue = input.ProcessInput();

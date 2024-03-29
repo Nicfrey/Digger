@@ -23,34 +23,6 @@ private:
 	dae::GameObject* m_GameObject;
 };
 
-class MoveForwardCommand : public GameObjectCommand
-{
-public:
-	MoveForwardCommand(dae::GameObject* go);
-	void Execute() override;
-};
-
-class MoveBackwardCommand : public GameObjectCommand
-{
-public:
-	MoveBackwardCommand(dae::GameObject* go);
-	void Execute() override;
-};
-
-class MoveRightCommand : public GameObjectCommand
-{
-public:
-	MoveRightCommand(dae::GameObject* go);
-	void Execute() override;
-};
-
-class MoveLeftCommand : public GameObjectCommand
-{
-public:
-	MoveLeftCommand(dae::GameObject* go);
-	void Execute() override;
-};
-
 class KillPlayerCommand : public GameObjectCommand
 {
 public:

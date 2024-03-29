@@ -180,6 +180,10 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(Out
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Digger.cpp" />
+    <ClCompile Include="DiggerCommands.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DiggerCommands.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

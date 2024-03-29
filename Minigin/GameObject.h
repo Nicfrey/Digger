@@ -38,7 +38,10 @@ namespace dae
 		void SetLocalPosition(const glm::vec2& pos);
 		void SetLocalPosition(float x, float y, float z);
 		void SetLocalPosition(float x, float y);
-
+		void Translate(const glm::vec3& pos);
+		void Translate(const glm::vec2& pos);
+		void Translate(float x, float y, float z);
+		void Translate(float x, float y);
 		std::shared_ptr<GameObject> GetThis();
 
 		bool SetParent(const std::shared_ptr<GameObject>& newParent, bool keepWorldPosition = true);

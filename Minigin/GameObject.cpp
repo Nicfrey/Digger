@@ -125,6 +125,28 @@ void dae::GameObject::SetLocalPosition(float x, float y)
 	SetLocalPosition(glm::vec3{ x,y,0.f });
 }
 
+void dae::GameObject::Translate(const glm::vec3& pos)
+{
+	glm::vec3 localPos{ GetLocalPosition() };
+	localPos += pos;
+	SetLocalPosition(localPos);
+}
+
+void dae::GameObject::Translate(const glm::vec2& pos)
+{
+	Translate(glm::vec3{ pos.x,pos.y,0 });
+}
+
+void dae::GameObject::Translate(float x, float y, float z)
+{
+	Translate(glm::vec3{ x,y,z });
+}
+
+void dae::GameObject::Translate(float x, float y)
+{
+	Translate(glm::vec3{x,y,0});
+}
+
 std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
 {
 	return shared_from_this();
