@@ -42,6 +42,7 @@ public:
 		UserAchievementStored_t, m_CallbackAchievementStored);
 
 private:
+	bool IsAchievementUnlocked(const char* ID);
 	int64 m_iAppID; // Our current AppID
 	Achievement_t* m_pAchievements; // Achievements data
 	int m_iNumAchievements; // The number of Achievements

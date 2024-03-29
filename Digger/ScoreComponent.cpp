@@ -1,6 +1,5 @@
 #include "ScoreComponent.h"
 
-#include "Achievement.h"
 #include "Observer.h"
 
 void ScoreComponent::AddScore(int score)

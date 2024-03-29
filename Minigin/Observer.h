@@ -12,7 +12,7 @@ class EventManager : public dae::Singleton<EventManager>
 {
 public:
 	void AddEvent(const EventID& eventID, const EventHandler& handler);
-	void RemoveEvent(const EventID& eventID);
+	void RemoveEvent(const EventID& eventID, const EventHandler& handler);
 	void NotifyEvent(const EventID& eventID) const;
 private:
 	std::unordered_map<EventID, std::vector<EventHandler>> m_EventHandler;
