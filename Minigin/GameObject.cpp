@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "Collider2D.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "TextureComponent.h"
@@ -147,6 +148,65 @@ void dae::GameObject::Translate(float x, float y)
 	Translate(glm::vec3{x,y,0});
 }
 
+glm::vec3 dae::GameObject::GetWorldRotation()
+{
+	if(m_RotationIsDirty)
+	{
+		UpdateWorldPosition();
+	}
+	return m_WorldTransform.GetRotation();
+}
+
+const glm::vec3& dae::GameObject::GetLocalRotation() const
+{
+	return m_LocalTransform.GetRotation();
+}
+
+void dae::GameObject::SetLocalRotation(const glm::vec3& rot)
+{
+	SetRotationIsDirty();
+	m_LocalTransform.SetRotation(rot);
+}
+
+void dae::GameObject::SetLocalRotation(const glm::vec2& rot)
+{
+	SetLocalRotation(glm::vec3{ rot.x,rot.y,0 });
+}
+
+void dae::GameObject::OnCollisionEnter(const std::shared_ptr<GameObject>& other)
+{
+	if (const auto & collider{ GetComponent<Collider2D>() })
+	{
+		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+		{
+			goc->OnCollisionEnter(other.get());
+		}
+	}
+}
+
+void dae::GameObject::OnCollisionExit(const std::shared_ptr<GameObject>& other)
+{
+	if(const auto& collider{GetComponent<Collider2D>()})
+	{
+		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+		{
+			goc->OnCollisionExit(other.get());
+		}
+	}
+}
+
+void dae::GameObject::OnCollisionStay(const std::shared_ptr<GameObject>& other)
+{
+	if (const auto & collider{ GetComponent<Collider2D>() })
+	{
+		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+		{
+			goc->OnCollisionStay(other.get());
+		}
+	}
+}
+
+
 std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
 {
 	return shared_from_this();
@@ -174,6 +234,31 @@ void dae::GameObject::UpdateWorldPosition()
 			m_WorldTransform.SetPosition(m_ParentObject->GetWorldPosition() + GetLocalPosition());
 		}
 		m_PositionIsDirty = false;
+	}
+}
+
+void dae::GameObject::SetRotationIsDirty()
+{
+	m_RotationIsDirty = true;
+	for(const auto& child: m_ChildrenObject)
+	{
+		child->SetRotationIsDirty();
+	}
+}
+
+void dae::GameObject::UpdateWorldRotation()
+{
+	if(m_RotationIsDirty)
+	{
+		if(m_ParentObject == nullptr)
+		{
+			m_WorldTransform.SetRotation(GetLocalRotation());
+		}
+		else
+		{
+			m_WorldTransform.SetRotation(m_ParentObject->GetWorldRotation() + GetLocalRotation());
+		}
+		m_RotationIsDirty = false;
 	}
 }
 
@@ -211,14 +296,17 @@ bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent, bo
 	if(newParent == nullptr)
 	{
 		SetLocalPosition(GetWorldPosition());
+		SetLocalRotation(GetWorldRotation());
 	}
 	else
 	{
 		if(keepWorldPosition)
 		{
 			SetLocalPosition(GetWorldPosition() - newParent->GetWorldPosition());
+			SetLocalRotation(GetWorldRotation() - newParent->GetWorldRotation());
 		}
 		SetPositionIsDirty();
+		SetRotationIsDirty();
 	}
 	if(m_ParentObject)
 	{

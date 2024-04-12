@@ -17,6 +17,7 @@ namespace dae
 		void Render();
 		void RenderGUI();
 		void FixedUpdate();
+		void OnCollisionUpdate();
 
 	private:
 		friend class Singleton<SceneManager>;

@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#include "Collider2D.h"
+
 using namespace dae;
 
 unsigned int Scene::m_idCounter = 0;
@@ -32,6 +34,26 @@ void Scene::RenderGUI()
 	for (const auto& object : m_objects)
 	{
 		object->RenderGUI();
+	}
+}
+
+void Scene::OnCollisionUpdate()
+{
+	for(const auto& go : m_objects)
+	{
+		if(go->HasComponent<ColliderComponent>())
+		{
+			for(const auto& goOther : m_objects)
+			{
+				if(go == goOther)
+					continue;
+
+				if (const std::shared_ptr otherCollider{ goOther->GetComponent<Collider2D>() })
+				{
+					otherCollider->IsOverlapping(goOther.get());
+				}
+			}
+		}
 	}
 }
 

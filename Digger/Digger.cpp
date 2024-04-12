@@ -9,6 +9,7 @@
 #include <Xinput.h>
 
 #include "Achievement.h"
+#include "BoxCollider2D.h"
 #include "Controller.h"
 #include "DiggerCommands.h"
 #include "GameObject.h"
@@ -33,11 +34,13 @@ void load()
 	auto healthComponent{ std::make_shared<HealthComponent>() };
 	auto scoreComponent{ std::make_shared<ScoreComponent>() };
 	auto uiComponent{ std::make_shared<UIPlayerComponent>(fontSmall) };
+	auto boxCollider{ std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width,spritePlayer1->GetShape().height) };
 	uiComponent->SetPosition(0, 150);
 	go->AddComponent(healthComponent);
 	go->AddComponent(uiComponent);
 	go->AddComponent(scoreComponent);
 	go->AddComponent(spritePlayer1);
+	go->AddComponent(boxCollider);
 	std::shared_ptr moveUpCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1}) };
 	std::shared_ptr moveDownCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1}) };
 	std::shared_ptr moveLeftCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{-1,0}) };
@@ -54,6 +57,7 @@ void load()
 	gamepadController->BindAction(killPlayerCommand, XINPUT_GAMEPAD_X, KeyPressed);
 	gamepadController->BindAction(addScoreCommand, XINPUT_GAMEPAD_A, KeyPressed);
 	dae::InputManager::GetInstance().AddController(gamepadController);
+	go->SetLocalPosition(20, 100);
 	scene.Add(go);
 
 	go = std::make_shared<dae::GameObject>();
@@ -61,11 +65,13 @@ void load()
 	healthComponent = std::make_shared<HealthComponent>();
 	uiComponent = std::make_shared<UIPlayerComponent>(fontSmall);
 	scoreComponent = std::make_shared<ScoreComponent>();
+	boxCollider = std::make_shared<BoxCollider2D>(spritePlayer2->GetShape().width,spritePlayer2->GetShape().height);
 	uiComponent->SetPosition(0, 210);
 	go->AddComponent(spritePlayer2);
 	go->AddComponent(healthComponent);
 	go->AddComponent(uiComponent);
 	go->AddComponent(scoreComponent);
+	go->AddComponent(boxCollider);
 	moveUpCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1});
 	moveDownCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1});
 	moveLeftCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{-1,0});

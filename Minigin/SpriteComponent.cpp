@@ -25,7 +25,7 @@ void SpriteComponent::Update()
 	glm::vec3 pos{};
 	if (const auto go{ GetGameObject() })
 	{
-		pos = go->GetWorldPosition();
+		pos = go->GetLocalPosition();
 	}
 	pos += m_Offset.GetPosition();
 	m_Shape.bottomLeft.x = pos.x;

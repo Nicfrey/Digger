@@ -34,19 +34,3 @@ bool HealthComponent::IsDead() const
 	return m_LifeRemaining == 0;
 }
 
-void HealthComponent::Update()
-{
-}
-
-void HealthComponent::FixedUpdate()
-{
-}
-
-void HealthComponent::Init()
-{
-
-}
-
-void HealthComponent::RenderGUI()
-{
-}

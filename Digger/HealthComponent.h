@@ -9,14 +9,6 @@ public:
 	void GainOneLife();
 	int GetLifeRemaining() const;
 	bool IsDead() const;
-
-	void Update() override;
-	void FixedUpdate() override;
-	void Init() override;
-	void Render() const override {}
-	void RenderGUI() override;
-
-	
 private:
 	int m_LifeRemaining;
 

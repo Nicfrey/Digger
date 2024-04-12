@@ -111,6 +111,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		while(lag >= FIXED_TIME_STEP)
 		{
 			sceneManager.FixedUpdate();
+			sceneManager.OnCollisionUpdate();
 			lag -= FIXED_TIME_STEP;
 		}
 		sceneManager.Update();

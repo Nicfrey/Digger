@@ -39,6 +39,16 @@ void dae::Transform::SetRotation(float x, float y)
 	SetRotation(x, y, 1.f);
 }
 
+void dae::Transform::SetRotation(const glm::vec3& rot)
+{
+	SetRotation(rot.x, rot.y, rot.z);
+}
+
+void dae::Transform::SetRotation(const glm::vec2& rot)
+{
+	SetRotation(rot.x, rot.y);
+}
+
 void dae::Transform::SetScale(float x, float y, float z)
 {
 	m_Scale.x = x;
@@ -49,4 +59,11 @@ void dae::Transform::SetScale(float x, float y, float z)
 void dae::Transform::SetScale(float scale)
 {
 	SetScale(scale, scale, scale);
+}
+
+glm::vec3 dae::Transform::GetForward() const
+{
+	glm::vec3 forward{};
+	//const float angle{ GetRotation().z };
+	return forward;
 }
