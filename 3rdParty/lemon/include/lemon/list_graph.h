@@ -581,28 +581,28 @@ namespace lemon {
         virtual void add(const Node& node) {
           snapshot.addNode(node);
         }
-        virtual void add(const std::vector<Node>& nodes) {
-          for (int i = nodes.size() - 1; i >= 0; ++i) {
-            snapshot.addNode(nodes[i]);
+        virtual void add(const std::vector<Node>& nodesTemp) {
+          for (int i = nodesTemp.size() - 1; i >= 0; ++i) {
+            snapshot.addNode(nodesTemp[i]);
           }
         }
         virtual void erase(const Node& node) {
           snapshot.eraseNode(node);
         }
-        virtual void erase(const std::vector<Node>& nodes) {
-          for (int i = 0; i < int(nodes.size()); ++i) {
-            snapshot.eraseNode(nodes[i]);
+        virtual void erase(const std::vector<Node>& nodesTemp) {
+          for (int i = 0; i < int(nodesTemp.size()); ++i) {
+            snapshot.eraseNode(nodesTemp[i]);
           }
         }
         virtual void build() {
           Node node;
-          std::vector<Node> nodes;
+          std::vector<Node> nodesTemp;
           for (notifier()->first(node); node != INVALID;
                notifier()->next(node)) {
-            nodes.push_back(node);
+              nodesTemp.push_back(node);
           }
-          for (int i = nodes.size() - 1; i >= 0; --i) {
-            snapshot.addNode(nodes[i]);
+          for (int i = nodesTemp.size() - 1; i >= 0; --i) {
+            snapshot.addNode(nodesTemp[i]);
           }
         }
         virtual void clear() {
@@ -631,28 +631,28 @@ namespace lemon {
         virtual void add(const Arc& arc) {
           snapshot.addArc(arc);
         }
-        virtual void add(const std::vector<Arc>& arcs) {
-          for (int i = arcs.size() - 1; i >= 0; ++i) {
-            snapshot.addArc(arcs[i]);
+        virtual void add(const std::vector<Arc>& arcsTemp) {
+          for (int i = arcsTemp.size() - 1; i >= 0; ++i) {
+            snapshot.addArc(arcsTemp[i]);
           }
         }
         virtual void erase(const Arc& arc) {
           snapshot.eraseArc(arc);
         }
-        virtual void erase(const std::vector<Arc>& arcs) {
-          for (int i = 0; i < int(arcs.size()); ++i) {
-            snapshot.eraseArc(arcs[i]);
+        virtual void erase(const std::vector<Arc>& arcsTemp) {
+          for (int i = 0; i < int(arcsTemp.size()); ++i) {
+            snapshot.eraseArc(arcsTemp[i]);
           }
         }
         virtual void build() {
           Arc arc;
-          std::vector<Arc> arcs;
+          std::vector<Arc> arcsTemp;
           for (notifier()->first(arc); arc != INVALID;
                notifier()->next(arc)) {
-            arcs.push_back(arc);
+              arcsTemp.push_back(arc);
           }
-          for (int i = arcs.size() - 1; i >= 0; --i) {
-            snapshot.addArc(arcs[i]);
+          for (int i = arcsTemp.size() - 1; i >= 0; --i) {
+            snapshot.addArc(arcsTemp[i]);
           }
         }
         virtual void clear() {
@@ -1393,28 +1393,28 @@ namespace lemon {
         virtual void add(const Node& node) {
           snapshot.addNode(node);
         }
-        virtual void add(const std::vector<Node>& nodes) {
-          for (int i = nodes.size() - 1; i >= 0; ++i) {
-            snapshot.addNode(nodes[i]);
+        virtual void add(const std::vector<Node>& nodesTemp) {
+          for (int i = nodesTemp.size() - 1; i >= 0; ++i) {
+            snapshot.addNode(nodesTemp[i]);
           }
         }
         virtual void erase(const Node& node) {
           snapshot.eraseNode(node);
         }
-        virtual void erase(const std::vector<Node>& nodes) {
-          for (int i = 0; i < int(nodes.size()); ++i) {
-            snapshot.eraseNode(nodes[i]);
+        virtual void erase(const std::vector<Node>& nodesTemp) {
+          for (int i = 0; i < int(nodesTemp.size()); ++i) {
+            snapshot.eraseNode(nodesTemp[i]);
           }
         }
         virtual void build() {
           Node node;
-          std::vector<Node> nodes;
+          std::vector<Node> nodesTemp;
           for (notifier()->first(node); node != INVALID;
                notifier()->next(node)) {
-            nodes.push_back(node);
+              nodesTemp.push_back(node);
           }
-          for (int i = nodes.size() - 1; i >= 0; --i) {
-            snapshot.addNode(nodes[i]);
+          for (int i = nodesTemp.size() - 1; i >= 0; --i) {
+            snapshot.addNode(nodesTemp[i]);
           }
         }
         virtual void clear() {
@@ -2298,28 +2298,28 @@ namespace lemon {
         virtual void add(const Node& node) {
           snapshot.addNode(node);
         }
-        virtual void add(const std::vector<Node>& nodes) {
-          for (int i = nodes.size() - 1; i >= 0; ++i) {
-            snapshot.addNode(nodes[i]);
+        virtual void add(const std::vector<Node>& nodesTemp) {
+          for (int i = nodesTemp.size() - 1; i >= 0; ++i) {
+            snapshot.addNode(nodesTemp[i]);
           }
         }
         virtual void erase(const Node& node) {
           snapshot.eraseNode(node);
         }
-        virtual void erase(const std::vector<Node>& nodes) {
-          for (int i = 0; i < int(nodes.size()); ++i) {
-            snapshot.eraseNode(nodes[i]);
+        virtual void erase(const std::vector<Node>& nodesTemp) {
+          for (int i = 0; i < int(nodesTemp.size()); ++i) {
+            snapshot.eraseNode(nodesTemp[i]);
           }
         }
         virtual void build() {
           Node node;
-          std::vector<Node> nodes;
+          std::vector<Node> nodesTemp;
           for (notifier()->first(node); node != INVALID;
                notifier()->next(node)) {
-            nodes.push_back(node);
+              nodesTemp.push_back(node);
           }
-          for (int i = nodes.size() - 1; i >= 0; --i) {
-            snapshot.addNode(nodes[i]);
+          for (int i = nodesTemp.size() - 1; i >= 0; --i) {
+            snapshot.addNode(nodesTemp[i]);
           }
         }
         virtual void clear() {

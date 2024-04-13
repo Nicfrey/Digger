@@ -84,7 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -109,7 +109,7 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\*.dll" "$(OutputPat
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -134,7 +134,7 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\*.dll" "$(OutputPat
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -159,7 +159,7 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(Out
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -185,6 +185,7 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(Out
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ProjectileComponent.cpp" />
+    <ClCompile Include="LevelComponent.cpp" />
     <ClCompile Include="UIPlayerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +194,7 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(Out
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ProjectileComponent.h" />
+    <ClInclude Include="LevelComponent.h" />
     <ClInclude Include="UIPlayerComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

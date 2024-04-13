@@ -15,6 +15,7 @@
 #include "GameObject.h"
 #include "HealthComponent.h"
 #include "InputManager.h"
+#include "LevelComponent.h"
 #include "Minigin.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -86,6 +87,9 @@ void load()
 	dae::InputManager::GetInstance().BindCommand(addScoreCommand, SDL_SCANCODE_Z, KeyPressed);
 	scene.Add(go);
 
+	go = std::make_shared<dae::GameObject>();
+	go->AddComponent(std::make_shared<LevelComponent>());
+	scene.Add(go);
 }
 
 int main()
