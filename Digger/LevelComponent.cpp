@@ -2,60 +2,66 @@
 
 #include <glm/detail/func_geometric.inl>
 
+#include "Graph.h"
 #include "imgui.h"
 
-LevelComponent::LevelComponent() : BaseComponent(nullptr), m_NodePositions {}
+LevelComponent::LevelComponent() : BaseComponent(nullptr), m_Graph{new GraphUtils::Graph{}}
 {
 	
+}
+
+LevelComponent::~LevelComponent()
+{
+	delete m_Graph;
+	m_Graph = nullptr;
 }
 
 
 void LevelComponent::Init()
 {
-	lemon::ListGraph g;
-	lemon::ListGraph::EdgeMap<float> edgeDistance{ g };
-	const int maxColumn{ 15 };
-	int edgeIndex{};
-	for(int i{}; i < 10; ++i)
+	constexpr int maxRow{ 10 };
+	constexpr int maxColumn{ 15 };
+	for (int i{}; i < maxRow; ++i)
 	{
 		for (int j{}; j < maxColumn; ++j)
 		{
-			const int currentIndex{ i * j + i };
-			m_Nodes[currentIndex] = m_Graph.addNode();
-			m_NodePositions[currentIndex] = glm::vec2( m_StartPos.x + m_StartPos.x * static_cast<float>(j), m_StartPos.y + m_StartPos.y * static_cast<float>(i) );
-			const int indexTop{ currentIndex - j };
-			if (i != 0 && j != 0)
+			const int currentIndex{ i * maxColumn + j };
+			GraphUtils::GraphNode* current{ m_Graph->AddNode(glm::vec3{ m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0 }) };
+			if (j != 0)
 			{
-				lemon::ListGraph::Edge edge = m_Graph.addEdge(m_Nodes[currentIndex], m_Nodes[currentIndex - 1]);
-				edgeDistance[edge] = glm::distance(m_NodePositions[currentIndex], m_NodePositions[currentIndex - 1]);
-				++edgeIndex;
+				GraphUtils::GraphNode* left{ m_Graph->GetNode(currentIndex - 1) };
+				left->AddNeighbor(current, glm::distance(current->GetPosition(), left->GetPosition()));
+				current->AddNeighbor(left, glm::distance(current->GetPosition(), left->GetPosition()));
 			}
-			if(indexTop >= 0)
+			const int indexTop{ currentIndex - maxColumn };
+			if (i > 0)
 			{
-				lemon::ListGraph::Edge edge = m_Graph.addEdge(m_Nodes[currentIndex], m_Nodes[indexTop]);
-				edgeDistance[edge] = glm::distance(m_NodePositions[currentIndex], m_NodePositions[indexTop]);
-				++edgeIndex;
+				GraphUtils::GraphNode* top{ m_Graph->GetNode(indexTop) };
+				top->AddNeighbor(current, glm::distance(current->GetPosition(), top->GetPosition()));
+				current->AddNeighbor(top, glm::distance(current->GetPosition(), top->GetPosition()));
 			}
 		}
 	}
+	m_ShortestPath = m_Graph->GetShortestPath(m_Graph->GetNode(25), m_Graph->GetNode(149));
 }
 
 void LevelComponent::RenderGUI()
 {
 	ImGui::Begin("Graph");
-	for(int i{}; i < SIZE_LEVEL; ++i)
+	for(size_t i{}; i < m_Graph->GetNodes().size(); ++i)
 	{
-		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(m_NodePositions[i].x, m_NodePositions[i].y), 5, IM_COL32(255, 0, 0, 255));
+		const GraphUtils::GraphNode* node{ m_Graph->GetNode(i) };
+		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(node->GetPosition().x, node->GetPosition().y), 15, IM_COL32(255, 0, 0, 255));
+		for (const auto& neighbor : node->GetNeighbors())
+		{
+			const GraphUtils::GraphNode* neighborNode{ neighbor.first };
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(node->GetPosition().x, node->GetPosition().y), ImVec2(neighborNode->GetPosition().x, neighborNode->GetPosition().y), IM_COL32(0, 255, 0, 255));
+		}
+	}
+	for(size_t i{}; i < m_ShortestPath.size(); ++i)
+	{
+		const GraphUtils::GraphNode* node{ m_ShortestPath[i] };
+		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(node->GetPosition().x, node->GetPosition().y), 15, IM_COL32(0, 255, 0, 255));
 	}
 	ImGui::End();
-}
-
-bool LevelComponent::IsCorner(int i, int j) const
-{
-	return (i == 0 && j == 0) || (i == 0 && j == 14) || (i == 9 && j == 0) || (i == 9 && j == 14);
-}
-
-bool LevelComponent::IsEdge(int i, int j) const
-{
-	return i == 0 || j == 0 || i == 9 || j == 14;
 }
