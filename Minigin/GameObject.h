@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "BaseComponent.h"
@@ -20,6 +21,8 @@ namespace dae
 		void FixedUpdate();
 		void Render() const;
 		void RenderGUI();
+		void SetTag(const std::string& tag);
+		std::string GetTag() const;
 
 
 		template <typename T>
@@ -76,6 +79,8 @@ namespace dae
 		std::vector<std::shared_ptr<BaseComponent>> m_Components;
 		GameObject* m_ParentObject{};
 		std::vector<GameObject*> m_ChildrenObject{};
+
+		std::string m_Tag{};
 
 		void SetPositionIsDirty();
 		void UpdateWorldPosition();

@@ -41,6 +41,33 @@ void dae::SceneManager::OnCollisionUpdate()
 	}
 }
 
+dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) const
+{
+	for (const auto& scene : m_scenes)
+	{
+		const auto go = scene->GetGameObjectByTag(tag);
+		if (go != nullptr)
+		{
+			return go;
+		}
+	}
+	return nullptr;
+}
+
+std::vector<dae::GameObject*> dae::SceneManager::GetGameObjectsByTag(const std::string& tag) const
+{
+	std::vector<GameObject*> gameObjects;
+	for (const auto& scene : m_scenes)
+	{
+		const auto go = scene->GetGameObjectsByTag(tag);
+		if (!go.empty())
+		{
+			gameObjects.insert(gameObjects.end(), go.begin(), go.end());
+		}
+	}
+	return gameObjects;
+}
+
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 {
 	const auto& scene = std::shared_ptr<Scene>(new Scene(name));

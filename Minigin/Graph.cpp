@@ -13,11 +13,6 @@ GraphUtils::GraphNode::GraphNode(const glm::vec3& value): GraphNode{}
 	m_Position = value;
 }
 
-GraphUtils::GraphNode::~GraphNode()
-{
-
-}
-
 float GraphUtils::GraphNode::GetDistance(const GraphNode* neighbor) const
 {
 	return distance(m_Position, neighbor->m_Position);
@@ -64,6 +59,22 @@ GraphUtils::GraphNode* GraphUtils::Graph::GetNode(GraphNode* node)
 {
 	const auto it = std::ranges::find(m_Nodes, node);
 	return *it;
+}
+
+GraphUtils::GraphNode* GraphUtils::Graph::GetClosestNode(const glm::vec3& position) const
+{
+	GraphNode* closestNode = nullptr;
+	float minDistance = FLT_MAX;
+	for (const auto node : m_Nodes)
+	{
+		const float distance = glm::distance(node->GetPosition(), position);
+		if(distance < minDistance)
+		{
+			minDistance = distance;
+			closestNode = node;
+		}
+	}
+	return closestNode;
 }
 
 void GraphUtils::Graph::RemoveNode(GraphNode* node)

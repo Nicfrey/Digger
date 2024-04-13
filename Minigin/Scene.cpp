@@ -57,6 +57,44 @@ void Scene::OnCollisionUpdate()
 	}
 }
 
+std::vector<GameObject*> Scene::GetGameObjectsWithComponent() const
+{
+	std::vector<GameObject*> objectsWithComponent;
+	for (const auto& object : m_objects)
+	{
+		if (object->HasComponent<ColliderComponent>())
+		{
+			objectsWithComponent.push_back(object.get());
+		}
+	}
+	return objectsWithComponent;
+}
+
+GameObject* Scene::GetGameObjectByTag(const std::string& tag) const
+{
+	for (const auto& object : m_objects)
+	{
+		if (object->GetTag() == tag)
+		{
+			return object.get();
+		}
+	}
+	return nullptr;
+}
+
+std::vector<GameObject*> Scene::GetGameObjectsByTag(const std::string& tag) const
+{
+	std::vector<GameObject*> objectsWithTag;
+	for (const auto& object : m_objects)
+	{
+		if (object->GetTag() == tag)
+		{
+			objectsWithTag.push_back(object.get());
+		}
+	}
+	return objectsWithTag;
+}
+
 void Scene::Add(std::shared_ptr<GameObject> object)
 {
 	m_objects.emplace_back(std::move(object));

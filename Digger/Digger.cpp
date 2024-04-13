@@ -73,6 +73,7 @@ void load()
 	go->AddComponent(uiComponent);
 	go->AddComponent(scoreComponent);
 	go->AddComponent(boxCollider);
+	go->SetTag("Player");
 	moveUpCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1});
 	moveDownCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1});
 	moveLeftCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{-1,0});

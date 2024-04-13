@@ -1,9 +1,10 @@
 #include "LevelComponent.h"
 
-#include <glm/detail/func_geometric.inl>
 
+#include "GameObject.h"
 #include "Graph.h"
 #include "imgui.h"
+#include "SceneManager.h"
 
 LevelComponent::LevelComponent() : BaseComponent(nullptr), m_Graph{new GraphUtils::Graph{}}
 {
@@ -47,6 +48,7 @@ void LevelComponent::Init()
 
 void LevelComponent::RenderGUI()
 {
+	dae::GameObject* player{ dae::SceneManager::GetInstance().GetGameObjectByTag("Player") };
 	ImGui::Begin("Graph");
 	for(size_t i{}; i < m_Graph->GetNodes().size(); ++i)
 	{
@@ -63,5 +65,11 @@ void LevelComponent::RenderGUI()
 		const GraphUtils::GraphNode* node{ m_ShortestPath[i] };
 		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(node->GetPosition().x, node->GetPosition().y), 15, IM_COL32(0, 255, 0, 255));
 	}
+	if (player)
+	{
+		GraphUtils::GraphNode* closestNode{ m_Graph->GetClosestNode(player->GetWorldPosition()) };
+		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(closestNode->GetPosition().x, closestNode->GetPosition().y), 15, IM_COL32(255, 255, 255, 255));
+	}
 	ImGui::End();
 }
+

@@ -79,6 +79,16 @@ void dae::GameObject::RenderGUI()
 	}
 }
 
+void dae::GameObject::SetTag(const std::string& tag)
+{
+	m_Tag = tag;
+}
+
+std::string dae::GameObject::GetTag() const
+{
+	return m_Tag;
+}
+
 bool dae::GameObject::RemoveComponentAtIndex(size_t index)
 {
 	if (index < 0 || index >= m_Components.size())
@@ -171,6 +181,16 @@ void dae::GameObject::SetLocalRotation(const glm::vec3& rot)
 void dae::GameObject::SetLocalRotation(const glm::vec2& rot)
 {
 	SetLocalRotation(glm::vec3{ rot.x,rot.y,0 });
+}
+
+void dae::GameObject::SetLocalRotation(float x, float y, float z)
+{
+	SetLocalRotation(glm::vec3{ x,y,z });
+}
+
+void dae::GameObject::SetLocalRotation(float x, float y)
+{
+	SetLocalRotation(glm::vec3{ x,y,0 });
 }
 
 void dae::GameObject::OnCollisionEnter(const std::shared_ptr<GameObject>& other)

@@ -1,4 +1,5 @@
 #pragma once
+#include "GameObject.h"
 #include "SceneManager.h"
 
 namespace dae
@@ -20,6 +21,12 @@ namespace dae
 		void Init();
 		void RenderGUI();
 		void OnCollisionUpdate();
+
+		template<typename T>
+		GameObject* GetGameObjectWithComponent() const;
+		std::vector<GameObject*> GetGameObjectsWithComponent() const;
+		GameObject* GetGameObjectByTag(const std::string& tag) const;
+		std::vector<GameObject*> GetGameObjectsByTag(const std::string& tag) const;
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
 		Scene& operator=(const Scene& other) = delete;
@@ -34,4 +41,16 @@ namespace dae
 		static unsigned int m_idCounter; 
 	};
 
+	template <typename T>
+	GameObject* Scene::GetGameObjectWithComponent() const
+	{
+		for (const auto& object : m_objects)
+		{
+			if (object->HasComponent<T>())
+			{
+				return object.get();
+			}
+		}
+		return nullptr;
+	}
 }
