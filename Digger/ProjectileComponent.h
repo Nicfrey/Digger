@@ -5,7 +5,7 @@
 class ProjectileComponent : public BaseComponent
 {
 public:
-	ProjectileComponent() = default;
+	ProjectileComponent();
 	~ProjectileComponent() override = default;
 	ProjectileComponent(const ProjectileComponent& other) = delete;
 	ProjectileComponent(ProjectileComponent&& other) noexcept = delete;
@@ -14,9 +14,11 @@ public:
 
 	void Update() override;
 	void Init() override;
-	void OnCollisionEnter(dae::GameObject* other) override;
+
+	void Activate();
 
 private:
+	bool m_IsActive;
 	float m_RotationSpeed;
 	glm::vec2 m_Velocity;
 };

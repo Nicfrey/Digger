@@ -10,7 +10,7 @@ namespace dae
 		friend Scene& SceneManager::CreateScene(const std::string& name);
 	public:
 		void Add(std::shared_ptr<GameObject> object);
-		void Remove(std::shared_ptr<GameObject> object);
+		void Remove(std::shared_ptr<GameObject>& object);
 		void RemoveAll();
 
 		void Update();
@@ -21,6 +21,7 @@ namespace dae
 		void Init();
 		void RenderGUI();
 		void OnCollisionUpdate();
+		std::string GetName() const { return m_name; }
 
 		template<typename T>
 		GameObject* GetGameObjectWithComponent() const;

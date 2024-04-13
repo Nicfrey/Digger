@@ -12,6 +12,6 @@ public:
 	Collider2D& operator=(const Collider2D& other) = delete;
 	Collider2D& operator=(Collider2D&& other) noexcept = delete;
 
-	bool IsOverlapping(dae::GameObject* other) override;
+	bool IsOverlapping(std::shared_ptr<dae::GameObject>& other) override;
 };
 

@@ -1,55 +1,75 @@
 #include "SceneManager.h"
+
+#include <iostream>
+#include <utility>
+
 #include "Scene.h"
 
 void dae::SceneManager::Update()
 {
-	for(auto& scene : m_scenes)
-	{
-		scene->Update();
-	}
+	m_ActiveScene->Update();
 }
 
 void dae::SceneManager::Render()
 {
-	for (const auto& scene : m_scenes)
-	{
-		scene->Render();
-	}
+	m_ActiveScene->Render();
 }
 
 void dae::SceneManager::RenderGUI()
 {
-	for (const auto& scene : m_scenes)
-	{
-		scene->RenderGUI();
-	}
+	m_ActiveScene->RenderGUI();
 }
 
 void dae::SceneManager::FixedUpdate()
 {
-	for (const auto& scene : m_scenes)
-	{
-		scene->FixedUpdate();
-	}
+	m_ActiveScene->FixedUpdate();
 }
 
 void dae::SceneManager::OnCollisionUpdate()
 {
-	for(const auto& scene : m_scenes)
+	m_ActiveScene->OnCollisionUpdate();
+}
+
+void dae::SceneManager::SetActiveScene(const std::string& name)
+{
+	const auto it{ std::ranges::find_if(m_scenes,[name](const std::shared_ptr<Scene>& other)
 	{
-		scene->OnCollisionUpdate();
+		return other->GetName() == name;
+	}) };
+	if(it != m_scenes.end())
+	{
+		m_ActiveScene = *it;
 	}
+	else
+	{
+		std::cerr << "Scene with name: " << name << " not found\n";
+	}
+}
+
+void dae::SceneManager::SetActiveScene(std::shared_ptr<Scene> scene)
+{
+	const auto it{ std::ranges::find(m_scenes, scene) };
+	if(it != m_scenes.end())
+	{
+		m_ActiveScene = *it;
+	}
+	else
+	{
+		std::cerr << "Scene not found\n";
+	}
+}
+
+void dae::SceneManager::Instantiate(std::shared_ptr<GameObject> object)
+{
+	m_ActiveScene->Add(std::move(object));
 }
 
 dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) const
 {
-	for (const auto& scene : m_scenes)
+	const auto go = m_ActiveScene->GetGameObjectByTag(tag);
+	if (go != nullptr)
 	{
-		const auto go = scene->GetGameObjectByTag(tag);
-		if (go != nullptr)
-		{
-			return go;
-		}
+		return go;
 	}
 	return nullptr;
 }
@@ -57,15 +77,18 @@ dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) c
 std::vector<dae::GameObject*> dae::SceneManager::GetGameObjectsByTag(const std::string& tag) const
 {
 	std::vector<GameObject*> gameObjects;
-	for (const auto& scene : m_scenes)
+
+	const auto go = m_ActiveScene->GetGameObjectsByTag(tag);
+	if (!go.empty())
 	{
-		const auto go = scene->GetGameObjectsByTag(tag);
-		if (!go.empty())
-		{
-			gameObjects.insert(gameObjects.end(), go.begin(), go.end());
-		}
+		gameObjects.insert(gameObjects.end(), go.begin(), go.end());
 	}
 	return gameObjects;
+}
+
+void dae::SceneManager::Destroy(std::shared_ptr<GameObject>& object)
+{
+	m_ActiveScene->Remove(object);
 }
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
@@ -77,8 +100,5 @@ dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 
 void dae::SceneManager::Init()
 {
-	for (const auto& scene : m_scenes)
-	{
-		scene->Init();
-	}
+	m_ActiveScene->Init();
 }

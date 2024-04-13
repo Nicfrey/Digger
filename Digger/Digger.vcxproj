@@ -183,6 +183,7 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(Out
     <ClCompile Include="Digger.cpp" />
     <ClCompile Include="DiggerCommands.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
+    <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ProjectileComponent.cpp" />
     <ClCompile Include="LevelComponent.cpp" />
@@ -192,6 +193,7 @@ xcopy "$(SolutionDir)3rdParty\steamworks\redistributable_bin\win64\*.dll" "$(Out
     <ClInclude Include="Achievement.h" />
     <ClInclude Include="DiggerCommands.h" />
     <ClInclude Include="HealthComponent.h" />
+    <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ProjectileComponent.h" />
     <ClInclude Include="LevelComponent.h" />

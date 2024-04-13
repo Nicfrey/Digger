@@ -9,6 +9,64 @@
 
 dae::GameObject::~GameObject() = default;
 
+dae::GameObject::GameObject(const GameObject& other): GameObject{}
+{
+	m_Components = other.m_Components;
+	m_Tag = other.m_Tag;
+	m_LocalTransform = other.m_LocalTransform;
+	m_WorldTransform = other.m_WorldTransform;
+	m_ParentObject = other.m_ParentObject;
+	m_ChildrenObject = other.m_ChildrenObject;
+	m_PositionIsDirty = other.m_PositionIsDirty;
+	m_RotationIsDirty = other.m_RotationIsDirty;
+}
+
+dae::GameObject::GameObject(GameObject&& other) noexcept
+{
+	m_Components = std::move(other.m_Components);
+	m_Tag = std::move(other.m_Tag);
+	m_LocalTransform = std::move(other.m_LocalTransform);
+	m_WorldTransform = std::move(other.m_WorldTransform);
+	m_ParentObject = std::move(other.m_ParentObject);
+	m_ChildrenObject = std::move(other.m_ChildrenObject);
+	m_PositionIsDirty = std::move(other.m_PositionIsDirty);
+	m_RotationIsDirty = std::move(other.m_RotationIsDirty);
+}
+
+dae::GameObject& dae::GameObject::operator=(const GameObject& other)
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+	m_Components = other.m_Components;
+	m_Tag = other.m_Tag;
+	m_LocalTransform = other.m_LocalTransform;
+	m_WorldTransform = other.m_WorldTransform;
+	m_ParentObject = other.m_ParentObject;
+	m_ChildrenObject = other.m_ChildrenObject;
+	m_PositionIsDirty = other.m_PositionIsDirty;
+	m_RotationIsDirty = other.m_RotationIsDirty;
+	return *this;
+}
+
+dae::GameObject& dae::GameObject::operator=(GameObject&& other) noexcept
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+	m_Components = std::move(other.m_Components);
+	m_Tag = std::move(other.m_Tag);
+	m_LocalTransform = std::move(other.m_LocalTransform);
+	m_WorldTransform = std::move(other.m_WorldTransform);
+	m_ParentObject = std::move(other.m_ParentObject);
+	m_ChildrenObject = std::move(other.m_ChildrenObject);
+	m_PositionIsDirty = std::move(other.m_PositionIsDirty);
+	m_RotationIsDirty = std::move(other.m_RotationIsDirty);
+	return *this;
+}
+
 bool dae::GameObject::IsEqualToParent(const std::shared_ptr<GameObject>& child)
 {
 	GameObject* parent{ child->GetParent() };
@@ -193,35 +251,35 @@ void dae::GameObject::SetLocalRotation(float x, float y)
 	SetLocalRotation(glm::vec3{ x,y,0 });
 }
 
-void dae::GameObject::OnCollisionEnter(const std::shared_ptr<GameObject>& other)
+void dae::GameObject::OnCollisionEnter(std::shared_ptr<GameObject>& other)
 {
 	if (const auto & collider{ GetComponent<Collider2D>() })
 	{
 		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
 		{
-			goc->OnCollisionEnter(other.get());
+			goc->OnCollisionEnter(other);
 		}
 	}
 }
 
-void dae::GameObject::OnCollisionExit(const std::shared_ptr<GameObject>& other)
+void dae::GameObject::OnCollisionExit(std::shared_ptr<GameObject>& other)
 {
 	if(const auto& collider{GetComponent<Collider2D>()})
 	{
 		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
 		{
-			goc->OnCollisionExit(other.get());
+			goc->OnCollisionExit(other);
 		}
 	}
 }
 
-void dae::GameObject::OnCollisionStay(const std::shared_ptr<GameObject>& other)
+void dae::GameObject::OnCollisionStay(std::shared_ptr<GameObject>& other)
 {
 	if (const auto & collider{ GetComponent<Collider2D>() })
 	{
 		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
 		{
-			goc->OnCollisionStay(other.get());
+			goc->OnCollisionStay(other);
 		}
 	}
 }

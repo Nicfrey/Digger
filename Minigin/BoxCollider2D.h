@@ -3,6 +3,7 @@
 #include "Collider2D.h"
 #include "Utils.h"
 
+
 class BoxCollider2D : public Collider2D
 {
 public:
@@ -14,7 +15,7 @@ public:
 	BoxCollider2D& operator=(BoxCollider2D&& other) noexcept = delete;
 
 	void Update() override;
-	bool IsOverlapping(dae::GameObject* other) override;
+	bool IsOverlapping(std::shared_ptr<dae::GameObject>& other) override;
 	Rectf GetBoxCollider() const;
 	void SetSize(const Rectf& size);
 

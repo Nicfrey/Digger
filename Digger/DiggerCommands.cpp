@@ -1,6 +1,7 @@
 #include "DiggerCommands.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
+#include "PlayerComponent.h"
 #include "ScoreComponent.h"
 #include "TimeEngine.h"
 
@@ -36,5 +37,17 @@ void AddScorePlayerCommand::Execute()
 	if (const auto scoreComponent{ GetGameObject()->GetComponent<ScoreComponent>() })
 	{
 		scoreComponent->AddScore(100);
+	}
+}
+
+ShootCommand::ShootCommand(dae::GameObject* go): GameObjectCommand{ go }
+{
+}
+
+void ShootCommand::Execute()
+{
+	if(const auto playerComp{GetGameObject()->GetComponent<PlayerComponent>()})
+	{
+		playerComp->ShootProjectile();
 	}
 }

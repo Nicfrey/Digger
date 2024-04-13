@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Renderer.h"
+#include "Utils.h"
 
 SpriteComponent::SpriteComponent(const std::string& filename): TextureComponent{filename}
 {
@@ -25,7 +26,7 @@ void SpriteComponent::Update()
 	glm::vec3 pos{};
 	if (const auto go{ GetGameObject() })
 	{
-		pos = go->GetLocalPosition();
+		pos = go->GetWorldPosition();
 	}
 	pos += m_Offset.GetPosition();
 	m_Shape.bottomLeft.x = pos.x;

@@ -39,18 +39,20 @@ void Scene::RenderGUI()
 
 void Scene::OnCollisionUpdate()
 {
-	for(const auto& go : m_objects)
+	for(auto& go : m_objects)
 	{
 		if(go->HasComponent<ColliderComponent>())
 		{
-			for(const auto& goOther : m_objects)
+			for(auto& goOther : m_objects)
 			{
 				if(go == goOther)
 					continue;
 
-				if (const std::shared_ptr otherCollider{ goOther->GetComponent<Collider2D>() })
+				if (std::shared_ptr otherCollider{ goOther->GetComponent<Collider2D>() })
 				{
-					otherCollider->IsOverlapping(goOther.get());
+					otherCollider->IsOverlapping(go);
+					auto goCollider{ go->GetComponent<Collider2D>() };
+					goCollider->IsOverlapping(goOther);
 				}
 			}
 		}
@@ -100,9 +102,10 @@ void Scene::Add(std::shared_ptr<GameObject> object)
 	m_objects.emplace_back(std::move(object));
 }
 
-void Scene::Remove(std::shared_ptr<GameObject> object)
+void Scene::Remove(std::shared_ptr<GameObject>& object)
 {
 	m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), object), m_objects.end());
+	object.reset();
 }
 
 void Scene::RemoveAll()
@@ -112,7 +115,7 @@ void Scene::RemoveAll()
 
 void Scene::Update()
 {
-	for(auto& object : m_objects)
+	for(const auto& object : m_objects)
 	{
 		object->Update();
 	}

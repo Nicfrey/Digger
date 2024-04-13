@@ -22,9 +22,9 @@ public:
 	virtual void Init() {}
 	virtual void Render() const {}
 	virtual void RenderGUI() {}
-	virtual void OnCollisionEnter(dae::GameObject* other) { if (!other) return; }
-	virtual void OnCollisionExit(dae::GameObject* other) { if (!other) return; }
-	virtual void OnCollisionStay(dae::GameObject* other) { if (!other) return; }
+	virtual void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
+	virtual void OnCollisionExit(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
+	virtual void OnCollisionStay(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
 	void SetGameObject(const std::shared_ptr<dae::GameObject>& go);
 	void RemoveGameObject();
 

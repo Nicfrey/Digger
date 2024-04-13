@@ -17,6 +17,7 @@
 #include "InputManager.h"
 #include "LevelComponent.h"
 #include "Minigin.h"
+#include "PlayerComponent.h"
 #include "ResourceManager.h"
 #include "Scene.h"
 #include "SceneManager.h"
@@ -27,6 +28,7 @@
 void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Digger");
+	dae::SceneManager::GetInstance().SetActiveScene("Digger");
 
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
 
@@ -36,19 +38,21 @@ void load()
 	auto scoreComponent{ std::make_shared<ScoreComponent>() };
 	auto uiComponent{ std::make_shared<UIPlayerComponent>(fontSmall) };
 	auto boxCollider{ std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width,spritePlayer1->GetShape().height) };
+	auto playerComponent{ std::make_shared<PlayerComponent>() };
 	uiComponent->SetPosition(0, 150);
 	go->AddComponent(healthComponent);
 	go->AddComponent(uiComponent);
 	go->AddComponent(scoreComponent);
 	go->AddComponent(spritePlayer1);
 	go->AddComponent(boxCollider);
+	go->AddComponent(playerComponent);
 	std::shared_ptr moveUpCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1}) };
 	std::shared_ptr moveDownCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1}) };
 	std::shared_ptr moveLeftCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{-1,0}) };
 	std::shared_ptr moveRightCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{1,0}) };
 	std::shared_ptr killPlayerCommand{ std::make_shared<KillPlayerCommand>(go.get()) };
 	std::shared_ptr addScoreCommand{ std::make_shared<AddScorePlayerCommand>(go.get()) };
-
+	std::shared_ptr shootCommand{ std::make_shared<ShootCommand>(go.get()) };
 
 	GamepadController* gamepadController{ new GamepadController{} };
 	gamepadController->BindAction(moveUpCommand, XINPUT_GAMEPAD_DPAD_UP);
@@ -57,6 +61,7 @@ void load()
 	gamepadController->BindAction(moveRightCommand, XINPUT_GAMEPAD_DPAD_RIGHT);
 	gamepadController->BindAction(killPlayerCommand, XINPUT_GAMEPAD_X, KeyPressed);
 	gamepadController->BindAction(addScoreCommand, XINPUT_GAMEPAD_A, KeyPressed);
+	gamepadController->BindAction(shootCommand, XINPUT_GAMEPAD_B, KeyPressed);
 	dae::InputManager::GetInstance().AddController(gamepadController);
 	go->SetLocalPosition(20, 100);
 	scene.Add(go);
@@ -67,12 +72,14 @@ void load()
 	uiComponent = std::make_shared<UIPlayerComponent>(fontSmall);
 	scoreComponent = std::make_shared<ScoreComponent>();
 	boxCollider = std::make_shared<BoxCollider2D>(spritePlayer2->GetShape().width,spritePlayer2->GetShape().height);
+	playerComponent = std::make_shared<PlayerComponent>();
 	uiComponent->SetPosition(0, 210);
 	go->AddComponent(spritePlayer2);
 	go->AddComponent(healthComponent);
 	go->AddComponent(uiComponent);
 	go->AddComponent(scoreComponent);
 	go->AddComponent(boxCollider);
+	go->AddComponent(playerComponent);
 	go->SetTag("Player");
 	moveUpCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1});
 	moveDownCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1});
@@ -80,12 +87,14 @@ void load()
 	moveRightCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{1,0});
 	killPlayerCommand = std::make_shared<KillPlayerCommand>(go.get());
 	addScoreCommand = std::make_shared<AddScorePlayerCommand>(go.get());
+	shootCommand = std::make_shared<ShootCommand>(go.get());
 	dae::InputManager::GetInstance().BindCommand(moveUpCommand, SDL_SCANCODE_W);
 	dae::InputManager::GetInstance().BindCommand(moveDownCommand, SDL_SCANCODE_S);
 	dae::InputManager::GetInstance().BindCommand(moveLeftCommand, SDL_SCANCODE_A);
 	dae::InputManager::GetInstance().BindCommand(moveRightCommand, SDL_SCANCODE_D);
 	dae::InputManager::GetInstance().BindCommand(killPlayerCommand, SDL_SCANCODE_X, KeyPressed);
 	dae::InputManager::GetInstance().BindCommand(addScoreCommand, SDL_SCANCODE_Z, KeyPressed);
+	dae::InputManager::GetInstance().BindCommand(shootCommand, SDL_SCANCODE_SPACE, KeyPressed);
 	scene.Add(go);
 
 	go = std::make_shared<dae::GameObject>();

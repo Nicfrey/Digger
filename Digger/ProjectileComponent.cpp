@@ -2,10 +2,19 @@
 
 #include "GameObject.h"
 #include "SpriteComponent.h"
+#include "TimeEngine.h"
+
+ProjectileComponent::ProjectileComponent(): BaseComponent{nullptr}, m_IsActive{}, m_RotationSpeed{15.f}, m_Velocity{}
+{
+}
 
 void ProjectileComponent::Update()
 {
-
+	if(m_IsActive)
+	{
+		m_Velocity.x = 20.f * TimeEngine::GetInstance().GetDeltaTime();
+		GetGameObject()->Translate(m_Velocity);
+	}
 }
 
 void ProjectileComponent::Init()
@@ -16,12 +25,7 @@ void ProjectileComponent::Init()
 	}
 }
 
-void ProjectileComponent::OnCollisionEnter(dae::GameObject* other)
+void ProjectileComponent::Activate()
 {
-	if(other)
-	{
-		
-	}
-	// TODO Check if the component is enemy component
-	// Kill the enemy
-}
+	m_IsActive = true;
+}	

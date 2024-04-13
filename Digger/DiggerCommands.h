@@ -26,3 +26,10 @@ public:
 	AddScorePlayerCommand(dae::GameObject* go);
 	void Execute() override;
 };
+
+class ShootCommand : public GameObjectCommand
+{
+public:
+	ShootCommand(dae::GameObject* go);
+	void Execute() override;
+};

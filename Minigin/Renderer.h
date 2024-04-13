@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include "Singleton.h"
 
+
 struct Rectf;
 
 namespace dae

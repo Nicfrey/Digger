@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 
-bool ColliderComponent::IsOverlapping(dae::GameObject* other)
+bool ColliderComponent::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 {
 	if (!other)
 	{

@@ -53,9 +53,9 @@ namespace dae
 		void SetLocalRotation(const glm::vec2& rot);
 		void SetLocalRotation(float x, float y, float z);
 		void SetLocalRotation(float x, float y);
-		void OnCollisionEnter(const std::shared_ptr<GameObject>& other);
-		void OnCollisionExit(const std::shared_ptr<GameObject>& other);
-		void OnCollisionStay(const std::shared_ptr<GameObject>& other);
+		void OnCollisionEnter(std::shared_ptr<GameObject>& other);
+		void OnCollisionExit(std::shared_ptr<GameObject>& other);
+		void OnCollisionStay(std::shared_ptr<GameObject>& other);
 		std::shared_ptr<GameObject> GetThis();
 
 		bool SetParent(const std::shared_ptr<GameObject>& newParent, bool keepWorldPosition = true);
@@ -66,10 +66,10 @@ namespace dae
 		GameObject() = default;
 		GameObject(const glm::vec3& pos);
 		~GameObject();
-		GameObject(const GameObject& other) = delete;
-		GameObject(GameObject&& other) = delete;
-		GameObject& operator=(const GameObject& other) = delete;
-		GameObject& operator=(GameObject&& other) = delete;
+		GameObject(const GameObject& other);
+		GameObject(GameObject&& other) noexcept;
+		GameObject& operator=(const GameObject& other);
+		GameObject& operator=(GameObject&& other) noexcept;
 
 	private:
 		Transform m_LocalTransform{};

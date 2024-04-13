@@ -11,7 +11,7 @@ public:
 	ColliderComponent& operator=(const ColliderComponent& other) = delete;
 	ColliderComponent& operator=(ColliderComponent&& other) noexcept = delete;
 
-	virtual bool IsOverlapping(dae::GameObject* other);
+	virtual bool IsOverlapping(std::shared_ptr<dae::GameObject>& other);
 	dae::GameObject* GetOther() const;
 protected:
 	void SetOther(dae::GameObject* other);

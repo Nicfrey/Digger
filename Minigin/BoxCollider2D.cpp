@@ -1,7 +1,6 @@
 #include "BoxCollider2D.h"
 
 #include "GameObject.h"
-
 BoxCollider2D::BoxCollider2D(): Collider2D{}
 {
 	if(GetGameObject())
@@ -26,7 +25,7 @@ void BoxCollider2D::Update()
 	}
 }
 
-bool BoxCollider2D::IsOverlapping(dae::GameObject* other)
+bool BoxCollider2D::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 {
 	if(!Collider2D::IsOverlapping(other))
 	{
@@ -42,6 +41,7 @@ bool BoxCollider2D::IsOverlapping(dae::GameObject* other)
 		{
 			SetOther(nullptr);
 			// TODO call OnCollisionExit
+			GetGameObject()->OnCollisionExit(other);
 			return false;
 		}
 
@@ -50,16 +50,19 @@ bool BoxCollider2D::IsOverlapping(dae::GameObject* other)
 		{
 			SetOther(nullptr);
 			// TODO call OnCollisionExit
+			GetGameObject()->OnCollisionExit(other);
 			return false;
 		}
-		if(GetOther())
+		if (GetOther())
 		{
 			// TODO call OnCollisionStay
+			GetGameObject()->OnCollisionStay(other);
 		}
 		else
 		{
-			SetOther(other);
+			SetOther(other.get());
 			// TODO call OnCollisionEnter
+			GetGameObject()->OnCollisionEnter(other);
 		}
 		return true;
 	}
