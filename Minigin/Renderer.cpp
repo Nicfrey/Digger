@@ -1,10 +1,14 @@
 #include <stdexcept>
 #include "Renderer.h"
 
+#include <iostream>
+#include <SDL_opengl.h>
+
 #include "imgui.h"
 #include "implot.h"
 #include "SceneManager.h"
 #include "Texture2D.h"
+#include "Utils.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl2.h"
 
@@ -91,6 +95,17 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	dst.w = static_cast<int>(width);
 	dst.h = static_cast<int>(height);
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
+}
+
+void dae::Renderer::RenderTexture(const Texture2D& texture, const Rectf& dstRect, const Rectf& srcRect) const
+{
+	const SDL_Rect srcRectSDL{ static_cast<int>(srcRect.bottomLeft.x), static_cast<int>(srcRect.bottomLeft.y),static_cast<int>(srcRect.width),static_cast<int>(srcRect.height)};
+	const SDL_Rect destRectSDL{ static_cast<int>(dstRect.bottomLeft.x), static_cast<int>(dstRect.bottomLeft.y),static_cast<int>(dstRect.width),static_cast<int>(dstRect.height) };
+	if(SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &srcRectSDL, &destRectSDL) != 0)
+	{
+		const auto error = SDL_GetError();
+		std::cout << error << "\n";
+	}
 }
 
 SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }

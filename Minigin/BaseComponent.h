@@ -17,18 +17,23 @@ public:
 	BaseComponent& operator=(const BaseComponent& other) = delete;
 	BaseComponent& operator=(BaseComponent&& other) noexcept = delete;
 
-	virtual void Update() = 0;
-	virtual void FixedUpdate() = 0;
-	virtual void Init() = 0;
-	virtual void Render() const = 0;
-	virtual void RenderGUI() = 0;
+	virtual void Update() {}
+	virtual void FixedUpdate() {}
+	virtual void Init() {}
+	virtual void Render() const {}
+	virtual void RenderGUI() {}
+	virtual void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
+	virtual void OnCollisionExit(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
+	virtual void OnCollisionStay(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
 	void SetGameObject(const std::shared_ptr<dae::GameObject>& go);
 	void RemoveGameObject();
+
 protected:
 	dae::GameObject* GetGameObject() const
 	{
 		return m_GameObject;
 	}
+
 	std::shared_ptr<BaseComponent> GetThis();
 private:
 	dae::GameObject* m_GameObject;

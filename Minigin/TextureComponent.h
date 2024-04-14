@@ -23,9 +23,12 @@ public:
 	void Render() const override;
 	void FixedUpdate() override;
 	void RenderGUI() override;
+	glm::ivec2 GetSize() const;
+	std::shared_ptr<dae::Texture2D> GetTexture() const;
 
-private:
+protected:
 	dae::Transform m_Offset;
+private:
 	std::shared_ptr<dae::Texture2D> m_Texture{};
 };
 

@@ -1,8 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
 
-#include "BaseComponent.h"
-
 namespace dae
 {
 	class Transform final
@@ -19,9 +17,12 @@ namespace dae
 		const glm::vec3& GetRotation() const { return m_Rotation; }
 		void SetRotation(float x, float y, float z);
 		void SetRotation(float x, float y);
+		void SetRotation(const glm::vec3& rot);
+		void SetRotation(const glm::vec2& rot);
 		const glm::vec3& GetScale() const { return m_Scale; }
 		void SetScale(float x, float y, float z);
 		void SetScale(float scale);
+		glm::vec3 GetForward() const;
 
 	private:
 		glm::vec3 m_Position;

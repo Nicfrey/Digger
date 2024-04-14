@@ -1,3 +1,5 @@
+#include "Minigin.h"
+
 #include <stdexcept>
 #define WIN32_LEAN_AND_MEAN
 #define MS_PER_FRAME 8
@@ -7,17 +9,15 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "Minigin.h"
 
 #include <steam_api_common.h>
 #include <thread>
 
-#include "Achievement.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
-#include "Time.h"
+#include "TimeEngine.h"
 
 SDL_Window* g_window{};
 
@@ -88,19 +88,11 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 
-	Time::UpdateLastTime();
+	auto lastTime{ std::chrono::high_resolution_clock::now() };
+
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
-	Achievement_t g_Achievements[] =
-	{
-		_ACH_ID(ACH_WIN_ONE_GAME, "Vainqueur"),
-		_ACH_ID(ACH_WIN_100_GAMES, "Champion"),
-		_ACH_ID(ACH_TRAVEL_FAR_ACCUM, "Interstellaire"),
-		_ACH_ID(ACH_TRAVEL_FAR_SINGLE, "Étoile"),
-	};
-
-	auto achievement = new Achievement(g_Achievements,4);
 	sceneManager.Init();
 	float lag{0.f};
 
@@ -109,8 +101,10 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	while (doContinue)
 	{
 		SteamAPI_RunCallbacks();
-		Time::Update();
-		lag += Time::GetDeltaTime();
+		const auto currentTime{ std::chrono::high_resolution_clock::now() };
+		TimeEngine::GetInstance().SetDeltaTime(std::chrono::duration<float>(currentTime - lastTime).count());
+		lastTime = currentTime;
+		lag += TimeEngine::GetInstance().GetDeltaTime();
 
 		doContinue = input.ProcessInput();
 
@@ -119,11 +113,12 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			sceneManager.FixedUpdate();
 			lag -= FIXED_TIME_STEP;
 		}
+		sceneManager.OnCollisionUpdate();
 		sceneManager.Update();
 		renderer.Render();
 
-		const auto sleepTime{ Time::GetCurrent() + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
+		sceneManager.Destroy();
+		const auto sleepTime{ currentTime + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
 		std::this_thread::sleep_for(sleepTime);
 	}
-	delete achievement;
 }

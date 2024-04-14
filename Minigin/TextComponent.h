@@ -2,11 +2,7 @@
 #include <string>
 #include <memory>
 
-#include "BaseComponent.h"
-#include "GameObject.h"
-#include "Singleton.h"
 #include "TextureComponent.h"
-#include "Transform.h"
 
 namespace dae
 {

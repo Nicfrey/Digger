@@ -5,9 +5,21 @@ void EventManager::AddEvent(const EventID& eventID, const EventHandler& handler)
 	m_EventHandler[eventID].emplace_back(handler);
 }
 
-void EventManager::RemoveEvent(const EventID& eventID)
+void EventManager::RemoveEvent(const EventID& eventID, const EventHandler& handler)
 {
-	m_EventHandler.erase(eventID);
+	const auto it = m_EventHandler.find(eventID);
+	if (it != m_EventHandler.end())
+	{
+		auto& handlers = it->second;
+		for (auto itHandler = handlers.begin(); itHandler != handlers.end(); ++itHandler)
+		{
+			if (itHandler->target<void()>() == handler.target<void()>())
+			{
+				handlers.erase(itHandler);
+				break;
+			}
+		}
+	}
 }
 
 void EventManager::NotifyEvent(const EventID& eventID) const

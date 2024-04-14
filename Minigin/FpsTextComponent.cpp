@@ -1,6 +1,8 @@
 #include "FpsTextComponent.h"
 #include "FpsComponent.h"
-#include "Time.h"
+#include <sstream>
+#include <iomanip>
+
 
 FpsTextComponent::FpsTextComponent(const std::shared_ptr<dae::Font>& font) : TextComponent{ "",font }, m_FpsComponent{ std::make_shared<FpsComponent>() }
 {

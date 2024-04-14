@@ -3,6 +3,7 @@
 #include <chrono>
 #include <future>
 #include <iostream>
+#include <map>
 #include <thread>
 
 #include "imgui_plot.h"

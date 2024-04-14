@@ -5,7 +5,7 @@
 #include "ResourceManager.h"
 #include "Texture2D.h"
 
-TextureComponent::TextureComponent(const std::string& filename): BaseComponent{nullptr}
+TextureComponent::TextureComponent(const std::string& filename): BaseComponent{nullptr}, m_Offset{}
 {
 	SetTexture(filename);
 }
@@ -53,4 +53,14 @@ void TextureComponent::FixedUpdate()
 
 void TextureComponent::RenderGUI()
 {
+}
+
+glm::ivec2 TextureComponent::GetSize() const
+{
+	return m_Texture->GetSize();
+}
+
+std::shared_ptr<dae::Texture2D> TextureComponent::GetTexture() const
+{
+	return m_Texture;
 }

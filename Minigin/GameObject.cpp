@@ -1,13 +1,71 @@
-#include <string>
 #include "GameObject.h"
 
 #include <iostream>
 
+#include "Collider2D.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "TextureComponent.h"
 
 dae::GameObject::~GameObject() = default;
+
+dae::GameObject::GameObject(const GameObject& other): GameObject{}
+{
+	m_Components = other.m_Components;
+	m_Tag = other.m_Tag;
+	m_LocalTransform = other.m_LocalTransform;
+	m_WorldTransform = other.m_WorldTransform;
+	m_ParentObject = other.m_ParentObject;
+	m_ChildrenObject = other.m_ChildrenObject;
+	m_PositionIsDirty = other.m_PositionIsDirty;
+	m_RotationIsDirty = other.m_RotationIsDirty;
+}
+
+dae::GameObject::GameObject(GameObject&& other) noexcept
+{
+	m_Components = std::move(other.m_Components);
+	m_Tag = std::move(other.m_Tag);
+	m_LocalTransform = std::move(other.m_LocalTransform);
+	m_WorldTransform = std::move(other.m_WorldTransform);
+	m_ParentObject = std::move(other.m_ParentObject);
+	m_ChildrenObject = std::move(other.m_ChildrenObject);
+	m_PositionIsDirty = std::move(other.m_PositionIsDirty);
+	m_RotationIsDirty = std::move(other.m_RotationIsDirty);
+}
+
+dae::GameObject& dae::GameObject::operator=(const GameObject& other)
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+	m_Components = other.m_Components;
+	m_Tag = other.m_Tag;
+	m_LocalTransform = other.m_LocalTransform;
+	m_WorldTransform = other.m_WorldTransform;
+	m_ParentObject = other.m_ParentObject;
+	m_ChildrenObject = other.m_ChildrenObject;
+	m_PositionIsDirty = other.m_PositionIsDirty;
+	m_RotationIsDirty = other.m_RotationIsDirty;
+	return *this;
+}
+
+dae::GameObject& dae::GameObject::operator=(GameObject&& other) noexcept
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+	m_Components = std::move(other.m_Components);
+	m_Tag = std::move(other.m_Tag);
+	m_LocalTransform = std::move(other.m_LocalTransform);
+	m_WorldTransform = std::move(other.m_WorldTransform);
+	m_ParentObject = std::move(other.m_ParentObject);
+	m_ChildrenObject = std::move(other.m_ChildrenObject);
+	m_PositionIsDirty = std::move(other.m_PositionIsDirty);
+	m_RotationIsDirty = std::move(other.m_RotationIsDirty);
+	return *this;
+}
 
 bool dae::GameObject::IsEqualToParent(const std::shared_ptr<GameObject>& child)
 {
@@ -79,6 +137,16 @@ void dae::GameObject::RenderGUI()
 	}
 }
 
+void dae::GameObject::SetTag(const std::string& tag)
+{
+	m_Tag = tag;
+}
+
+std::string dae::GameObject::GetTag() const
+{
+	return m_Tag;
+}
+
 bool dae::GameObject::RemoveComponentAtIndex(size_t index)
 {
 	if (index < 0 || index >= m_Components.size())
@@ -126,6 +194,97 @@ void dae::GameObject::SetLocalPosition(float x, float y)
 	SetLocalPosition(glm::vec3{ x,y,0.f });
 }
 
+void dae::GameObject::Translate(const glm::vec3& pos)
+{
+	glm::vec3 localPos{ GetLocalPosition() };
+	localPos += pos;
+	SetLocalPosition(localPos);
+}
+
+void dae::GameObject::Translate(const glm::vec2& pos)
+{
+	Translate(glm::vec3{ pos.x,pos.y,0 });
+}
+
+void dae::GameObject::Translate(float x, float y, float z)
+{
+	Translate(glm::vec3{ x,y,z });
+}
+
+void dae::GameObject::Translate(float x, float y)
+{
+	Translate(glm::vec3{x,y,0});
+}
+
+glm::vec3 dae::GameObject::GetWorldRotation()
+{
+	if(m_RotationIsDirty)
+	{
+		UpdateWorldRotation();
+	}
+	return m_WorldTransform.GetRotation();
+}
+
+const glm::vec3& dae::GameObject::GetLocalRotation() const
+{
+	return m_LocalTransform.GetRotation();
+}
+
+void dae::GameObject::SetLocalRotation(const glm::vec3& rot)
+{
+	SetRotationIsDirty();
+	m_LocalTransform.SetRotation(rot);
+}
+
+void dae::GameObject::SetLocalRotation(const glm::vec2& rot)
+{
+	SetLocalRotation(glm::vec3{ rot.x,rot.y,0 });
+}
+
+void dae::GameObject::SetLocalRotation(float x, float y, float z)
+{
+	SetLocalRotation(glm::vec3{ x,y,z });
+}
+
+void dae::GameObject::SetLocalRotation(float x, float y)
+{
+	SetLocalRotation(glm::vec3{ x,y,0 });
+}
+
+void dae::GameObject::OnCollisionEnter(std::shared_ptr<GameObject>& other)
+{
+	if (const auto & collider{ GetComponent<Collider2D>() })
+	{
+		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+		{
+			goc->OnCollisionEnter(other);
+		}
+	}
+}
+
+void dae::GameObject::OnCollisionExit(std::shared_ptr<GameObject>& other)
+{
+	if(const auto& collider{GetComponent<Collider2D>()})
+	{
+		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+		{
+			goc->OnCollisionExit(other);
+		}
+	}
+}
+
+void dae::GameObject::OnCollisionStay(std::shared_ptr<GameObject>& other)
+{
+	if (const auto & collider{ GetComponent<Collider2D>() })
+	{
+		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+		{
+			goc->OnCollisionStay(other);
+		}
+	}
+}
+
+
 std::shared_ptr<dae::GameObject> dae::GameObject::GetThis()
 {
 	return shared_from_this();
@@ -153,6 +312,31 @@ void dae::GameObject::UpdateWorldPosition()
 			m_WorldTransform.SetPosition(m_ParentObject->GetWorldPosition() + GetLocalPosition());
 		}
 		m_PositionIsDirty = false;
+	}
+}
+
+void dae::GameObject::SetRotationIsDirty()
+{
+	m_RotationIsDirty = true;
+	for(const auto& child: m_ChildrenObject)
+	{
+		child->SetRotationIsDirty();
+	}
+}
+
+void dae::GameObject::UpdateWorldRotation()
+{
+	if(m_RotationIsDirty)
+	{
+		if(m_ParentObject == nullptr)
+		{
+			m_WorldTransform.SetRotation(GetLocalRotation());
+		}
+		else
+		{
+			m_WorldTransform.SetRotation(m_ParentObject->GetWorldRotation() + GetLocalRotation());
+		}
+		m_RotationIsDirty = false;
 	}
 }
 
@@ -190,14 +374,17 @@ bool dae::GameObject::SetParent(const std::shared_ptr<GameObject>& newParent, bo
 	if(newParent == nullptr)
 	{
 		SetLocalPosition(GetWorldPosition());
+		SetLocalRotation(GetWorldRotation());
 	}
 	else
 	{
 		if(keepWorldPosition)
 		{
 			SetLocalPosition(GetWorldPosition() - newParent->GetWorldPosition());
+			SetLocalRotation(GetWorldRotation() - newParent->GetWorldRotation());
 		}
 		SetPositionIsDirty();
+		SetRotationIsDirty();
 	}
 	if(m_ParentObject)
 	{
@@ -223,6 +410,21 @@ dae::GameObject* dae::GameObject::GetParent() const
 std::vector<dae::GameObject*> dae::GameObject::GetChildren() const
 {
 	return m_ChildrenObject;
+}
+
+glm::vec3 dae::GameObject::GetForward() const
+{
+	return m_LocalTransform.GetForward();
+}
+
+void dae::GameObject::Destroy()
+{
+	m_IsDestroyed = true;
+}
+
+bool dae::GameObject::IsDestroyed() const
+{
+	return m_IsDestroyed;
 }
 
 bool dae::GameObject::RemoveChild(const std::shared_ptr<GameObject>& child)
