@@ -5,7 +5,7 @@
 #include "ProjectileComponent.h"
 #include "SceneManager.h"
 #include "BoxCollider2D.h"
-#include "imgui_plot.h"
+#include "imgui.h"
 #include "SpriteComponent.h"
 #include "Scene.h"
 
