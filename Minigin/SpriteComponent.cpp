@@ -3,6 +3,10 @@
 #include "GameObject.h"
 #include "Renderer.h"
 #include "Utils.h"
+#include <SDL_opengl.h>
+
+#include "MathUtils.h"
+
 
 SpriteComponent::SpriteComponent(const std::string& filename): TextureComponent{filename}
 {
@@ -16,39 +20,36 @@ SpriteComponent::SpriteComponent(const std::string& filename, unsigned nrCols, u
 	SetShape();
 }
 
-void SpriteComponent::Init()
-{
-	TextureComponent::Init();
-}
-
-void SpriteComponent::Update()
+void SpriteComponent::Render() const
 {
 	glm::vec3 pos{};
+	glm::vec3 rot{};
 	if (const auto go{ GetGameObject() })
 	{
 		pos = go->GetWorldPosition();
+		rot = go->GetWorldRotation();
 	}
 	pos += m_Offset.GetPosition();
-	m_Shape.bottomLeft.x = pos.x;
-	m_Shape.bottomLeft.y = pos.y;
-}
+	glPushMatrix();
+	glTranslatef(pos.x,pos.y,0);
 
-void SpriteComponent::Render() const
-{
+	if(MathUtils::Abs(rot.z) != 180.f)
+	{
+		glRotatef(rot.z, 0, 0, 1);
+		glScalef(-1, 1, 1);
+	}
+	else
+	{
+		glRotatef(0, 0, 0, 1);
+		glScalef(1, 1, 1);
+	}
+	glTranslatef(-m_Shape.width / 2, -m_Shape.height / 2,0);
+
 	if (GetTexture() != nullptr)
 	{
 		dae::Renderer::GetInstance().RenderTexture(*GetTexture(),m_Shape,GetSrcRect());
 	}
-}
-
-void SpriteComponent::FixedUpdate()
-{
-	TextureComponent::FixedUpdate();
-}
-
-void SpriteComponent::RenderGUI()
-{
-	TextureComponent::RenderGUI();
+	glPopMatrix();
 }
 
 Rectf SpriteComponent::GetShape() const

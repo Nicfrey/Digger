@@ -61,6 +61,7 @@ namespace dae
 		bool SetParent(const std::shared_ptr<GameObject>& newParent, bool keepWorldPosition = true);
 		GameObject* GetParent() const;
 		std::vector<GameObject*> GetChildren() const;
+		glm::vec3 GetForward() const;
 
 
 		GameObject() = default;

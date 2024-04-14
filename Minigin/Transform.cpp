@@ -1,5 +1,7 @@
 #include "Transform.h"
 
+#include "MathUtils.h"
+
 
 dae::Transform::Transform(const glm::vec3& pos) : m_Position{ pos }, m_Rotation{}, m_Scale{1.f}
 {
@@ -64,6 +66,8 @@ void dae::Transform::SetScale(float scale)
 glm::vec3 dae::Transform::GetForward() const
 {
 	glm::vec3 forward{};
-	//const float angle{ GetRotation().z };
+	const float angle{ GetRotation().z };
+	forward.x = MathUtils::Cos(MathUtils::Deg2Rad(angle));
+	forward.y = MathUtils::Sin(MathUtils::Deg2Rad(angle));
 	return forward;
 }

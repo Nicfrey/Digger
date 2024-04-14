@@ -39,3 +39,13 @@ float MathUtils::Cos(float angle)
 	return std::cosf(angle);
 }
 
+float MathUtils::Atan2(float y, float x)
+{
+	return std::atan2f(y, x);
+}
+
+float MathUtils::Abs(float value)
+{
+	return std::abs(value);
+}
+

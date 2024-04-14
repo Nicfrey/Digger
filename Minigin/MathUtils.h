@@ -16,4 +16,6 @@ namespace MathUtils
 	float Rad2Deg(float radian);
 	float Sin(float angle);
 	float Cos(float angle);
+	float Atan2(float y, float x);
+	float Abs(float value);
 }

@@ -220,7 +220,7 @@ glm::vec3 dae::GameObject::GetWorldRotation()
 {
 	if(m_RotationIsDirty)
 	{
-		UpdateWorldPosition();
+		UpdateWorldRotation();
 	}
 	return m_WorldTransform.GetRotation();
 }
@@ -410,6 +410,11 @@ dae::GameObject* dae::GameObject::GetParent() const
 std::vector<dae::GameObject*> dae::GameObject::GetChildren() const
 {
 	return m_ChildrenObject;
+}
+
+glm::vec3 dae::GameObject::GetForward() const
+{
+	return m_LocalTransform.GetForward();
 }
 
 bool dae::GameObject::RemoveChild(const std::shared_ptr<GameObject>& child)

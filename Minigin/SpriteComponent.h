@@ -14,11 +14,7 @@ public:
 	SpriteComponent(SpriteComponent&& other) noexcept = delete;
 	SpriteComponent& operator=(const SpriteComponent& other) = delete;
 	SpriteComponent& operator=(SpriteComponent&& other) noexcept = delete;
-	void Init() override;
-	void Update() override;
 	void Render() const override;
-	void FixedUpdate() override;
-	void RenderGUI() override;
 	Rectf GetShape() const;
 	void SetNrCols(unsigned nrCols);
 	void SetNrRows(unsigned nrRows);
