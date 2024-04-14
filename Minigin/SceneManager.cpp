@@ -86,9 +86,9 @@ std::vector<dae::GameObject*> dae::SceneManager::GetGameObjectsByTag(const std::
 	return gameObjects;
 }
 
-void dae::SceneManager::Destroy(std::shared_ptr<GameObject>& object)
+void dae::SceneManager::Destroy()
 {
-	m_ActiveScene->Remove(object);
+	m_ActiveScene->Remove();
 }
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)

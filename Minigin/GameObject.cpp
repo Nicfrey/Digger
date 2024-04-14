@@ -417,6 +417,16 @@ glm::vec3 dae::GameObject::GetForward() const
 	return m_LocalTransform.GetForward();
 }
 
+void dae::GameObject::Destroy()
+{
+	m_IsDestroyed = true;
+}
+
+bool dae::GameObject::IsDestroyed() const
+{
+	return m_IsDestroyed;
+}
+
 bool dae::GameObject::RemoveChild(const std::shared_ptr<GameObject>& child)
 {
 	assert(child);

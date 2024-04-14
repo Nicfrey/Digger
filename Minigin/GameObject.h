@@ -62,7 +62,8 @@ namespace dae
 		GameObject* GetParent() const;
 		std::vector<GameObject*> GetChildren() const;
 		glm::vec3 GetForward() const;
-
+		void Destroy();
+		bool IsDestroyed() const;
 
 		GameObject() = default;
 		GameObject(const glm::vec3& pos);
@@ -80,8 +81,8 @@ namespace dae
 		std::vector<std::shared_ptr<BaseComponent>> m_Components;
 		GameObject* m_ParentObject{};
 		std::vector<GameObject*> m_ChildrenObject{};
-
 		std::string m_Tag{};
+		bool m_IsDestroyed{};
 
 		void SetPositionIsDirty();
 		void UpdateWorldPosition();

@@ -102,6 +102,19 @@ void Scene::Add(std::shared_ptr<GameObject> object)
 	m_objects.emplace_back(std::move(object));
 }
 
+void Scene::Remove()
+{
+	auto it{ std::find_if(m_objects.begin(), m_objects.end(), [&](const std::shared_ptr<dae::GameObject>& other)
+		{
+			return other->IsDestroyed();
+		}) };
+	if(it != m_objects.end())
+	{
+		it->reset();
+		m_objects.erase(it);
+	}
+}
+
 void Scene::Remove(std::shared_ptr<GameObject>& object)
 {
 	m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), object), m_objects.end());
