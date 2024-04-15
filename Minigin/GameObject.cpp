@@ -11,12 +11,26 @@ dae::GameObject::~GameObject() = default;
 
 dae::GameObject::GameObject(const GameObject& other): GameObject{}
 {
-	m_Components = other.m_Components;
+	for(auto& component : other.m_Components)
+	{
+		const auto newComp{ component->Clone() };
+		m_Components.emplace_back(newComp);
+	}
 	m_Tag = other.m_Tag;
 	m_LocalTransform = other.m_LocalTransform;
 	m_WorldTransform = other.m_WorldTransform;
-	m_ParentObject = other.m_ParentObject;
-	m_ChildrenObject = other.m_ChildrenObject;
+	if(other.m_ParentObject != nullptr)
+	{
+		m_ParentObject = new GameObject{ *other.m_ParentObject };
+	}
+	else
+	{
+		m_ParentObject = nullptr;
+	}
+	for(auto& child: other.m_ChildrenObject)
+	{
+		m_ChildrenObject.emplace_back(new GameObject{ *child });
+	}
 	m_PositionIsDirty = other.m_PositionIsDirty;
 	m_RotationIsDirty = other.m_RotationIsDirty;
 }
@@ -39,12 +53,43 @@ dae::GameObject& dae::GameObject::operator=(const GameObject& other)
 	{
 		return *this;
 	}
-	m_Components = other.m_Components;
+	for (auto& component : m_Components)
+	{
+		component.reset();
+	}
+	m_Components.clear();
+	if(m_ParentObject != nullptr)
+	{
+		delete m_ParentObject;
+		m_ParentObject = nullptr;
+	}
+	for (auto& child : m_ChildrenObject)
+	{
+		delete child;
+		child = nullptr;
+	}
+	m_ChildrenObject.clear();
+
+	for (auto& component : other.m_Components)
+	{
+		const auto newComp{ component->Clone() };
+		m_Components.emplace_back(newComp);
+	}
 	m_Tag = other.m_Tag;
 	m_LocalTransform = other.m_LocalTransform;
 	m_WorldTransform = other.m_WorldTransform;
-	m_ParentObject = other.m_ParentObject;
-	m_ChildrenObject = other.m_ChildrenObject;
+	if (other.m_ParentObject != nullptr)
+	{
+		m_ParentObject = new GameObject{ *other.m_ParentObject };
+	}
+	else
+	{
+		m_ParentObject = nullptr;
+	}
+	for (auto& child : other.m_ChildrenObject)
+	{
+		m_ChildrenObject.emplace_back(new GameObject{ *child });
+	}
 	m_PositionIsDirty = other.m_PositionIsDirty;
 	m_RotationIsDirty = other.m_RotationIsDirty;
 	return *this;
@@ -56,6 +101,23 @@ dae::GameObject& dae::GameObject::operator=(GameObject&& other) noexcept
 	{
 		return *this;
 	}
+	for (auto& component : m_Components)
+	{
+		component.reset();
+	}
+	m_Components.clear();
+	if (m_ParentObject != nullptr)
+	{
+		delete m_ParentObject;
+		m_ParentObject = nullptr;
+	}
+	for (auto& child : m_ChildrenObject)
+	{
+		delete child;
+		child = nullptr;
+	}
+	m_ChildrenObject.clear();
+
 	m_Components = std::move(other.m_Components);
 	m_Tag = std::move(other.m_Tag);
 	m_LocalTransform = std::move(other.m_LocalTransform);

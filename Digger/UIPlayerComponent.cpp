@@ -17,6 +17,55 @@ UIPlayerComponent::~UIPlayerComponent()
 	m_pScoreText = nullptr;
 }
 
+UIPlayerComponent::UIPlayerComponent(const UIPlayerComponent& other): BaseComponent{ other }, m_pLifeText{ new dae::TextComponent{*other.m_pLifeText} }, m_pScoreText{ new dae::TextComponent{*other.m_pScoreText} }
+{
+}
+
+UIPlayerComponent::UIPlayerComponent(UIPlayerComponent&& other) noexcept: BaseComponent{ std::move(other) }
+{
+	m_pLifeText = other.m_pLifeText;
+	m_pScoreText = other.m_pScoreText;
+	other.m_pLifeText = nullptr;
+	other.m_pScoreText = nullptr;
+}
+
+UIPlayerComponent& UIPlayerComponent::operator=(const UIPlayerComponent& other)
+{
+	if (this != &other)
+	{
+		BaseComponent::operator=(other);
+		delete m_pLifeText;
+		m_pLifeText = nullptr;
+		delete m_pScoreText;
+		m_pScoreText = nullptr;
+		m_pLifeText = new dae::TextComponent{*other.m_pLifeText};
+		m_pScoreText = new dae::TextComponent{*other.m_pScoreText};
+	}
+	return *this;
+}
+
+UIPlayerComponent& UIPlayerComponent::operator=(UIPlayerComponent&& other) noexcept
+{
+	if (this != &other)
+	{
+		BaseComponent::operator=(std::move(other));
+		delete m_pLifeText;
+		m_pLifeText = nullptr;
+		delete m_pScoreText;
+		m_pScoreText = nullptr;
+		m_pLifeText = std::move(other.m_pLifeText);
+		m_pScoreText = std::move(other.m_pScoreText);
+		other.m_pLifeText = nullptr;
+		other.m_pScoreText = nullptr;
+	}
+	return *this;
+}
+
+std::shared_ptr<BaseComponent> UIPlayerComponent::Clone() const
+{
+	return std::make_shared<UIPlayerComponent>(*this);
+}
+
 void UIPlayerComponent::Init()
 {
 	EventManager::GetInstance().AddEvent("LifeGained", [this]() { UpdateTextLife(); });

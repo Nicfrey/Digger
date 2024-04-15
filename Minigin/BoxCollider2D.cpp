@@ -16,6 +16,45 @@ BoxCollider2D::BoxCollider2D(float width, float height): BoxCollider2D{}
 	m_BoxCollider.height = height;
 }
 
+BoxCollider2D::BoxCollider2D(const BoxCollider2D& other) : Collider2D{other}
+{
+	m_BoxCollider = other.m_BoxCollider;
+}
+
+BoxCollider2D::BoxCollider2D(BoxCollider2D&& other) noexcept: Collider2D{std::move(other)}
+{
+	m_BoxCollider = std::move(other.m_BoxCollider);
+	other.m_BoxCollider = Rectf{};
+}
+
+BoxCollider2D& BoxCollider2D::operator=(const BoxCollider2D& other)
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	Collider2D::operator=(other);
+	m_BoxCollider = other.m_BoxCollider;
+	return *this;
+}
+
+BoxCollider2D& BoxCollider2D::operator=(BoxCollider2D&& other) noexcept
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	Collider2D::operator=(std::move(other));
+	m_BoxCollider = std::move(other.m_BoxCollider);
+	other.m_BoxCollider = Rectf{};
+	return *this;
+}
+
+std::shared_ptr<BaseComponent> BoxCollider2D::Clone() const
+{
+	return std::make_shared<BoxCollider2D>(*this);
+}
+
 void BoxCollider2D::Update()
 {
 	if(GetGameObject())
@@ -39,29 +78,31 @@ bool BoxCollider2D::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 		// If one rectangle is on left side of the other
 		if (m_BoxCollider.bottomLeft.x + m_BoxCollider.width < otherBox->GetBoxCollider().bottomLeft.x || (otherBox->GetBoxCollider().bottomLeft.x + otherBox->GetBoxCollider().width) < m_BoxCollider.bottomLeft.x)
 		{
+			if(GetOther())
+			{
+				GetGameObject()->OnCollisionExit(other);
+			}
 			SetOther(nullptr);
-			// TODO call OnCollisionExit
-			GetGameObject()->OnCollisionExit(other);
 			return false;
 		}
 
 		// If one rectangle is under the other
 		if (m_BoxCollider.bottomLeft.y + m_BoxCollider.height < otherBox->GetBoxCollider().bottomLeft.y || (otherBox->GetBoxCollider().bottomLeft.y + otherBox->GetBoxCollider().height) < m_BoxCollider.bottomLeft.y)
 		{
+			if (GetOther())
+			{
+				GetGameObject()->OnCollisionExit(other);
+			}
 			SetOther(nullptr);
-			// TODO call OnCollisionExit
-			GetGameObject()->OnCollisionExit(other);
 			return false;
 		}
 		if (GetOther())
 		{
-			// TODO call OnCollisionStay
 			GetGameObject()->OnCollisionStay(other);
 		}
 		else
 		{
 			SetOther(other.get());
-			// TODO call OnCollisionEnter
 			GetGameObject()->OnCollisionEnter(other);
 		}
 		return true;

@@ -10,14 +10,6 @@ TextureComponent::TextureComponent(const std::string& filename): BaseComponent{n
 	SetTexture(filename);
 }
 
-void TextureComponent::Init()
-{
-}
-
-void TextureComponent::Update()
-{
-}
-
 void TextureComponent::SetTexture(const std::string& filename)
 {
 	m_Texture = dae::ResourceManager::GetInstance().LoadTexture(filename);
@@ -47,14 +39,6 @@ void TextureComponent::Render() const
 	}
 }
 
-void TextureComponent::FixedUpdate()
-{
-}
-
-void TextureComponent::RenderGUI()
-{
-}
-
 glm::ivec2 TextureComponent::GetSize() const
 {
 	return m_Texture->GetSize();
@@ -63,4 +47,9 @@ glm::ivec2 TextureComponent::GetSize() const
 std::shared_ptr<dae::Texture2D> TextureComponent::GetTexture() const
 {
 	return m_Texture;
+}
+
+std::shared_ptr<BaseComponent> TextureComponent::Clone() const
+{
+	return std::make_shared<TextureComponent>(*this);
 }

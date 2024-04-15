@@ -48,10 +48,11 @@ void Scene::OnCollisionUpdate()
 				if(go == goOther)
 					continue;
 
-				if (std::shared_ptr otherCollider{ goOther->GetComponent<Collider2D>() })
+				if (goOther->HasComponent<Collider2D>())
 				{
+					const auto otherCollider{ goOther->GetComponent<Collider2D>() };
 					otherCollider->IsOverlapping(go);
-					auto goCollider{ go->GetComponent<Collider2D>() };
+					const auto goCollider{ go->GetComponent<Collider2D>() };
 					goCollider->IsOverlapping(goOther);
 				}
 			}

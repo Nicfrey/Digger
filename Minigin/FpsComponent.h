@@ -1,19 +1,27 @@
 #pragma once
 #include "BaseComponent.h"
 
-class FpsComponent final : BaseComponent
+namespace dae
+{
+	class TextComponent;
+}
+
+class FpsComponent final : public BaseComponent
 {
 public:
 	FpsComponent() = default;
-	~FpsComponent() override;
+	~FpsComponent() override = default;
+	FpsComponent(const FpsComponent& other);
+	FpsComponent(FpsComponent&& other) noexcept;
+	FpsComponent& operator=(const FpsComponent& other);
+	FpsComponent& operator=(FpsComponent&& other) noexcept;
 	void Update() override;
-	void Init() override;
 	void Render() const override;
 	float GetFps() const;
-	void FixedUpdate() override;
-	void RenderGUI() override;
-
+	std::shared_ptr<BaseComponent> Clone() const override;
 private:
+	int m_Precision{ 1 };
 	float m_Fps;
+	std::shared_ptr<dae::TextComponent> m_pTextComponent;
 };
 

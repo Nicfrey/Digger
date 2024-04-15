@@ -6,6 +6,11 @@ class UIPlayerComponent : public BaseComponent
 public:
 	UIPlayerComponent(const std::shared_ptr<dae::Font>& font);
 	~UIPlayerComponent() override;
+	UIPlayerComponent(const UIPlayerComponent& other);
+	UIPlayerComponent(UIPlayerComponent&& other) noexcept;
+	UIPlayerComponent& operator=(const UIPlayerComponent& other);
+	UIPlayerComponent& operator=(UIPlayerComponent&& other) noexcept;
+	std::shared_ptr<BaseComponent> Clone() const override;
 	void Init() override;
 	void Update() override;
 	void Render() const override;

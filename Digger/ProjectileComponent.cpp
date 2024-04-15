@@ -13,6 +13,52 @@ ProjectileComponent::ProjectileComponent(const glm::vec2& direction): Projectile
 	m_Direction = direction;
 }
 
+ProjectileComponent::ProjectileComponent(ProjectileComponent&& other) noexcept: BaseComponent{nullptr}
+{
+	m_IsActive = other.m_IsActive;
+	m_RotationSpeed = other.m_RotationSpeed;
+	m_Velocity = other.m_Velocity;
+	m_Direction = other.m_Direction;
+	m_ShotBy = std::move(other.m_ShotBy);
+}
+
+ProjectileComponent& ProjectileComponent::operator=(const ProjectileComponent& other)
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+
+	m_IsActive = other.m_IsActive;
+	m_RotationSpeed = other.m_RotationSpeed;
+	m_Velocity = other.m_Velocity;
+	m_Direction = other.m_Direction;
+	m_ShotBy = other.m_ShotBy;
+
+	return *this;
+}
+
+ProjectileComponent& ProjectileComponent::operator=(ProjectileComponent&& other) noexcept
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+
+	m_IsActive = other.m_IsActive;
+	m_RotationSpeed = other.m_RotationSpeed;
+	m_Velocity = other.m_Velocity;
+	m_Direction = other.m_Direction;
+	m_ShotBy = std::move(other.m_ShotBy);
+
+	return *this;
+}
+
+std::shared_ptr<BaseComponent> ProjectileComponent::Clone() const
+{
+		return std::make_shared<ProjectileComponent>(*this);
+}
+
 void ProjectileComponent::Update()
 {
 	if(m_IsActive)

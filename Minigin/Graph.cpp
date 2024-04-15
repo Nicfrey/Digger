@@ -13,6 +13,54 @@ GraphUtils::GraphNode::GraphNode(const glm::vec3& value): GraphNode{}
 	m_Position = value;
 }
 
+GraphUtils::GraphNode::GraphNode(const GraphNode& other)
+{
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	for (const auto& neighbor : other.m_Neighbors)
+	{
+		m_Neighbors.insert(std::make_pair(new GraphNode{ *neighbor.first },neighbor.second));
+	}
+}
+
+GraphUtils::GraphNode::GraphNode(GraphNode&& other) noexcept
+{
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	m_Neighbors = std::move(other.m_Neighbors);
+	other.m_Id = 0;
+	other.m_Position = glm::vec3(0.0f);
+}
+
+GraphUtils::GraphNode& GraphUtils::GraphNode::operator=(const GraphNode& other)
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	for (const auto& neighbor : other.m_Neighbors)
+	{
+		m_Neighbors.insert(std::make_pair(new GraphNode{ *neighbor.first }, neighbor.second));
+	}
+	return *this;
+}
+
+GraphUtils::GraphNode& GraphUtils::GraphNode::operator=(GraphNode&& other) noexcept
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	m_Neighbors = std::move(other.m_Neighbors);
+	other.m_Id = 0;
+	other.m_Position = glm::vec3(0.0f);
+	return *this;
+}
+
 float GraphUtils::GraphNode::GetDistance(const GraphNode* neighbor) const
 {
 	return distance(m_Position, neighbor->m_Position);
@@ -30,6 +78,56 @@ GraphUtils::Graph::~Graph()
 		delete node;
 		node = nullptr;
 	}
+}
+
+GraphUtils::Graph::Graph(const Graph& other)
+{
+	for(const auto node : other.m_Nodes)
+	{
+		m_Nodes.push_back(new GraphNode(*node));
+	}
+}
+
+GraphUtils::Graph::Graph(Graph&& other) noexcept
+{
+	m_Nodes = std::move(other.m_Nodes);
+	other.m_Nodes.clear();
+}
+
+GraphUtils::Graph& GraphUtils::Graph::operator=(const Graph& other)
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	for (auto node : m_Nodes)
+	{
+		delete node;
+		node = nullptr;
+	}
+	m_Nodes.clear();
+	for (const auto node : other.m_Nodes)
+	{
+		m_Nodes.push_back(new GraphNode(*node));
+	}
+	return *this;
+}
+
+GraphUtils::Graph& GraphUtils::Graph::operator=(Graph&& other) noexcept
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	for (auto node : m_Nodes)
+	{
+		delete node;
+		node = nullptr;
+	}
+	m_Nodes.clear();
+	m_Nodes = std::move(other.m_Nodes);
+	other.m_Nodes.clear();
+	return *this;
 }
 
 GraphUtils::GraphNode* GraphUtils::Graph::AddNode()

@@ -20,6 +20,11 @@ SpriteComponent::SpriteComponent(const std::string& filename, unsigned nrCols, u
 	SetShape();
 }
 
+std::shared_ptr<BaseComponent> SpriteComponent::Clone() const
+{
+	return std::make_shared<SpriteComponent>(*this);
+}
+
 void SpriteComponent::Render() const
 {
 	glm::vec3 pos{};

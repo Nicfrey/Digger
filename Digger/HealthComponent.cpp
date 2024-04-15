@@ -7,6 +7,11 @@ HealthComponent::HealthComponent(): BaseComponent{nullptr}, m_LifeRemaining{3}
 
 }
 
+std::shared_ptr<BaseComponent> HealthComponent::Clone() const
+{
+	return std::make_shared<HealthComponent>(*this);
+}
+
 
 void HealthComponent::LoseOneLife()
 {

@@ -9,11 +9,7 @@ public:
 	SpriteComponent(const std::string& filename);
 	SpriteComponent(const std::string& filename, unsigned nrCols, unsigned nrRows);
 	~SpriteComponent() override = default;
-
-	SpriteComponent(const SpriteComponent& other) = delete;
-	SpriteComponent(SpriteComponent&& other) noexcept = delete;
-	SpriteComponent& operator=(const SpriteComponent& other) = delete;
-	SpriteComponent& operator=(SpriteComponent&& other) noexcept = delete;
+	std::shared_ptr<BaseComponent> Clone() const override;
 	void Render() const override;
 	Rectf GetShape() const;
 	void SetNrCols(unsigned nrCols);

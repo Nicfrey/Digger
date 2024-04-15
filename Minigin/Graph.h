@@ -13,10 +13,10 @@ namespace GraphUtils
 		GraphNode();
 		GraphNode(const glm::vec3& value);
 		~GraphNode() = default;
-		GraphNode(const GraphNode& other) = delete;
-		GraphNode(GraphNode&& other) noexcept = delete;
-		GraphNode& operator=(const GraphNode& other) = delete;
-		GraphNode& operator=(GraphNode&& other) noexcept = delete;
+		GraphNode(const GraphNode& other);
+		GraphNode(GraphNode&& other) noexcept;
+		GraphNode& operator=(const GraphNode& other);
+		GraphNode& operator=(GraphNode&& other) noexcept;
 
 		float GetDistance(const GraphNode* neighbor) const;
 		void AddNeighbor(GraphNode* neighbor, float distance);
@@ -37,10 +37,10 @@ namespace GraphUtils
 	public:
 		Graph() = default;
 		~Graph();
-		Graph(const Graph& other) = delete;
-		Graph(Graph&& other) noexcept = delete;
-		Graph& operator=(const Graph& other) = delete;
-		Graph& operator=(Graph&& other) noexcept = delete;
+		Graph(const Graph& other);
+		Graph(Graph&& other) noexcept;
+		Graph& operator=(const Graph& other);
+		Graph& operator=(Graph&& other) noexcept;
 
 		GraphNode* AddNode();
 		GraphNode* AddNode(const glm::vec3& value);
