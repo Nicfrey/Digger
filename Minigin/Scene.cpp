@@ -98,6 +98,11 @@ std::vector<GameObject*> Scene::GetGameObjectsByTag(const std::string& tag) cons
 	return objectsWithTag;
 }
 
+std::vector<std::shared_ptr<GameObject>> Scene::GetAllGameObject()
+{
+	return m_objects;
+}
+
 void Scene::Add(std::shared_ptr<GameObject> object)
 {
 	m_objects.emplace_back(std::move(object));

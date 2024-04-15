@@ -18,4 +18,6 @@ namespace MathUtils
 	float Cos(float angle);
 	float Atan2(float y, float x);
 	float Abs(float value);
+	float Cross2D(const glm::vec2& a, const glm::vec2& b);
+	float Dot2D(const glm::vec2& a, const glm::vec2& b);
 }

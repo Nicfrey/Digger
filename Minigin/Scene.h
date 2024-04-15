@@ -29,6 +29,7 @@ namespace dae
 		std::vector<GameObject*> GetGameObjectsWithComponent() const;
 		GameObject* GetGameObjectByTag(const std::string& tag) const;
 		std::vector<GameObject*> GetGameObjectsByTag(const std::string& tag) const;
+		std::vector<std::shared_ptr<GameObject>> GetAllGameObject();
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
 		Scene& operator=(const Scene& other) = delete;

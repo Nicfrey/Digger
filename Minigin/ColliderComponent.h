@@ -1,4 +1,6 @@
 #pragma once
+#include <glm/vec3.hpp>
+
 #include "BaseComponent.h"
 
 class ColliderComponent : public BaseComponent
@@ -13,6 +15,7 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 
 	virtual bool IsOverlapping(std::shared_ptr<dae::GameObject>& other);
+	virtual bool Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec3& intersection, dae::GameObject* go) const = 0;
 	dae::GameObject* GetOther() const;
 protected:
 	void SetOther(dae::GameObject* other);

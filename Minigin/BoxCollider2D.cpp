@@ -4,6 +4,7 @@
 
 #include "GameObject.h"
 #include "imgui.h"
+#include "Utils.h"
 
 BoxCollider2D::BoxCollider2D(): Collider2D{}
 {
@@ -119,6 +120,28 @@ bool BoxCollider2D::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 			SetOther(other.get());
 		}
 		return true;
+	}
+	return false;
+}
+
+bool BoxCollider2D::Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec3& intersection, dae::GameObject* go) const
+{
+	// Regroup every point of the box
+	std::vector<glm::vec2> points;
+	points.emplace_back(m_BoxCollider.bottomLeft);
+	points.emplace_back(m_BoxCollider.bottomLeft + glm::vec2{ m_BoxCollider.width,0 });
+	points.emplace_back(m_BoxCollider.bottomLeft + glm::vec2{ 0,m_BoxCollider.height });
+	points.emplace_back(m_BoxCollider.bottomLeft + glm::vec2{ m_BoxCollider.width , m_BoxCollider.height });
+
+	for(size_t i{}; i < points.size(); ++i)
+	{
+		const unsigned j{ (i + 1) % points.size() };
+		glm::vec2 intersectPoint;
+		if(LineIntersect2D(p0,p1,points[i],points[j],intersectPoint))
+		{
+			go = GetGameObject();
+			return true;
+		}
 	}
 	return false;
 }
