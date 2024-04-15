@@ -83,5 +83,5 @@ void EnemyComponent::OnEnemyDead()
 
 void EnemyComponent::OnDestroy()
 {
-	EventManager::GetInstance().RemoveEvent("EnemyDied", [this]() { OnEnemyDead(); });
+	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemyComponent::OnDestroy);
 }
