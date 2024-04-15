@@ -111,6 +111,7 @@ void Scene::Remove()
 		}) };
 	if(it != m_objects.end())
 	{
+		it->get()->OnDestroy();
 		it->reset();
 		m_objects.erase(it);
 	}

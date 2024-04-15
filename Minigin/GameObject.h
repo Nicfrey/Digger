@@ -64,6 +64,7 @@ namespace dae
 		glm::vec3 GetForward() const;
 		void Destroy();
 		bool IsDestroyed() const;
+		void OnDestroy();
 
 		GameObject() = default;
 		GameObject(const glm::vec3& pos);
