@@ -13,6 +13,7 @@ public:
 	BoxCollider2D(BoxCollider2D&& other) noexcept;
 	BoxCollider2D& operator=(const BoxCollider2D& other);
 	BoxCollider2D& operator=(BoxCollider2D&& other) noexcept;
+	void Init() override;
 	void RenderGUI() override;
 	std::shared_ptr<BaseComponent> Clone() const override;
 

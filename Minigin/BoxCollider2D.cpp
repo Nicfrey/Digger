@@ -55,6 +55,16 @@ BoxCollider2D& BoxCollider2D::operator=(BoxCollider2D&& other) noexcept
 	return *this;
 }
 
+void BoxCollider2D::Init()
+{
+	Collider2D::Init();
+	if (GetGameObject())
+	{
+		m_BoxCollider.bottomLeft.x = GetGameObject()->GetWorldPosition().x;
+		m_BoxCollider.bottomLeft.y = GetGameObject()->GetWorldPosition().y;
+	}
+}
+
 void BoxCollider2D::RenderGUI()
 {
 	const ImVec2 TopLeft{m_BoxCollider.bottomLeft.x , m_BoxCollider.bottomLeft.y};

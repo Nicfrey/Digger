@@ -12,6 +12,7 @@
 #include "BoxCollider2D.h"
 #include "Controller.h"
 #include "DiggerCommands.h"
+#include "EmeraldComponent.h"
 #include "EnemyComponent.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
@@ -122,6 +123,17 @@ void load()
 	go->AddComponent(enemyComponent);
 	go->SetLocalPosition(50, 180);
 	go->SetTag("Enemy");
+	scene.Add(go);
+
+	go = std::make_shared<dae::GameObject>();
+	sprite = std::make_shared<SpriteComponent>("SpritesItems.png",3,3);
+	sprite->SetCurrentRow(3);
+	boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width,sprite->GetShape().height);
+	const auto item{ std::make_shared<EmeraldComponent>() };
+	go->AddComponent(sprite);
+	go->AddComponent(boxCollider);
+	go->AddComponent(item);
+	go->SetLocalPosition(50, 210);
 	scene.Add(go);
 
 	go = std::make_shared<dae::GameObject>();
