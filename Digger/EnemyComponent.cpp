@@ -13,7 +13,7 @@ int EnemyComponent::m_ScoreKilled{ 250 };
 
 EnemyComponent::EnemyComponent(): BaseComponent{nullptr}
 {
-	EventManager::GetInstance().AddEvent("EnemyDied", std::bind(&EnemyComponent::OnEnemyDead,this));
+	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::OnEnemyDead);
 }
 
 EnemyComponent::EnemyComponent(EnemyType type): EnemyComponent()
