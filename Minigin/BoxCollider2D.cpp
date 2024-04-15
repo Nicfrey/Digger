@@ -140,6 +140,7 @@ bool BoxCollider2D::Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec
 		if(LineIntersect2D(p0,p1,points[i],points[j],intersectPoint))
 		{
 			go = GetGameObject();
+			intersection = glm::vec3{ intersectPoint.x,intersectPoint.y,0 };
 			return true;
 		}
 	}

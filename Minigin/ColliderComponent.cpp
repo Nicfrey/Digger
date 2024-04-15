@@ -36,7 +36,7 @@ ColliderComponent& ColliderComponent::operator=(ColliderComponent&& other) noexc
 
 std::shared_ptr<BaseComponent> ColliderComponent::Clone() const
 {
-	return std::make_shared<ColliderComponent>(*this);
+	return nullptr;
 }
 
 bool ColliderComponent::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
@@ -49,10 +49,6 @@ bool ColliderComponent::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 	return other->GetComponent<ColliderComponent>() != nullptr;
 }
 
-bool ColliderComponent::Intersect(const glm::vec2& p0, const glm::vec2& p1) const
-{
-	return false;
-}
 
 dae::GameObject* ColliderComponent::GetOther() const
 {
