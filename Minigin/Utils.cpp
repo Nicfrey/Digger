@@ -52,7 +52,7 @@ bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& 
 				hitInfo.pGameObject = go;
 				hitInfo.distance = glm::distance(origin, hitInfo.point);
 				return true;
-			}
+			} 
 		}
 	}
 	return false;
