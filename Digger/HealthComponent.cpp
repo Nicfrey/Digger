@@ -1,10 +1,16 @@
 #include "HealthComponent.h"
 
+#include "GameObject.h"
 #include "Observer.h"
+#include "PlayerComponent.h"
 
 HealthComponent::HealthComponent(): BaseComponent{nullptr}, m_LifeRemaining{3}
 {
 
+}
+
+HealthComponent::HealthComponent(int lifeRemaining): m_LifeRemaining{lifeRemaining}
+{
 }
 
 std::shared_ptr<BaseComponent> HealthComponent::Clone() const
@@ -16,9 +22,16 @@ std::shared_ptr<BaseComponent> HealthComponent::Clone() const
 void HealthComponent::LoseOneLife()
 {
 	--m_LifeRemaining;
-	if(m_LifeRemaining < 0)
+	if(IsDead())
 	{
-		m_LifeRemaining = 0;
+		if(GetGameObject()->HasComponent<PlayerComponent>())
+		{
+			EventManager::GetInstance().NotifyEvent("PlayerDied");
+		}
+		else
+		{
+			EventManager::GetInstance().NotifyEvent("EnemyDied");
+		}
 	}
 	EventManager::GetInstance().NotifyEvent("LifeLost");
 }
@@ -36,6 +49,6 @@ int HealthComponent::GetLifeRemaining() const
 
 bool HealthComponent::IsDead() const
 {
-	return m_LifeRemaining == 0;
+	return m_LifeRemaining <= 0;
 }
 

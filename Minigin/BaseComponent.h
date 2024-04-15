@@ -9,7 +9,7 @@ namespace dae
 class BaseComponent : public::std::enable_shared_from_this<BaseComponent>
 {
 public:
-	BaseComponent() = default;
+	BaseComponent();
 	BaseComponent(dae::GameObject* pGameObject): m_GameObject{pGameObject} {}
 	virtual ~BaseComponent() = default;
 	BaseComponent(const BaseComponent& other);
@@ -25,6 +25,7 @@ public:
 	virtual void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
 	virtual void OnCollisionExit(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
 	virtual void OnCollisionStay(std::shared_ptr<dae::GameObject>& other) { if (!other) return; }
+	virtual void OnDestroy() {}
 	virtual std::shared_ptr<BaseComponent> Clone() const = 0;
 	void SetGameObject(const std::shared_ptr<dae::GameObject>& go);
 	void SetGameObject(dae::GameObject* go);

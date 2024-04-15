@@ -4,6 +4,10 @@
 
 #include "GameObject.h"
 
+BaseComponent::BaseComponent(): BaseComponent{nullptr}
+{
+}
+
 BaseComponent::BaseComponent(const BaseComponent& other): BaseComponent(other.m_GameObject)
 {
 

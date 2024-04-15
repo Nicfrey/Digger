@@ -317,7 +317,7 @@ void dae::GameObject::OnCollisionEnter(std::shared_ptr<GameObject>& other)
 {
 	if (const auto & collider{ GetComponent<Collider2D>() })
 	{
-		for (const std::shared_ptr<BaseComponent>& goc : m_Components)
+		for (const auto& goc : m_Components)
 		{
 			goc->OnCollisionEnter(other);
 		}
@@ -487,6 +487,14 @@ void dae::GameObject::Destroy()
 bool dae::GameObject::IsDestroyed() const
 {
 	return m_IsDestroyed;
+}
+
+void dae::GameObject::OnDestroy()
+{
+	for(const auto& goc : m_Components)
+	{
+		goc->OnDestroy();
+	}
 }
 
 bool dae::GameObject::RemoveChild(const std::shared_ptr<GameObject>& child)

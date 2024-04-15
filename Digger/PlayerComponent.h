@@ -16,12 +16,11 @@ public:
 	void RenderGUI() override;
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
 	void ShootProjectile();
+	void ResetProjectile();
 
 private:
 	dae::GameObject* m_pProjectile;
 	std::unique_ptr<dae::GameObject> m_pDefaultProjectile;
-
-	void ResetProjectile();
 	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other) const;
 	std::shared_ptr<dae::GameObject> CreateProjectile() const;
 };

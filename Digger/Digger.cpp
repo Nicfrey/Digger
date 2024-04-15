@@ -12,6 +12,7 @@
 #include "BoxCollider2D.h"
 #include "Controller.h"
 #include "DiggerCommands.h"
+#include "EnemyComponent.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
 #include "InputManager.h"
@@ -95,6 +96,32 @@ void load()
 	dae::InputManager::GetInstance().BindCommand(killPlayerCommand, SDL_SCANCODE_X, KeyPressed);
 	dae::InputManager::GetInstance().BindCommand(addScoreCommand, SDL_SCANCODE_Z, KeyPressed);
 	dae::InputManager::GetInstance().BindCommand(shootCommand, SDL_SCANCODE_SPACE, KeyPressed);
+	scene.Add(go);
+
+	go = std::make_shared<dae::GameObject>();
+	auto sprite{ std::make_shared<SpriteComponent>("SpritesEnemies.png",4,2) };
+	healthComponent = std::make_shared<HealthComponent>(1);
+	boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width,sprite->GetShape().height);
+	auto enemyComponent{ std::make_shared<EnemyComponent>(EnemyComponent::EnemyType::Nobbins) };
+	go->AddComponent(sprite);
+	go->AddComponent(healthComponent);
+	go->AddComponent(boxCollider);
+	go->AddComponent(enemyComponent);
+	go->SetLocalPosition(50, 150);
+	go->SetTag("Enemy");
+	scene.Add(go);
+
+	go = std::make_shared<dae::GameObject>();
+	sprite = std::make_shared<SpriteComponent>("SpritesEnemies.png",4,2);
+	healthComponent = std::make_shared<HealthComponent>(1);
+	boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height);
+	enemyComponent = std::make_shared<EnemyComponent>(EnemyComponent::EnemyType::Hobbins);
+	go->AddComponent(sprite);
+	go->AddComponent(healthComponent);
+	go->AddComponent(boxCollider);
+	go->AddComponent(enemyComponent);
+	go->SetLocalPosition(50, 180);
+	go->SetTag("Enemy");
 	scene.Add(go);
 
 	go = std::make_shared<dae::GameObject>();

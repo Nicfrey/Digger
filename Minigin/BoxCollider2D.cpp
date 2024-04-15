@@ -1,6 +1,10 @@
 #include "BoxCollider2D.h"
 
+#include <iostream>
+
 #include "GameObject.h"
+#include "imgui.h"
+
 BoxCollider2D::BoxCollider2D(): Collider2D{}
 {
 	if(GetGameObject())
@@ -48,6 +52,15 @@ BoxCollider2D& BoxCollider2D::operator=(BoxCollider2D&& other) noexcept
 	m_BoxCollider = std::move(other.m_BoxCollider);
 	other.m_BoxCollider = Rectf{};
 	return *this;
+}
+
+void BoxCollider2D::RenderGUI()
+{
+	const ImVec2 TopLeft{m_BoxCollider.bottomLeft.x , m_BoxCollider.bottomLeft.y};
+	const ImVec2 bottomRight{ m_BoxCollider.bottomLeft.x + m_BoxCollider.width,m_BoxCollider.bottomLeft.y + m_BoxCollider.height };
+	ImGui::Begin("Collisions BoxCollider2D");
+	ImGui::GetWindowDrawList()->AddRect(TopLeft, bottomRight, IM_COL32(0, 255, 0, 255));
+	ImGui::End();
 }
 
 std::shared_ptr<BaseComponent> BoxCollider2D::Clone() const
@@ -102,14 +115,11 @@ bool BoxCollider2D::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 		}
 		else
 		{
-			SetOther(other.get());
 			GetGameObject()->OnCollisionEnter(other);
+			SetOther(other.get());
 		}
 		return true;
 	}
-
-	// TODO Circle
-
 	return false;
 }
 
