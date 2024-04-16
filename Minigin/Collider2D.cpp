@@ -14,3 +14,13 @@ bool Collider2D::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 	SetOther(nullptr);
 	return false;
 }
+
+bool Collider2D::IsRaycasting(std::shared_ptr<dae::GameObject>& other)
+{
+	if(ColliderComponent::IsRaycasting(other))
+	{
+		return true;
+	}
+	SetOther(nullptr);
+	return false;
+}

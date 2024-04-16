@@ -127,7 +127,6 @@ void load()
 
 	go = std::make_shared<dae::GameObject>();
 	sprite = std::make_shared<SpriteComponent>("SpritesItems.png",3,3);
-	sprite->SetCurrentRow(3);
 	boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width,sprite->GetShape().height);
 	const auto item{ std::make_shared<EmeraldComponent>() };
 	go->AddComponent(sprite);

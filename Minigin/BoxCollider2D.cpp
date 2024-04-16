@@ -157,6 +157,20 @@ bool BoxCollider2D::Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec
 	return false;
 }
 
+bool BoxCollider2D::IsRaycasting(std::shared_ptr<dae::GameObject>& other)
+{
+	if(Collider2D::IsRaycasting(other))
+	{
+		return false;
+	}
+	// Intersect with one line
+	if(const auto otherBox{other->GetComponent<BoxCollider2D>()})
+	{
+		// TODO
+	}
+	return false;
+}
+
 Rectf BoxCollider2D::GetBoxCollider() const
 {
 	return m_BoxCollider;

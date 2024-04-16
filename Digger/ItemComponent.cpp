@@ -20,14 +20,14 @@ void ItemComponent::Init()
 		switch (m_Type)
 		{
 		case ItemType::Emerald:
-			sprite->SetCurrentRow(0);
+			sprite->SetCurrentRow(2);
 			break;
 		case ItemType::Gold:
-			sprite->SetCurrentRow(1);
+			sprite->SetCurrentRow(0);
 			sprite->SetCurrentCol(1);
 			break;
 		case ItemType::GoldNugget:
-			sprite->SetCurrentRow(2);
+			sprite->SetCurrentRow(1);
 			break;
 		}
 	}

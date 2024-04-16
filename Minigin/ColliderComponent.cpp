@@ -50,6 +50,16 @@ bool ColliderComponent::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 }
 
 
+bool ColliderComponent::IsRaycasting(std::shared_ptr<dae::GameObject>& other)
+{
+	if (!other)
+	{
+		SetOther(nullptr);
+		return false;
+	}
+	return other->GetComponent<ColliderComponent>() != nullptr;
+}
+
 dae::GameObject* ColliderComponent::GetOther() const
 {
 	return m_Other;

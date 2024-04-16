@@ -29,6 +29,11 @@ bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& 
 	return false;
 }
 
+bool LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersectPoint)
+{
+	return LineIntersect2D(line1.p0, line1.p1, line2.p0, line2.p1, intersectPoint);
+}
+
 bool Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo)
 {
 	const glm::vec2 end = origin + direction * maxDistance;

@@ -20,10 +20,17 @@ public:
 	void Update() override;
 	bool IsOverlapping(std::shared_ptr<dae::GameObject>& other) override;
 	bool Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec3& intersection, dae::GameObject*) const override;
+	bool IsRaycasting(std::shared_ptr<dae::GameObject>& other) override;
+
 	Rectf GetBoxCollider() const;
 	void SetSize(const Rectf& size);
 
 private:
+	// Overlap and raycast
 	Rectf m_BoxCollider;
+
+	// Raycast
+	Linef m_VerticalLine;
+	Linef m_HorizontalLine;
 };
 

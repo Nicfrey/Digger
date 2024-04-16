@@ -16,6 +16,7 @@ public:
 
 	virtual bool IsOverlapping(std::shared_ptr<dae::GameObject>& other);
 	virtual bool Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec3& intersection, dae::GameObject* go) const = 0;
+	virtual bool IsRaycasting(std::shared_ptr<dae::GameObject>& other);
 	dae::GameObject* GetOther() const;
 protected:
 	void SetOther(dae::GameObject* other);
