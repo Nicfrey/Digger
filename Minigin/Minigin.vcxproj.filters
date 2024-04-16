@@ -16,20 +16,11 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{a90b54a9-6cd8-4497-b56c-5cdb2b17ef0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Commands">
-      <UniqueIdentifier>{e06a86df-1f65-4a5f-82ad-d6fc260d279d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Commands">
-      <UniqueIdentifier>{9bc2e90f-6110-4d5f-a96e-8724c6fd4b02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Movements">
       <UniqueIdentifier>{fde9443d-7147-4fee-95fd-bf7d215bfa74}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Movements">
       <UniqueIdentifier>{15a5df28-7b9c-4d94-a2fb-65de9395fd8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\TrashTheCacheExercises">
-      <UniqueIdentifier>{5cde0179-88ed-42ca-bae4-4481c29f4422}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\TrashTheCacheExercises">
       <UniqueIdentifier>{5bfdade9-6418-4661-ac22-72dcb540bc59}</UniqueIdentifier>
@@ -45,6 +36,33 @@
     </Filter>
     <Filter Include="Engine\Sources Files">
       <UniqueIdentifier>{a0ddbd3a-545d-48f3-8c00-3b6965a480e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\Graph">
+      <UniqueIdentifier>{b38f2b6f-f91d-4921-944e-7d608213f208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\Graph">
+      <UniqueIdentifier>{d33c7888-51ad-4031-bfbf-627eefa1f181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\FiniteStateMachine">
+      <UniqueIdentifier>{e4944784-d0d2-4806-9548-c9e34c86d0ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\FiniteStateMachine">
+      <UniqueIdentifier>{7650f2e7-8fa5-4a9d-aeeb-a521975698ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\Collision">
+      <UniqueIdentifier>{f0a61edb-f31c-44f4-bf87-9efde7045352}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\Commands">
+      <UniqueIdentifier>{e06a86df-1f65-4a5f-82ad-d6fc260d279d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\TrashTheCacheExercises">
+      <UniqueIdentifier>{5cde0179-88ed-42ca-bae4-4481c29f4422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\Collision">
+      <UniqueIdentifier>{25e58c89-6e2f-482f-a47e-9458fc478df0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\Commands">
+      <UniqueIdentifier>{9bc2e90f-6110-4d5f-a96e-8724c6fd4b02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -124,25 +142,25 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Command.h">
-      <Filter>Header Files\Commands</Filter>
+      <Filter>Engine\Header Files\Commands</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
-      <Filter>Header Files\Commands</Filter>
+      <Filter>Engine\Header Files\Commands</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectCommand.h">
-      <Filter>Header Files\Commands</Filter>
+      <Filter>Engine\Header Files\Commands</Filter>
     </ClInclude>
     <ClInclude Include="RotateComponent.h">
       <Filter>Header Files\Movements</Filter>
     </ClInclude>
     <ClInclude Include="Controller.h">
-      <Filter>Header Files\Commands</Filter>
+      <Filter>Engine\Header Files\Commands</Filter>
     </ClInclude>
     <ClInclude Include="TrashTheCacheComponent.h">
-      <Filter>Header Files\TrashTheCacheExercises</Filter>
+      <Filter>Engine\Header Files\TrashTheCacheExercises</Filter>
     </ClInclude>
     <ClInclude Include="TrashTheCacheGOComponent.h">
-      <Filter>Header Files\TrashTheCacheExercises</Filter>
+      <Filter>Engine\Header Files\TrashTheCacheExercises</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">
       <Filter>Header Files</Filter>
@@ -156,20 +174,32 @@
     <ClInclude Include="TextureComponent.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCollider2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ColliderComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MathUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graph.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine\Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider2D.h">
+      <Filter>Engine\Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider2D.h">
+      <Filter>Engine\Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderComponent.h">
+      <Filter>Engine\Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="FiniteStateMachine.h">
+      <Filter>Engine\Header Files\FiniteStateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="StateNode.h">
+      <Filter>Engine\Header Files\FiniteStateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="TransitionEdge.h">
+      <Filter>Engine\Header Files\FiniteStateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Blackboard.h">
+      <Filter>Engine\Header Files\FiniteStateMachine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -246,19 +276,19 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files\Commands</Filter>
+      <Filter>Engine\Sources Files\Commands</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
-      <Filter>Source Files\Commands</Filter>
+      <Filter>Engine\Sources Files\Commands</Filter>
     </ClCompile>
     <ClCompile Include="GameObjectCommand.cpp">
-      <Filter>Source Files\Commands</Filter>
+      <Filter>Engine\Sources Files\Commands</Filter>
     </ClCompile>
     <ClCompile Include="RotateComponent.cpp">
       <Filter>Source Files\Movements</Filter>
     </ClCompile>
     <ClCompile Include="Controller.cpp">
-      <Filter>Source Files\Commands</Filter>
+      <Filter>Engine\Sources Files\Commands</Filter>
     </ClCompile>
     <ClCompile Include="TrashTheCacheComponent.cpp">
       <Filter>Source Files\TrashTheCacheExercises</Filter>
@@ -278,20 +308,32 @@
     <ClCompile Include="TextureComponent.cpp">
       <Filter>Engine\Sources Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoxCollider2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ColliderComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MathUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BoxCollider2D.cpp">
+      <Filter>Engine\Sources Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider2D.cpp">
+      <Filter>Engine\Sources Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderComponent.cpp">
+      <Filter>Engine\Sources Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="FiniteStateMachine.cpp">
+      <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
+    </ClCompile>
     <ClCompile Include="Graph.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine\Sources Files\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="StateNode.cpp">
+      <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="TransitionEdge.cpp">
+      <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Blackboard.cpp">
+      <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
