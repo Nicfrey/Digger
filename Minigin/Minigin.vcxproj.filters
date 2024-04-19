@@ -192,10 +192,10 @@
     <ClInclude Include="FiniteStateMachine.h">
       <Filter>Engine\Header Files\FiniteStateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="StateNode.h">
+    <ClInclude Include="FSMStateNode.h">
       <Filter>Engine\Header Files\FiniteStateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="TransitionEdge.h">
+    <ClInclude Include="FSMTransition.h">
       <Filter>Engine\Header Files\FiniteStateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Blackboard.h">
@@ -326,10 +326,10 @@
     <ClCompile Include="Graph.cpp">
       <Filter>Engine\Sources Files\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="StateNode.cpp">
+    <ClCompile Include="FSMStateNode.cpp">
       <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
     </ClCompile>
-    <ClCompile Include="TransitionEdge.cpp">
+    <ClCompile Include="FSMTransition.cpp">
       <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
     </ClCompile>
     <ClCompile Include="Blackboard.cpp">
