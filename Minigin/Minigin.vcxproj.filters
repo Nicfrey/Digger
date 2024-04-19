@@ -64,6 +64,12 @@
     <Filter Include="Engine\Sources Files\Commands">
       <UniqueIdentifier>{9bc2e90f-6110-4d5f-a96e-8724c6fd4b02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Header Files\Components">
+      <UniqueIdentifier>{1ccffe15-cf31-4e7f-b276-b117fd033167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\Components">
+      <UniqueIdentifier>{6ea7a708-2e66-434a-8d46-945e0c148a9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -165,13 +171,7 @@
     <ClInclude Include="Observer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteComponent.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureComponent.h">
       <Filter>Engine\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MathUtils.h">
@@ -192,14 +192,17 @@
     <ClInclude Include="FiniteStateMachine.h">
       <Filter>Engine\Header Files\FiniteStateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="FSMStateNode.h">
-      <Filter>Engine\Header Files\FiniteStateMachine</Filter>
-    </ClInclude>
-    <ClInclude Include="FSMTransition.h">
-      <Filter>Engine\Header Files\FiniteStateMachine</Filter>
-    </ClInclude>
     <ClInclude Include="Blackboard.h">
       <Filter>Engine\Header Files\FiniteStateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>Engine\Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureComponent.h">
+      <Filter>Engine\Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatorComponent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -299,13 +302,7 @@
     <ClCompile Include="Observer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteComponent.cpp">
-      <Filter>Engine\Sources Files</Filter>
-    </ClCompile>
     <ClCompile Include="Utils.cpp">
-      <Filter>Engine\Sources Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureComponent.cpp">
       <Filter>Engine\Sources Files</Filter>
     </ClCompile>
     <ClCompile Include="MathUtils.cpp">
@@ -326,14 +323,17 @@
     <ClCompile Include="Graph.cpp">
       <Filter>Engine\Sources Files\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="FSMStateNode.cpp">
-      <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
-    </ClCompile>
-    <ClCompile Include="FSMTransition.cpp">
-      <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
-    </ClCompile>
     <ClCompile Include="Blackboard.cpp">
       <Filter>Engine\Sources Files\FiniteStateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Engine\Sources Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureComponent.cpp">
+      <Filter>Engine\Sources Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatorComponent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

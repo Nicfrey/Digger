@@ -15,6 +15,7 @@ public:
 	void SetNrRows(unsigned nrRows);
 	void SetCurrentRow(unsigned row);
 	void SetCurrentCol(unsigned col);
+	void SetCurrentFrame(unsigned frame);
 private:
 	Rectf GetSrcRect() const;
 	void SetShape();

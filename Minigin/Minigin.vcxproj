@@ -220,6 +220,7 @@
     <ClInclude Include="..\3rdParty\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\3rdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="..\3rdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="AnimatorComponent.h" />
     <ClInclude Include="Blackboard.h" />
     <ClInclude Include="BoxCollider2D.h" />
     <ClInclude Include="ColliderComponent.h" />
@@ -244,13 +245,11 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SpriteComponent.h" />
-    <ClInclude Include="FSMStateNode.h" />
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TimeEngine.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="FSMTransition.h" />
     <ClInclude Include="TrashTheCacheComponent.h" />
     <ClInclude Include="TrashTheCacheGOComponent.h" />
     <ClInclude Include="Utils.h" />
@@ -267,6 +266,7 @@
     <ClCompile Include="..\3rdParty\imgui\implot.cpp" />
     <ClCompile Include="..\3rdParty\imgui\implot_demo.cpp" />
     <ClCompile Include="..\3rdParty\imgui\implot_items.cpp" />
+    <ClCompile Include="AnimatorComponent.cpp" />
     <ClCompile Include="Blackboard.cpp" />
     <ClCompile Include="BoxCollider2D.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
@@ -290,13 +290,11 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
-    <ClCompile Include="FSMStateNode.cpp" />
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="TextureComponent.cpp" />
     <ClCompile Include="TimeEngine.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="FSMTransition.cpp" />
     <ClCompile Include="TrashTheCacheComponent.cpp" />
     <ClCompile Include="TrashTheCacheGOComponent.cpp" />
     <ClCompile Include="Utils.cpp" />

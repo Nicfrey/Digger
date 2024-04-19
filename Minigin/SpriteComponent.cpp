@@ -88,6 +88,16 @@ void SpriteComponent::SetCurrentCol(unsigned col)
 	m_CurrentCol = col;
 }
 
+void SpriteComponent::SetCurrentFrame(unsigned frame)
+{
+	if(frame >= m_NrCols * m_NrRows || frame < 0)
+	{
+		frame = 0;
+	}
+	m_CurrentRow = frame / m_NrCols;
+	m_CurrentCol = frame % m_NrCols;
+}
+
 void SpriteComponent::SetShape()
 {
 	m_Shape.bottomLeft.x = 0;

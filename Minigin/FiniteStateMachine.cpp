@@ -1,8 +1,10 @@
 #include "FiniteStateMachine.h"
 
 #include "Blackboard.h"
-#include "FSMStateNode.h"
-#include "FSMTransition.h"
+
+FiniteStateMachine::FiniteStateMachine(Blackboard* pBlackboard): m_pCurrentState{nullptr}, m_pBlackboard{pBlackboard}
+{
+}
 
 FiniteStateMachine::FiniteStateMachine(FSMStateNode* startNode, Blackboard* pBlackboard): m_pBlackboard(pBlackboard)
 {
@@ -13,7 +15,6 @@ FiniteStateMachine::~FiniteStateMachine()
 {
 	for(const auto& state : m_Transitions)
 	{
-		delete state.first;
 		for(auto transition : state.second)
 		{
 			if(transition.first != nullptr)
@@ -31,9 +32,23 @@ FiniteStateMachine::~FiniteStateMachine()
 	delete m_pBlackboard;
 }
 
+void FiniteStateMachine::SetStartNode(FSMStateNode* startNode)
+{
+	ChangeState(startNode);
+}
+
+void FiniteStateMachine::AddStateNode(FSMStateNode* stateNode)
+{
+	const auto it{ m_Transitions.find(stateNode) };
+	if (it == m_Transitions.end())
+	{
+		m_Transitions[stateNode] = Transitions{};
+	}
+}
+
 void FiniteStateMachine::AddTransition(FSMStateNode* startNode, FSMStateNode* endNode, FSMTransition* condition)
 {
-	auto it{ m_Transitions.find(startNode) };
+	const auto it{ m_Transitions.find(startNode) };
 	if(it == m_Transitions.end())
 	{
 		m_Transitions[startNode] = Transitions{};
@@ -60,6 +75,11 @@ void FiniteStateMachine::Update()
 	{
 		m_pCurrentState->Update(m_pBlackboard);
 	}
+}
+
+Blackboard* FiniteStateMachine::GetBlackboard() const
+{
+	return m_pBlackboard;
 }
 
 void FiniteStateMachine::ChangeState(FSMStateNode* newState)

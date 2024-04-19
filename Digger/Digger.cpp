@@ -9,9 +9,11 @@
 #include <Xinput.h>
 
 #include "Achievement.h"
+#include "AnimatorComponent.h"
 #include "BoxCollider2D.h"
 #include "Controller.h"
 #include "DiggerCommands.h"
+#include "DiggerTransitionAnim.h"
 #include "EmeraldComponent.h"
 #include "EnemyComponent.h"
 #include "GameObject.h"
@@ -41,6 +43,21 @@ void load()
 	auto uiComponent{ std::make_shared<UIPlayerComponent>(fontSmall) };
 	auto boxCollider{ std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width,spritePlayer1->GetShape().height) };
 	auto playerComponent{ std::make_shared<PlayerComponent>() };
+	auto animator{ std::make_shared<AnimatorComponent>() };
+	Animation idlePlayer{ .name = "Idle",.frames = {0,1,2},.frameTime = 0.1f, .spriteComponent = spritePlayer1 };
+	Animation idleWithoutShoot{ .name = "IdleWithoutShoot",.frames{4,5,6},.frameTime = 0.1f,.spriteComponent = spritePlayer1 };
+	Animation deadAnim{ .name = "DeadAnim", .frames = {3},.spriteComponent = spritePlayer1 };
+	TransitionNoProjectile* transitionNoProjectile{ new TransitionNoProjectile() };
+	TransitionProjectile* transitionProjectile{ new TransitionProjectile{} };
+	TransitionDead* transitionDead{ new TransitionDead{} };
+	animator->AddTransition(idlePlayer, idleWithoutShoot, transitionNoProjectile);
+	animator->AddTransition(idleWithoutShoot, idlePlayer, transitionProjectile);
+	animator->AddTransition(idlePlayer, deadAnim, transitionDead);
+	animator->AddTransition(idleWithoutShoot, deadAnim, transitionDead);
+	if (!animator->SetStartAnimation(idlePlayer))
+	{
+		std::cerr << "Failed to set start animation" << '\n';
+	}
 	uiComponent->SetPosition(0, 150);
 	go->AddComponent(healthComponent);
 	go->AddComponent(uiComponent);
@@ -48,6 +65,7 @@ void load()
 	go->AddComponent(spritePlayer1);
 	go->AddComponent(boxCollider);
 	go->AddComponent(playerComponent);
+	go->AddComponent(animator);
 	std::shared_ptr moveUpCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1}) };
 	std::shared_ptr moveDownCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1}) };
 	std::shared_ptr moveLeftCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{-1,0}) };
@@ -75,6 +93,24 @@ void load()
 	scoreComponent = std::make_shared<ScoreComponent>();
 	boxCollider = std::make_shared<BoxCollider2D>(spritePlayer2->GetShape().width,spritePlayer2->GetShape().height);
 	playerComponent = std::make_shared<PlayerComponent>();
+	animator = std::make_shared<AnimatorComponent>();
+	idlePlayer.frames = { 8,9,10 };
+	idlePlayer.spriteComponent = spritePlayer2;
+	idleWithoutShoot.spriteComponent = spritePlayer2;
+	idleWithoutShoot.frames = { 12,13,14 };
+	deadAnim.frames = { 11 };
+	deadAnim.spriteComponent = spritePlayer2;
+	transitionNoProjectile = new TransitionNoProjectile{};
+	transitionProjectile = new TransitionProjectile{};
+	transitionDead = new TransitionDead{};
+	animator->AddTransition(idlePlayer,idleWithoutShoot,transitionNoProjectile);
+	animator->AddTransition(idleWithoutShoot,idlePlayer,transitionProjectile);
+	animator->AddTransition(idlePlayer,deadAnim,transitionDead);
+	animator->AddTransition(idleWithoutShoot,deadAnim,transitionDead);
+	if(!animator->SetStartAnimation(idlePlayer))
+	{
+		std::cerr << "Failed to set start animation" << '\n';
+	}
 	uiComponent->SetPosition(0, 210);
 	go->AddComponent(spritePlayer2);
 	go->AddComponent(healthComponent);
@@ -82,6 +118,7 @@ void load()
 	go->AddComponent(scoreComponent);
 	go->AddComponent(boxCollider);
 	go->AddComponent(playerComponent);
+	go->AddComponent(animator);
 	go->SetTag("Player");
 	moveUpCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1});
 	moveDownCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1});

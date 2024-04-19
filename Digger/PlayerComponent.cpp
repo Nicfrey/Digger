@@ -1,16 +1,19 @@
 #include "PlayerComponent.h"
 
+#include "AnimatorComponent.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
 #include "ProjectileComponent.h"
 #include "SceneManager.h"
 #include "BoxCollider2D.h"
 #include "imgui.h"
+#include "Observer.h"
 #include "SpriteComponent.h"
 #include "Scene.h"
 
 PlayerComponent::PlayerComponent() : BaseComponent(nullptr), m_pProjectile{ nullptr }
 {
+	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayerComponent::SetDeadAnim);
 }
 
 PlayerComponent::PlayerComponent(const PlayerComponent& other): BaseComponent(other)
@@ -67,15 +70,13 @@ void PlayerComponent::Update()
 void PlayerComponent::Init()
 {
 	BaseComponent::Init();
-	auto forward{ GetGameObject()->GetForward() };
-	m_pDefaultProjectile = std::make_unique<dae::GameObject>();
-	const auto projectileComponent{ std::make_shared<ProjectileComponent>( forward ) };
-	m_pDefaultProjectile->AddComponent(projectileComponent);
-	const auto sprite = std::make_shared<SpriteComponent>("SpritesFire.png", 3, 2);
-	m_pDefaultProjectile->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
-	m_pDefaultProjectile->AddComponent(sprite);
-	m_pDefaultProjectile->GetComponent<ProjectileComponent>()->Activate(GetGameObject());
-	m_pDefaultProjectile->SetLocalPosition(GetGameObject()->GetWorldPosition().x + 5 * forward.x, GetGameObject()->GetWorldPosition().y + 5 * forward.y);
+	if(GetGameObject()->HasComponent<AnimatorComponent>())
+	{
+		const auto animator{ GetGameObject()->GetComponent<AnimatorComponent>() };
+		animator->AddParameter("HasProjectile", true);
+		animator->AddParameter("PlayerDied", false);
+	}
+	
 }
 
 void PlayerComponent::RenderGUI()
@@ -101,12 +102,22 @@ void PlayerComponent::ShootProjectile()
 		const auto newProjectile{ CreateProjectile() };
 		m_pProjectile = newProjectile.get();
 		dae::SceneManager::GetInstance().Instantiate(newProjectile);
+		if(GetGameObject()->HasComponent<AnimatorComponent>())
+		{
+			auto animator = GetGameObject()->GetComponent<AnimatorComponent>();
+			animator->SetParameter("HasProjectile", false);
+		}
 	}
 }
 
 void PlayerComponent::ResetProjectile()
 {
 	m_pProjectile = nullptr;
+	if (GetGameObject()->HasComponent<AnimatorComponent>())
+	{
+		auto animator = GetGameObject()->GetComponent<AnimatorComponent>();
+		animator->SetParameter("HasProjectile", true);
+	}
 }
 
 void PlayerComponent::HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other) const
@@ -141,4 +152,17 @@ std::shared_ptr<dae::GameObject> PlayerComponent::CreateProjectile() const
 	newProjectile->GetComponent<ProjectileComponent>()->Activate(GetGameObject());
 	newProjectile->SetLocalPosition(GetGameObject()->GetWorldPosition().x + 5 * forward.x, GetGameObject()->GetWorldPosition().y + 5 * forward.y);
 	return newProjectile;
+}
+
+void PlayerComponent::SetDeadAnim()
+{
+	if(GetGameObject()->HasComponent<HealthComponent>())
+	{
+		const auto health{ GetGameObject()->GetComponent<HealthComponent>() };
+		if (GetGameObject()->HasComponent<AnimatorComponent>() && health->IsDead())
+		{
+			const auto animator = GetGameObject()->GetComponent<AnimatorComponent>();
+			animator->SetParameter("PlayerDied", true);
+		}
+	}
 }

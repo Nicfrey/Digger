@@ -23,5 +23,6 @@ private:
 	std::unique_ptr<dae::GameObject> m_pDefaultProjectile;
 	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other) const;
 	std::shared_ptr<dae::GameObject> CreateProjectile() const;
+	void SetDeadAnim();
 };
 

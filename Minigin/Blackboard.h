@@ -42,7 +42,7 @@ public:
 	template<typename T>
 	bool ChangeValue(const std::string& key, T data);
 private:
-	std::unordered_map<std::string, std::shared_ptr<IBlackboardField>> m_BlackboardData;
+	std::unordered_map<std::string, IBlackboardField*> m_BlackboardData;
 };
 
 template <typename T>
@@ -81,7 +81,7 @@ bool Blackboard::AddValue(const std::string& key,T data)
 	{
 		return false;
 	}
-	m_BlackboardData[key] = std::make_shared<BlackboardField<T>>>(data);
+	m_BlackboardData[key] = new BlackboardField<T>(data);
 	return true;
 }
 
@@ -93,7 +93,7 @@ bool Blackboard::ChangeValue(const std::string& key, T data)
 	{
 		return false;
 	}
-	if (std::shared_ptr<BlackboardField<T>> field{ std::dynamic_pointer_cast<BlackboardField<T>>(m_BlackboardData[key]) })
+	if (BlackboardField<T>* field{ dynamic_cast<BlackboardField<T>*>(m_BlackboardData[key]) })
 	{
 		field->SetData(data);
 		return true;
