@@ -145,7 +145,7 @@ bool BoxCollider2D::Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec
 
 	for(size_t i{}; i < points.size(); ++i)
 	{
-		const unsigned j{ (i + 1) % points.size() };
+		const size_t j{ (i + 1) % points.size() };
 		glm::vec2 intersectPoint;
 		if(LineIntersect2D(p0,p1,points[i],points[j],intersectPoint))
 		{

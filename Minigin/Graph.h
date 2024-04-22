@@ -7,11 +7,15 @@
 
 namespace GraphUtils
 {
-	class GraphNode final
+	/**
+	 * \brief Node of a Graph
+	 * Can be inherited to add more functionality
+	 */
+	class GraphNode
 	{
 	public:
-		GraphNode();
-		GraphNode(const glm::vec3& value);
+		GraphNode(bool canBeVisited = true);
+		GraphNode(const glm::vec3& value, bool canBeVisited = true);
 		~GraphNode() = default;
 		GraphNode(const GraphNode& other);
 		GraphNode(GraphNode&& other) noexcept;
@@ -24,12 +28,15 @@ namespace GraphUtils
 		void SetPosition(const glm::vec3& value) { m_Position = value; }
 		std::map<GraphNode*, float> GetNeighbors() const { return m_Neighbors; }
 		int GetId() const { return m_Id; }
+		bool CanBeVisited() const { return m_CanBeVisited; }
+		void SetCanBeVisited(bool value) { m_CanBeVisited = value; }
 
 	private:
 		int m_Id;
 		static int m_IdCounter;
 		std::map<GraphNode*,float> m_Neighbors;
 		glm::vec3  m_Position;
+		bool m_CanBeVisited;
 	};
 
 	class Graph final
@@ -53,8 +60,8 @@ namespace GraphUtils
 	private:
 		std::vector<GraphNode*> m_Nodes;
 		GraphNode* GetNodeMinDistance(const GraphUtils::GraphNode* endNode, const std::list<GraphUtils::GraphNode*>
-		                              & openList);
-		float GetDistance(const GraphNode* start, const GraphNode* end);
+		                              & openList, const std::list<GraphUtils::GraphNode*>& closedList, float& distance);
+		static float GetDistance(const GraphNode* start, const GraphNode* end);
 	};
 }
 

@@ -34,7 +34,7 @@ class Blackboard
 {
 public:
 	Blackboard() = default;
-	~Blackboard() = default;
+	~Blackboard();
 	template<typename T>
 	bool GetValue(const std::string& key, T& data);
 	template<typename T>

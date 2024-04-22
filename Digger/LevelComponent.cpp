@@ -85,7 +85,13 @@ void LevelComponent::Init()
 			}
 		}
 	}
-	m_ShortestPath = m_pGraph->GetShortestPath(m_pGraph->GetNode(25), m_pGraph->GetNode(149));
+	m_pGraph->GetNode(7)->SetCanBeVisited(false);
+	m_pGraph->GetNode(21)->SetCanBeVisited(false);
+	m_pGraph->GetNode(35)->SetCanBeVisited(false);
+	m_pGraph->GetNode(49)->SetCanBeVisited(false);
+	m_pGraph->GetNode(63)->SetCanBeVisited(false);
+
+	m_ShortestPath = m_pGraph->GetShortestPath(m_pGraph->GetNode(8), m_pGraph->GetNode(6));
 }
 
 void LevelComponent::RenderGUI()
@@ -94,8 +100,11 @@ void LevelComponent::RenderGUI()
 	ImGui::Begin("Graph");
 	for(size_t i{}; i < m_pGraph->GetNodes().size(); ++i)
 	{
-		const GraphUtils::GraphNode* node{ m_pGraph->GetNode(i) };
-		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(node->GetPosition().x, node->GetPosition().y), 15, IM_COL32(255, 0, 0, 255));
+		const GraphUtils::GraphNode* node{ m_pGraph->GetNode(static_cast<int>(i)) };
+		if(node->CanBeVisited())
+			ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(node->GetPosition().x, node->GetPosition().y), 15, IM_COL32(255, 0, 0, 255));
+		else
+			ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(node->GetPosition().x, node->GetPosition().y), 15, IM_COL32(0, 255, 255, 255));
 		for (const auto& neighbor : node->GetNeighbors())
 		{
 			const GraphUtils::GraphNode* neighborNode{ neighbor.first };

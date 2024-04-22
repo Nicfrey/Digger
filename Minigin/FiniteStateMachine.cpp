@@ -13,21 +13,39 @@ FiniteStateMachine::FiniteStateMachine(FSMStateNode* startNode, Blackboard* pBla
 
 FiniteStateMachine::~FiniteStateMachine()
 {
+	std::list<FSMStateNode*> nodesToDelete{};
+	std::list<FSMTransition*> transitionsToDelete{};
 	for(const auto& state : m_Transitions)
 	{
-		for(auto transition : state.second)
+		for (auto transition : state.second)
 		{
-			if(transition.first != nullptr)
+			auto itTransition = std::ranges::find_if(transitionsToDelete, [transition](const FSMTransition* other)
 			{
-				delete transition.first;
-				transition.first = nullptr;
+				return other == transition.first;
+			});
+			if(itTransition == transitionsToDelete.end())
+			{
+				transitionsToDelete.push_back(transition.first);
 			}
-			if(transition.second != nullptr)
+			auto itNode = std::ranges::find_if(nodesToDelete, [transition](const FSMStateNode* other)
 			{
-				delete transition.second;
-				transition.second = nullptr;
+				return other == transition.second;
+			});
+			if(itNode == nodesToDelete.end())
+			{
+				nodesToDelete.push_back(transition.second);
 			}
 		}
+	}
+	for(auto transition : transitionsToDelete)
+	{
+		delete transition;
+		transition = nullptr;
+	}
+	for(auto node : nodesToDelete)
+	{
+		delete node;
+		node = nullptr;
 	}
 	delete m_pBlackboard;
 }
