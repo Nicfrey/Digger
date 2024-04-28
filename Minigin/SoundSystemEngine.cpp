@@ -8,7 +8,7 @@
 
 #include "ResourceManager.h"
 
-std::unique_ptr<SoundSystemEngine> ServiceSoundLocator::m_SoundSystemInstance = nullptr;
+std::unique_ptr<SoundSystem> ServiceSoundLocator::m_SoundSystemInstance = nullptr;
 
 class SoundSystemEngine::SoundSystemImpl
 {
@@ -160,14 +160,30 @@ void SoundSystemEngine::SoundSystemImpl::LoadSoundThread(SoundId id, const std::
 	}
 }
 
-SoundSystemEngine& ServiceSoundLocator::GetSoundSystem()
+SoundSystem& ServiceSoundLocator::GetSoundSystem()
 {
 	return *m_SoundSystemInstance;
 }
 
-void ServiceSoundLocator::RegisterSoundSystem(std::unique_ptr<SoundSystemEngine>&& ss)
+void ServiceSoundLocator::RegisterSoundSystem(std::unique_ptr<SoundSystem>&& ss)
 {
 	m_SoundSystemInstance = std::move(ss);
+}
+
+LoggingSoundSystem::LoggingSoundSystem(std::unique_ptr<SoundSystem>&& ss): m_RealSoundSystem(std::move(ss))
+{
+}
+
+void LoggingSoundSystem::Play(const SoundId& id, const float& volume)
+{
+	m_RealSoundSystem->Play(id, volume);
+	std::cout << "Playing " << id << " at volume " << volume << "\n";
+}
+
+void LoggingSoundSystem::Add(const SoundId& id, const std::string& filepath)
+{
+	m_RealSoundSystem->Add(id, filepath);
+	std::cout << "Added " << id << " at path " << filepath << "\n";
 }
 
 SoundSystemEngine::SoundSystemEngine()

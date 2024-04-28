@@ -62,9 +62,22 @@ private:
 class ServiceSoundLocator final
 {
 public:
-	static SoundSystemEngine& GetSoundSystem();
-	static void RegisterSoundSystem(std::unique_ptr<SoundSystemEngine>&& ss);
+	static SoundSystem& GetSoundSystem();
+	static void RegisterSoundSystem(std::unique_ptr<SoundSystem>&& ss);
 private:
-	static std::unique_ptr<SoundSystemEngine> m_SoundSystemInstance;
+	static std::unique_ptr<SoundSystem> m_SoundSystemInstance;
+};
+
+class LoggingSoundSystem final : public SoundSystem
+{
+public:
+	LoggingSoundSystem() = delete;
+	LoggingSoundSystem(const LoggingSoundSystem& other) = delete;
+	LoggingSoundSystem(std::unique_ptr<SoundSystem>&& ss);
+	~LoggingSoundSystem() override = default;
+	void Play(const SoundId& id, const float& volume) override;
+	void Add(const SoundId& id, const std::string& filepath) override;
+private:
+	std::unique_ptr<SoundSystem> m_RealSoundSystem;
 };
 

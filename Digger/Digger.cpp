@@ -33,9 +33,14 @@
 
 void load()
 {
+#if _DEBUG
+	ServiceSoundLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystemEngine>()));
+
+#else
 	ServiceSoundLocator::RegisterSoundSystem(std::make_unique<SoundSystemEngine>());
+#endif
 	auto& ss{ ServiceSoundLocator::GetSoundSystem() };
-	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT),"Sounds/ProjectileHit.wav");
+	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), "Sounds/ProjectileHit.wav");
 
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Digger");
 	dae::SceneManager::GetInstance().SetActiveScene("Digger");
