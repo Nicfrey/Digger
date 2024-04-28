@@ -131,6 +131,7 @@ void PlayerComponent::HandleCollisionProjectile(std::shared_ptr<dae::GameObject>
 	{
 		if (GetGameObject() != projectileOther->GetShotBy())
 		{
+			EventManager::GetInstance().NotifyEvent("ProjectileHit");
 			const auto health{ GetGameObject()->GetComponent<HealthComponent>() };
 			health->LoseOneLife();
 			const auto playerComp{ projectileOther->GetShotBy()->GetComponent<PlayerComponent>() };

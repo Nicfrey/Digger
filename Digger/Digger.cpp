@@ -14,6 +14,7 @@
 #include "Controller.h"
 #include "DiggerCommands.h"
 #include "DiggerTransitionAnim.h"
+#include "DiggerUtils.h"
 #include "EmeraldComponent.h"
 #include "EnemyComponent.h"
 #include "GameObject.h"
@@ -26,11 +27,16 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
+#include "SoundSystemEngine.h"
 #include "SpriteComponent.h"
 #include "UIPlayerComponent.h"
 
 void load()
 {
+	ServiceSoundLocator::RegisterSoundSystem(std::make_unique<SoundSystemEngine>());
+	auto& ss{ ServiceSoundLocator::GetSoundSystem() };
+	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT),"Sounds/ProjectileHit.wav");
+
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Digger");
 	dae::SceneManager::GetInstance().SetActiveScene("Digger");
 
@@ -174,6 +180,13 @@ void load()
 
 	go = std::make_shared<dae::GameObject>();
 	go->AddComponent(std::make_shared<LevelComponent>());
+	scene.Add(go);
+
+	auto fontTiny = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 12);
+	go = std::make_shared<dae::GameObject>();
+	auto text = std::make_shared<dae::TextComponent>("Press WASD to move and SPACEBAR to shoot projectile to enemy or player", fontTiny);
+	go->SetLocalPosition(0, 20);
+	go->AddComponent(text);
 	scene.Add(go);
 }
 

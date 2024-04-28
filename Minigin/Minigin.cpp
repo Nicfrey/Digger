@@ -59,6 +59,11 @@ dae::Minigin::Minigin(const std::string &dataPath)
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
 
+	if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_OGG) < 0) 
+	{
+		throw std::runtime_error(std::string("SDL mixer error: ") + Mix_GetError());
+	}
+
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0)
 	{
 		throw std::runtime_error(std::string("SDL mixer error: ") + Mix_GetError());
