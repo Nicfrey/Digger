@@ -1,16 +1,69 @@
 #include "Graph.h"
 
+#include <iostream>
 #include <glm/geometric.hpp>
 
 int GraphUtils::GraphNode::m_IdCounter = 0;
 
-GraphUtils::GraphNode::GraphNode(): m_Id(++m_IdCounter), m_Neighbors{}, m_Position(glm::vec3(0.0f))
+GraphUtils::GraphNode::GraphNode(bool canBeVisited): m_Id(++m_IdCounter), m_Neighbors{}, m_Position(glm::vec3(0.0f)), m_CanBeVisited{canBeVisited}
 {
 }
 
-GraphUtils::GraphNode::GraphNode(const glm::vec3& value): GraphNode{}
+GraphUtils::GraphNode::GraphNode(const glm::vec3& value, bool canBeVisited): GraphNode{canBeVisited}
 {
 	m_Position = value;
+}
+
+GraphUtils::GraphNode::GraphNode(const GraphNode& other)
+{
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	m_CanBeVisited = other.m_CanBeVisited;
+	for (const auto& neighbor : other.m_Neighbors)
+	{
+		m_Neighbors.insert(std::make_pair(new GraphNode{ *neighbor.first },neighbor.second));
+	}
+}
+
+GraphUtils::GraphNode::GraphNode(GraphNode&& other) noexcept
+{
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	m_CanBeVisited = other.m_CanBeVisited;
+	m_Neighbors = std::move(other.m_Neighbors);
+	other.m_Id = 0;
+	other.m_Position = glm::vec3(0.0f);
+}
+
+GraphUtils::GraphNode& GraphUtils::GraphNode::operator=(const GraphNode& other)
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	m_CanBeVisited = other.m_CanBeVisited;
+	for (const auto& neighbor : other.m_Neighbors)
+	{
+		m_Neighbors.insert(std::make_pair(new GraphNode{ *neighbor.first }, neighbor.second));
+	}
+	return *this;
+}
+
+GraphUtils::GraphNode& GraphUtils::GraphNode::operator=(GraphNode&& other) noexcept
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	m_Id = other.m_Id;
+	m_Position = other.m_Position;
+	m_CanBeVisited = other.m_CanBeVisited;
+	m_Neighbors = std::move(other.m_Neighbors);
+	other.m_Id = 0;
+	other.m_Position = glm::vec3(0.0f);
+	return *this;
 }
 
 float GraphUtils::GraphNode::GetDistance(const GraphNode* neighbor) const
@@ -30,6 +83,56 @@ GraphUtils::Graph::~Graph()
 		delete node;
 		node = nullptr;
 	}
+}
+
+GraphUtils::Graph::Graph(const Graph& other)
+{
+	for(const auto node : other.m_Nodes)
+	{
+		m_Nodes.push_back(new GraphNode(*node));
+	}
+}
+
+GraphUtils::Graph::Graph(Graph&& other) noexcept
+{
+	m_Nodes = std::move(other.m_Nodes);
+	other.m_Nodes.clear();
+}
+
+GraphUtils::Graph& GraphUtils::Graph::operator=(const Graph& other)
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	for (auto node : m_Nodes)
+	{
+		delete node;
+		node = nullptr;
+	}
+	m_Nodes.clear();
+	for (const auto node : other.m_Nodes)
+	{
+		m_Nodes.push_back(new GraphNode(*node));
+	}
+	return *this;
+}
+
+GraphUtils::Graph& GraphUtils::Graph::operator=(Graph&& other) noexcept
+{
+	if(this == &other)
+	{
+		return *this;
+	}
+	for (auto node : m_Nodes)
+	{
+		delete node;
+		node = nullptr;
+	}
+	m_Nodes.clear();
+	m_Nodes = std::move(other.m_Nodes);
+	other.m_Nodes.clear();
+	return *this;
 }
 
 GraphUtils::GraphNode* GraphUtils::Graph::AddNode()
@@ -100,6 +203,7 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode
 	std::list<GraphNode*> openList{};
 	std::list<GraphNode*> closedList{};
 	openList.emplace_back(pCurrent);
+	float distance{ GetDistance(pStart,pEnd) };
 	while (!openList.empty())
 	{
 		for (auto neighbor : pCurrent->GetNeighbors())
@@ -115,7 +219,7 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode
 		}
 		closedList.emplace_back(pCurrent);
 		openList.remove(pCurrent);
-		pCurrent = GetNodeMinDistance(pEnd, openList);
+		pCurrent = GetNodeMinDistance(pEnd, openList,closedList,distance);
 		if(pCurrent == pEnd)
 		{
 			break;
@@ -134,14 +238,21 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode
 }
 
 
-GraphUtils::GraphNode* GraphUtils::Graph::GetNodeMinDistance(const GraphNode* endNode, const std::list<GraphUtils::GraphNode*>& openList)
+GraphUtils::GraphNode* GraphUtils::Graph::GetNodeMinDistance(const GraphUtils::GraphNode* endNode, const std::list<GraphUtils::GraphNode*>& openList, const std::list<GraphUtils::
+                                                             GraphNode*>& closedList, float& distance)
 {
+	std::cout << "distance: " << distance << '\n';
 	GraphNode* minNode{nullptr};
 	float minDistance {FLT_MAX};
 	for (const auto neighbor : openList)
 	{
+		auto it = std::ranges::find(closedList, neighbor);
+		if(it != closedList.end())
+		{
+			continue;
+		}
 		const float distanceNeighborEnd = GetDistance(neighbor, endNode);
-		if(distanceNeighborEnd < minDistance)
+		if(distanceNeighborEnd < minDistance && neighbor->CanBeVisited())
 		{
 			minNode = neighbor;
 			minDistance = distanceNeighborEnd;

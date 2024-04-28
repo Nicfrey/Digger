@@ -5,6 +5,7 @@ class ScoreComponent : public BaseComponent
 {
 public:
 	ScoreComponent() = default;
+	std::shared_ptr<BaseComponent> Clone() const override;
 	void AddScore(int score);
 	int GetScore() const;
 	void Update() override;

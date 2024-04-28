@@ -21,7 +21,7 @@ Achievement::Achievement(Achievement_t* Achievements, int NumAchievements) :
 	m_iNumAchievements = NumAchievements;
 	RequestStats();
 
-	EventManager::GetInstance().AddEvent("WinTheGame", [this]() { WinAchievement(); });
+	EventManager::GetInstance().AddEvent("WinTheGame",this, &Achievement::WinAchievement);
 }
 
 

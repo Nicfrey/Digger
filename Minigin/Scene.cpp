@@ -48,10 +48,11 @@ void Scene::OnCollisionUpdate()
 				if(go == goOther)
 					continue;
 
-				if (std::shared_ptr otherCollider{ goOther->GetComponent<Collider2D>() })
+				if (goOther->HasComponent<Collider2D>())
 				{
+					const auto otherCollider{ goOther->GetComponent<Collider2D>() };
 					otherCollider->IsOverlapping(go);
-					auto goCollider{ go->GetComponent<Collider2D>() };
+					const auto goCollider{ go->GetComponent<Collider2D>() };
 					goCollider->IsOverlapping(goOther);
 				}
 			}
@@ -97,6 +98,11 @@ std::vector<GameObject*> Scene::GetGameObjectsByTag(const std::string& tag) cons
 	return objectsWithTag;
 }
 
+std::vector<std::shared_ptr<GameObject>> Scene::GetAllGameObject()
+{
+	return m_objects;
+}
+
 void Scene::Add(std::shared_ptr<GameObject> object)
 {
 	m_objects.emplace_back(std::move(object));
@@ -110,6 +116,7 @@ void Scene::Remove()
 		}) };
 	if(it != m_objects.end())
 	{
+		it->get()->OnDestroy();
 		it->reset();
 		m_objects.erase(it);
 	}

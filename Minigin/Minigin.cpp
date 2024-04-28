@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
 #include <steam_api_common.h>
@@ -58,6 +59,16 @@ dae::Minigin::Minigin(const std::string &dataPath)
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
 
+	if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_OGG) < 0) 
+	{
+		throw std::runtime_error(std::string("SDL mixer error: ") + Mix_GetError());
+	}
+
+	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0)
+	{
+		throw std::runtime_error(std::string("SDL mixer error: ") + Mix_GetError());
+	}
+
 	g_window = SDL_CreateWindow(
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
@@ -81,6 +92,7 @@ dae::Minigin::~Minigin()
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(g_window);
 	g_window = nullptr;
+	Mix_CloseAudio();
 	SDL_Quit();
 }
 

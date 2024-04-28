@@ -8,16 +8,14 @@ public:
 	SpriteComponent() = default;
 	SpriteComponent(const std::string& filename);
 	SpriteComponent(const std::string& filename, unsigned nrCols, unsigned nrRows);
-	~SpriteComponent() override = default;
-
-	SpriteComponent(const SpriteComponent& other) = delete;
-	SpriteComponent(SpriteComponent&& other) noexcept = delete;
-	SpriteComponent& operator=(const SpriteComponent& other) = delete;
-	SpriteComponent& operator=(SpriteComponent&& other) noexcept = delete;
+	std::shared_ptr<BaseComponent> Clone() const override;
 	void Render() const override;
 	Rectf GetShape() const;
 	void SetNrCols(unsigned nrCols);
 	void SetNrRows(unsigned nrRows);
+	void SetCurrentRow(unsigned row);
+	void SetCurrentCol(unsigned col);
+	void SetCurrentFrame(unsigned frame);
 private:
 	Rectf GetSrcRect() const;
 	void SetShape();
@@ -27,5 +25,7 @@ private:
 
 	unsigned m_NrCols;
 	unsigned m_NrRows;
+	unsigned m_CurrentRow;
+	unsigned m_CurrentCol;
 };
 

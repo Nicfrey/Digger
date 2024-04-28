@@ -8,17 +8,20 @@ public:
 	ProjectileComponent();
 	ProjectileComponent(const glm::vec2& direction);
 	~ProjectileComponent() override = default;
-	ProjectileComponent(const ProjectileComponent& other) = delete;
-	ProjectileComponent(ProjectileComponent&& other) noexcept = delete;
-	ProjectileComponent& operator=(const ProjectileComponent& other) = delete;
-	ProjectileComponent& operator=(ProjectileComponent&& other) noexcept = delete;
+	ProjectileComponent(const ProjectileComponent& other) = default;
+	ProjectileComponent(ProjectileComponent&& other) noexcept;
+	ProjectileComponent& operator=(const ProjectileComponent& other);
+	ProjectileComponent& operator=(ProjectileComponent&& other) noexcept;
 
+	std::shared_ptr<BaseComponent> Clone() const override;
 	void Update() override;
 	void Init() override;
+	void OnDestroy() override;
 
 	void Activate(dae::GameObject* owner);
 	void SetDirection(const glm::vec2& direction) { m_Direction = direction; }
 	dae::GameObject* GetShotBy() const { return m_ShotBy; }
+	void PlaySoundHit();
 
 private:
 	bool m_IsActive;

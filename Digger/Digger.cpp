@@ -9,9 +9,14 @@
 #include <Xinput.h>
 
 #include "Achievement.h"
+#include "AnimatorComponent.h"
 #include "BoxCollider2D.h"
 #include "Controller.h"
 #include "DiggerCommands.h"
+#include "DiggerTransitionAnim.h"
+#include "DiggerUtils.h"
+#include "EmeraldComponent.h"
+#include "EnemyComponent.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
 #include "InputManager.h"
@@ -22,11 +27,21 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
+#include "SoundSystemEngine.h"
 #include "SpriteComponent.h"
 #include "UIPlayerComponent.h"
 
 void load()
 {
+#if _DEBUG
+	ServiceSoundLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystemEngine>()));
+
+#else
+	ServiceSoundLocator::RegisterSoundSystem(std::make_unique<SoundSystemEngine>());
+#endif
+	auto& ss{ ServiceSoundLocator::GetSoundSystem() };
+	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), "Sounds/ProjectileHit.wav");
+
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Digger");
 	dae::SceneManager::GetInstance().SetActiveScene("Digger");
 
@@ -39,6 +54,21 @@ void load()
 	auto uiComponent{ std::make_shared<UIPlayerComponent>(fontSmall) };
 	auto boxCollider{ std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width,spritePlayer1->GetShape().height) };
 	auto playerComponent{ std::make_shared<PlayerComponent>() };
+	auto animator{ std::make_shared<AnimatorComponent>() };
+	Animation idlePlayer{ .name = "Idle",.frames = {0,1,2},.frameTime = 0.1f, .spriteComponent = spritePlayer1 };
+	Animation idleWithoutShoot{ .name = "IdleWithoutShoot",.frames{4,5,6},.frameTime = 0.1f,.spriteComponent = spritePlayer1 };
+	Animation deadAnim{ .name = "DeadAnim", .frames = {3},.spriteComponent = spritePlayer1 };
+	TransitionNoProjectile* transitionNoProjectile{ new TransitionNoProjectile() };
+	TransitionProjectile* transitionProjectile{ new TransitionProjectile{} };
+	TransitionDead* transitionDead{ new TransitionDead{} };
+	animator->AddTransition(idlePlayer, idleWithoutShoot, transitionNoProjectile);
+	animator->AddTransition(idleWithoutShoot, idlePlayer, transitionProjectile);
+	animator->AddTransition(idlePlayer, deadAnim, transitionDead);
+	animator->AddTransition(idleWithoutShoot, deadAnim, transitionDead);
+	if (!animator->SetStartAnimation(idlePlayer))
+	{
+		std::cerr << "Failed to set start animation" << '\n';
+	}
 	uiComponent->SetPosition(0, 150);
 	go->AddComponent(healthComponent);
 	go->AddComponent(uiComponent);
@@ -46,6 +76,7 @@ void load()
 	go->AddComponent(spritePlayer1);
 	go->AddComponent(boxCollider);
 	go->AddComponent(playerComponent);
+	go->AddComponent(animator);
 	std::shared_ptr moveUpCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1}) };
 	std::shared_ptr moveDownCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1}) };
 	std::shared_ptr moveLeftCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{-1,0}) };
@@ -73,6 +104,24 @@ void load()
 	scoreComponent = std::make_shared<ScoreComponent>();
 	boxCollider = std::make_shared<BoxCollider2D>(spritePlayer2->GetShape().width,spritePlayer2->GetShape().height);
 	playerComponent = std::make_shared<PlayerComponent>();
+	animator = std::make_shared<AnimatorComponent>();
+	idlePlayer.frames = { 8,9,10 };
+	idlePlayer.spriteComponent = spritePlayer2;
+	idleWithoutShoot.spriteComponent = spritePlayer2;
+	idleWithoutShoot.frames = { 12,13,14 };
+	deadAnim.frames = { 11 };
+	deadAnim.spriteComponent = spritePlayer2;
+	transitionNoProjectile = new TransitionNoProjectile{};
+	transitionProjectile = new TransitionProjectile{};
+	transitionDead = new TransitionDead{};
+	animator->AddTransition(idlePlayer,idleWithoutShoot,transitionNoProjectile);
+	animator->AddTransition(idleWithoutShoot,idlePlayer,transitionProjectile);
+	animator->AddTransition(idlePlayer,deadAnim,transitionDead);
+	animator->AddTransition(idleWithoutShoot,deadAnim,transitionDead);
+	if(!animator->SetStartAnimation(idlePlayer))
+	{
+		std::cerr << "Failed to set start animation" << '\n';
+	}
 	uiComponent->SetPosition(0, 210);
 	go->AddComponent(spritePlayer2);
 	go->AddComponent(healthComponent);
@@ -80,6 +129,7 @@ void load()
 	go->AddComponent(scoreComponent);
 	go->AddComponent(boxCollider);
 	go->AddComponent(playerComponent);
+	go->AddComponent(animator);
 	go->SetTag("Player");
 	moveUpCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1});
 	moveDownCommand = std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1});
@@ -98,7 +148,50 @@ void load()
 	scene.Add(go);
 
 	go = std::make_shared<dae::GameObject>();
+	auto sprite{ std::make_shared<SpriteComponent>("SpritesEnemies.png",4,2) };
+	healthComponent = std::make_shared<HealthComponent>(1);
+	boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width,sprite->GetShape().height);
+	auto enemyComponent{ std::make_shared<EnemyComponent>(EnemyComponent::EnemyType::Nobbins) };
+	go->AddComponent(sprite);
+	go->AddComponent(healthComponent);
+	go->AddComponent(boxCollider);
+	go->AddComponent(enemyComponent);
+	go->SetLocalPosition(50, 150);
+	go->SetTag("Enemy");
+	scene.Add(go);
+
+	go = std::make_shared<dae::GameObject>();
+	sprite = std::make_shared<SpriteComponent>("SpritesEnemies.png",4,2);
+	healthComponent = std::make_shared<HealthComponent>(1);
+	boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height);
+	enemyComponent = std::make_shared<EnemyComponent>(EnemyComponent::EnemyType::Hobbins);
+	go->AddComponent(sprite);
+	go->AddComponent(healthComponent);
+	go->AddComponent(boxCollider);
+	go->AddComponent(enemyComponent);
+	go->SetLocalPosition(50, 180);
+	go->SetTag("Enemy");
+	scene.Add(go);
+
+	go = std::make_shared<dae::GameObject>();
+	sprite = std::make_shared<SpriteComponent>("SpritesItems.png",3,3);
+	boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width,sprite->GetShape().height);
+	const auto item{ std::make_shared<EmeraldComponent>() };
+	go->AddComponent(sprite);
+	go->AddComponent(boxCollider);
+	go->AddComponent(item);
+	go->SetLocalPosition(50, 210);
+	scene.Add(go);
+
+	go = std::make_shared<dae::GameObject>();
 	go->AddComponent(std::make_shared<LevelComponent>());
+	scene.Add(go);
+
+	auto fontTiny = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 12);
+	go = std::make_shared<dae::GameObject>();
+	auto text = std::make_shared<dae::TextComponent>("Press WASD to move and SPACEBAR to shoot projectile to enemy or player", fontTiny);
+	go->SetLocalPosition(0, 20);
+	go->AddComponent(text);
 	scene.Add(go);
 }
 

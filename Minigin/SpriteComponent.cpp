@@ -10,6 +10,10 @@
 
 SpriteComponent::SpriteComponent(const std::string& filename): TextureComponent{filename}
 {
+	m_NrCols = 0;
+	m_NrRows = 0;
+	m_CurrentCol = 0;
+	m_CurrentRow = 0;
 	SetShape();
 }
 
@@ -17,7 +21,14 @@ SpriteComponent::SpriteComponent(const std::string& filename, unsigned nrCols, u
 {
 	m_NrCols = nrCols;
 	m_NrRows = nrRows;
+	m_CurrentCol = 0;
+	m_CurrentRow = 0;
 	SetShape();
+}
+
+std::shared_ptr<BaseComponent> SpriteComponent::Clone() const
+{
+	return std::make_shared<SpriteComponent>(*this);
 }
 
 void SpriteComponent::Render() const
@@ -67,6 +78,26 @@ void SpriteComponent::SetNrRows(unsigned nrRows)
 	m_NrRows = nrRows;
 }
 
+void SpriteComponent::SetCurrentRow(unsigned row)
+{
+	m_CurrentRow = row;
+}
+
+void SpriteComponent::SetCurrentCol(unsigned col)
+{
+	m_CurrentCol = col;
+}
+
+void SpriteComponent::SetCurrentFrame(unsigned frame)
+{
+	if(frame >= m_NrCols * m_NrRows || frame < 0)
+	{
+		frame = 0;
+	}
+	m_CurrentRow = frame / m_NrCols;
+	m_CurrentCol = frame % m_NrCols;
+}
+
 void SpriteComponent::SetShape()
 {
 	m_Shape.bottomLeft.x = 0;
@@ -80,7 +111,7 @@ Rectf SpriteComponent::GetSrcRect() const
 	Rectf srcRect{};
 	srcRect.width = m_Shape.width ;
 	srcRect.height = m_Shape.height ;
-	srcRect.bottomLeft.x = 0 * srcRect.width; // leave 0 for now
-	srcRect.bottomLeft.y = 0; // static_cast<float>(GetSize().y) + 0 * srcRect.height; // leave 0 for now
+	srcRect.bottomLeft.x = static_cast<float>(m_CurrentCol % m_NrCols) * srcRect.width; // leave 0 for now
+	srcRect.bottomLeft.y = srcRect.height * static_cast<float>(m_CurrentRow); // static_cast<float>(GetSize().y) + 0 * srcRect.height; // leave 0 for now
 	return srcRect;
 }

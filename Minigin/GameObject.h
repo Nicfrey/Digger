@@ -64,6 +64,7 @@ namespace dae
 		glm::vec3 GetForward() const;
 		void Destroy();
 		bool IsDestroyed() const;
+		void OnDestroy();
 
 		GameObject() = default;
 		GameObject(const glm::vec3& pos);
@@ -99,7 +100,7 @@ namespace dae
 	{
 		if (std::shared_ptr<BaseComponent> componentCaster{std::dynamic_pointer_cast<BaseComponent>(component)})
 		{
-			component->SetGameObject(GetThis());
+			component->SetGameObject(this);
 			m_Components.emplace_back(component);
 			return true;
 		}
