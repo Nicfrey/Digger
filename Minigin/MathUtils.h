@@ -20,4 +20,6 @@ namespace MathUtils
 	float Abs(float value);
 	float Cross2D(const glm::vec2& a, const glm::vec2& b);
 	float Dot2D(const glm::vec2& a, const glm::vec2& b);
+	float Pow(float value, int exponent);
+	float Sqrt(float x);
 }

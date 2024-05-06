@@ -86,10 +86,10 @@ void LevelComponent::Init()
 		}
 	}
 	m_pGraph->GetNode(7)->SetCanBeVisited(false);
-	m_pGraph->GetNode(21)->SetCanBeVisited(false);
-	m_pGraph->GetNode(35)->SetCanBeVisited(false);
-	m_pGraph->GetNode(49)->SetCanBeVisited(false);
-	m_pGraph->GetNode(63)->SetCanBeVisited(false);
+	m_pGraph->GetNode(22)->SetCanBeVisited(false);
+	m_pGraph->GetNode(36)->SetCanBeVisited(false);
+	m_pGraph->GetNode(50)->SetCanBeVisited(false);
+	m_pGraph->GetNode(64)->SetCanBeVisited(false);
 
 	m_ShortestPath = m_pGraph->GetShortestPath(m_pGraph->GetNode(8), m_pGraph->GetNode(6));
 }

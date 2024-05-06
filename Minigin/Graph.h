@@ -58,10 +58,20 @@ namespace GraphUtils
 		std::vector<GraphNode*> GetNodes() const;
 		std::vector<GraphNode*> GetShortestPath(GraphNode* pStart, GraphNode* pEnd);
 	private:
+		struct NodeRecord
+		{
+			GraphNode* pNode = nullptr;
+			GraphNode* pFromNode = nullptr;
+			float costSoFar = 0.f;
+			float heuristicCost = 0.f;
+			bool operator==(const NodeRecord& other) const;
+			bool operator<(const NodeRecord& other) const;
+		};
 		std::vector<GraphNode*> m_Nodes;
 		GraphNode* GetNodeMinDistance(const GraphUtils::GraphNode* endNode, const std::list<GraphUtils::GraphNode*>
-		                              & openList, const std::list<GraphUtils::GraphNode*>& closedList, float& distance);
+		                              & openList, const std::list<GraphUtils::GraphNode*>& closedList);
 		static float GetDistance(const GraphNode* start, const GraphNode* end);
+		float GetHeuristic(const GraphNode* start, const GraphNode* end);
 	};
 }
 
