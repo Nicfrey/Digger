@@ -61,7 +61,7 @@ void dae::SceneManager::SetActiveScene(std::shared_ptr<Scene> scene)
 
 void dae::SceneManager::Instantiate(std::shared_ptr<GameObject> object)
 {
-	m_ActiveScene->Add(std::move(object));
+	m_ActiveScene->Instantiate(std::move(object));
 }
 
 dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) const

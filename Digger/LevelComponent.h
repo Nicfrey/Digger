@@ -4,6 +4,8 @@
 #include "BaseComponent.h"
 #include <glm/vec2.hpp>
 
+#include "json.hpp"
+
 namespace GraphUtils
 {
 	class Graph;
@@ -26,5 +28,8 @@ private:
 	GraphUtils::Graph* m_pGraph;
 	std::vector<GraphUtils::GraphNode*> m_ShortestPath;
 	glm::vec2 m_StartPos{20,20};
+	glm::vec2 m_SpawnPointEnemy;
+	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
+	void CreateEmeraldAtIndex(int index);
 };
 

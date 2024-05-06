@@ -1,9 +1,16 @@
 #include "LevelComponent.h"
 
+#include <iostream>
+
+#include "BoxCollider2D.h"
+#include "EmeraldComponent.h"
 #include "GameObject.h"
 #include "Graph.h"
 #include "imgui.h"
 #include "SceneManager.h"
+#include "json.hpp"
+#include "ResourceManager.h"
+#include "SpriteComponent.h"
 
 LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}}
 {
@@ -62,6 +69,11 @@ std::shared_ptr<BaseComponent> LevelComponent::Clone() const
 
 void LevelComponent::Init()
 {
+	// Read from json
+	nlohmann::json json{ dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level1.json") };
+	auto spawnEnemy = json["SpawnPointEnemy"];
+	m_SpawnPointEnemy = GetVectorFromJson(json["SpawnPointEnemy"]);
+
 	constexpr int maxRow{ 10 };
 	constexpr int maxColumn{ 15 };
 	for (int i{}; i < maxRow; ++i)
@@ -70,6 +82,7 @@ void LevelComponent::Init()
 		{
 			const int currentIndex{ i * maxColumn + j };
 			GraphUtils::GraphNode* current{ m_pGraph->AddNode(glm::vec3{ m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0 }) };
+			current->SetCanBeVisited(false);
 			if (j != 0)
 			{
 				GraphUtils::GraphNode* left{ m_pGraph->GetNode(currentIndex - 1) };
@@ -85,13 +98,19 @@ void LevelComponent::Init()
 			}
 		}
 	}
-	m_pGraph->GetNode(7)->SetCanBeVisited(false);
-	m_pGraph->GetNode(22)->SetCanBeVisited(false);
-	m_pGraph->GetNode(36)->SetCanBeVisited(false);
-	m_pGraph->GetNode(50)->SetCanBeVisited(false);
-	m_pGraph->GetNode(64)->SetCanBeVisited(false);
 
-	m_ShortestPath = m_pGraph->GetShortestPath(m_pGraph->GetNode(8), m_pGraph->GetNode(6));
+	// Set the graph index to be visited
+	for(auto data: json["CanBeVisited"])
+	{
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x))->SetCanBeVisited(true);
+	}
+
+	for(auto data: json["Emerald"])
+	{
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
+	}
 }
 
 void LevelComponent::RenderGUI()
@@ -122,5 +141,23 @@ void LevelComponent::RenderGUI()
 		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(closestNode->GetPosition().x, closestNode->GetPosition().y), 15, IM_COL32(255, 255, 255, 255));
 	}
 	ImGui::End();
+}
+
+glm::vec2 LevelComponent::GetVectorFromJson(const nlohmann::json& json)
+{
+	return glm::vec2{ json.at("x"),json.at("y") };
+}
+
+void LevelComponent::CreateEmeraldAtIndex(int index)
+{
+	const auto pos = m_pGraph->GetNode(index)->GetPosition();
+	const std::shared_ptr emerald{ std::make_shared<dae::GameObject>()};
+	const auto sprite = std::make_shared<SpriteComponent>("SpritesItems.png", 3, 3);
+	emerald->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
+	const auto item{ std::make_shared<EmeraldComponent>() };
+	emerald->AddComponent(sprite);
+	emerald->AddComponent(item);
+	emerald->SetLocalPosition(pos);
+	dae::SceneManager::GetInstance().Instantiate(emerald);
 }
 

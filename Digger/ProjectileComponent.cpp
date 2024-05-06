@@ -76,7 +76,7 @@ void ProjectileComponent::Init()
 {
 	if (const auto spriteComp{ GetGameObject()->GetComponent<SpriteComponent>() })
 	{
-		spriteComp->SetTexture("Projectile.png");
+		spriteComp->SetTexture("SpritesFire.png");
 	}
 }
 

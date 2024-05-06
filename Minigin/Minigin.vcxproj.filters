@@ -70,6 +70,9 @@
     <Filter Include="Engine\Sources Files\Components">
       <UniqueIdentifier>{6ea7a708-2e66-434a-8d46-945e0c148a9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{61101b28-1ea9-4802-b868-a3b50548ff80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -206,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="SoundSystemEngine.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\nlohmann\json.hpp">
+      <Filter>json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
