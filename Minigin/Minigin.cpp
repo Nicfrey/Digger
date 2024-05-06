@@ -11,7 +11,6 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
-#include <steam_api_common.h>
 #include <thread>
 
 #include "InputManager.h"
@@ -112,7 +111,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	bool doContinue = true;
 	while (doContinue)
 	{
-		SteamAPI_RunCallbacks();
 		const auto currentTime{ std::chrono::high_resolution_clock::now() };
 		TimeEngine::GetInstance().SetDeltaTime(std::chrono::duration<float>(currentTime - lastTime).count());
 		lastTime = currentTime;

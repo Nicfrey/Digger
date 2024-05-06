@@ -33,9 +33,6 @@
     <ClCompile Include="UIPlayerComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Achievement.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="ProjectileComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
@@ -76,9 +73,6 @@
     </ClInclude>
     <ClInclude Include="UIPlayerComponent.h">
       <Filter>Fichiers d%27en-tête\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Achievement.h">
-      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="ProjectileComponent.h">
       <Filter>Fichiers d%27en-tête\Components</Filter>

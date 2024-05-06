@@ -5,10 +5,8 @@
 #endif
 #include <windows.h>
 #include <iostream>
-#include <steam_api.h>
 #include <Xinput.h>
 
-#include "Achievement.h"
 #include "AnimatorComponent.h"
 #include "BoxCollider2D.h"
 #include "Controller.h"
@@ -197,24 +195,7 @@ void load()
 
 int main()
 {
-	if (!SteamAPI_Init())
-	{
-		std::cerr << "Fatal Error - Steam must be running to play this game (SteamAPI_Init() failed)." << std::endl;
-		return 1;
-	}
-	std::cout << "Successfully initialized steam." << '\n';
-	Achievement_t g_Achievements[] =
-	{
-		_ACH_ID(ACH_WIN_ONE_GAME, "Vainqueur"),
-		_ACH_ID(ACH_WIN_100_GAMES, "Champion"),
-		_ACH_ID(ACH_TRAVEL_FAR_ACCUM, "Interstellaire"),
-		_ACH_ID(ACH_TRAVEL_FAR_SINGLE, "Étoile"),
-	};
-
-	const auto achievement = new Achievement(g_Achievements, 4);
     dae::Minigin engine{"../Data/" };
     engine.Run(load);
-	SteamAPI_Shutdown();
-	delete achievement;
 	return 0;
 }
