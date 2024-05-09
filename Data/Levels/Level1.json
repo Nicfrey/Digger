@@ -1,14 +1,21 @@
 {
+    "NumberLevel": 1,
     "SpawnPointEnemy": 
     {
         "x":10,
         "y":10
     },
-    "SpawnPointPlayer":
-    {
-        "x":7,
-        "y":12
-    },
+    "SpawnPointPlayers":
+    [
+        {
+            "x":7,
+            "y":9
+        },
+        {
+            "x":8,
+            "y":9
+        } 
+    ],
     "Emerald":
     [  
         {

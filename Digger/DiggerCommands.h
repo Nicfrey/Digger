@@ -13,20 +13,6 @@ private:
 	float m_Speed{80.f};
 };
 
-class KillPlayerCommand : public GameObjectCommand
-{
-public:
-	KillPlayerCommand(dae::GameObject* go);
-	void Execute() override;
-};
-
-class AddScorePlayerCommand : public GameObjectCommand
-{
-public:
-	AddScorePlayerCommand(dae::GameObject* go);
-	void Execute() override;
-};
-
 class ShootCommand : public GameObjectCommand
 {
 public:

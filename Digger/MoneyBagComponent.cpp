@@ -7,6 +7,8 @@
 #include "SceneManager.h"
 #include "ScoreComponent.h"
 #include "TimeEngine.h"
+#include "LevelComponent.h"
+#include "Scene.h"
 
 MoneyBagComponent::MoneyBagComponent(const MoneyBagComponent& other): BaseComponent{other}, m_State{other.m_State}
 {
@@ -51,6 +53,11 @@ void MoneyBagComponent::Init()
 		const auto animator{ GetGameObject()->GetComponent<AnimatorComponent>() };
 		animator->AddParameter("MoneyBagState",m_State);
 	}
+	if (const auto level{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() })
+	{
+		const auto levelComp{ level->GetComponent<LevelComponent>() };
+	}
+
 }
 
 void MoneyBagComponent::Update()

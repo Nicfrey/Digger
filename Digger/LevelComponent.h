@@ -32,5 +32,8 @@ private:
 	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
 	void CreateEmeraldAtIndex(int index);
 	void CreateMoneyBagAtIndex(int index);
+	void CreateBackgroundLevel(int level);
+	void CreatePlayerAtIndex(int index, int player);
+	int GetIndexFromPosition(const glm::vec2& pos, int maxColumn);
 };
 
