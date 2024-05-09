@@ -1,7 +1,10 @@
 #pragma once
+#include <functional>
 #include <string>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
+#include "Singleton.h"
 
 #pragma region structs
 
@@ -37,6 +40,41 @@ namespace dae
 		float distance;
 		dae::GameObject* pGameObject;
 	};
+
+	struct Timer
+	{
+		float timer{};
+		float currentTimer{};
+	};
+
+	using DelegateFnc = std::function<void()>;
+
+	class TimerManager final : public dae::Singleton<TimerManager>
+	{
+	public:
+		template<typename ClassType>
+		void AddTimer(ClassType* obj, void (ClassType::* funcPtr)(),float timer);
+		void AddTimer(const DelegateFnc& function, float timer);
+		void Update();
+	private:
+		struct TimerHandler
+		{
+			Timer timer;
+			DelegateFnc func;
+		};
+		std::vector<TimerHandler> m_TimerHandlers;
+	};
+
+template <typename ClassType>
+void TimerManager::AddTimer(ClassType* obj, void(ClassType::* funcPtr)(), float timer)
+{
+	Timer newTimer{ .timer = timer };
+	TimerHandler newHandler{ .timer = newTimer, .func = [obj, funcPtr]()
+	{
+		(obj->*funcPtr)();
+	} };
+	m_TimerHandlers.emplace_back(newHandler);
+}
 
 #pragma endregion structs
 

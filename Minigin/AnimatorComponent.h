@@ -41,6 +41,7 @@ public:
 	void Update(Blackboard* pBlackboard) override;
 	void Exit(Blackboard* pBlackboard) override;
 	std::string GetName() const { return m_CurrentAnimation.name; }
+	bool IsFinished() const { return m_IsFinished; }
 private:
 	Animation m_CurrentAnimation;
 	bool m_IsFinished{ false };
@@ -64,6 +65,7 @@ public:
 	void Init() override;
 	void Update() override;
 
+	bool CurrentAnimationIsFinished() const;
 	bool SetStartAnimation(const Animation& anim) const;
 	void AddTransition(const Animation& startAnim, const Animation& endAnim, FSMTransition* pTransition) const;
 	template<typename T>

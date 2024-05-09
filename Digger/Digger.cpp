@@ -29,6 +29,11 @@
 #include "SpriteComponent.h"
 #include "UIPlayerComponent.h"
 
+void TestTimerManager()
+{
+	std::cout << "Prout HAHAHAHAHA\n";
+}
+
 void load()
 {
 #if _DEBUG
@@ -56,9 +61,9 @@ void load()
 	Animation idlePlayer{ .name = "Idle",.frames = {0,1,2},.frameTime = 0.1f, .spriteComponent = spritePlayer1 };
 	Animation idleWithoutShoot{ .name = "IdleWithoutShoot",.frames{4,5,6},.frameTime = 0.1f,.spriteComponent = spritePlayer1 };
 	Animation deadAnim{ .name = "DeadAnim", .frames = {3},.spriteComponent = spritePlayer1 };
-	TransitionNoProjectile* transitionNoProjectile{ new TransitionNoProjectile() };
-	TransitionProjectile* transitionProjectile{ new TransitionProjectile{} };
-	TransitionDead* transitionDead{ new TransitionDead{} };
+	TransitionPlayerNoProjectile* transitionNoProjectile{ new TransitionPlayerNoProjectile() };
+	TransitionPlayerHasProjectile* transitionProjectile{ new TransitionPlayerHasProjectile{} };
+	TransitionPlayerIsDead* transitionDead{ new TransitionPlayerIsDead{} };
 	animator->AddTransition(idlePlayer, idleWithoutShoot, transitionNoProjectile);
 	animator->AddTransition(idleWithoutShoot, idlePlayer, transitionProjectile);
 	animator->AddTransition(idlePlayer, deadAnim, transitionDead);
@@ -109,9 +114,9 @@ void load()
 	idleWithoutShoot.frames = { 12,13,14 };
 	deadAnim.frames = { 11 };
 	deadAnim.spriteComponent = spritePlayer2;
-	transitionNoProjectile = new TransitionNoProjectile{};
-	transitionProjectile = new TransitionProjectile{};
-	transitionDead = new TransitionDead{};
+	transitionNoProjectile = new TransitionPlayerNoProjectile{};
+	transitionProjectile = new TransitionPlayerHasProjectile{};
+	transitionDead = new TransitionPlayerIsDead{};
 	animator->AddTransition(idlePlayer,idleWithoutShoot,transitionNoProjectile);
 	animator->AddTransition(idleWithoutShoot,idlePlayer,transitionProjectile);
 	animator->AddTransition(idlePlayer,deadAnim,transitionDead);
@@ -191,6 +196,8 @@ void load()
 	go->SetLocalPosition(0, 20);
 	go->AddComponent(text);
 	scene.Add(go);
+
+	TimerManager::GetInstance().AddTimer(TestTimerManager, 2.f);
 }
 
 int main()

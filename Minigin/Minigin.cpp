@@ -18,6 +18,7 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include "TimeEngine.h"
+#include "Utils.h"
 
 SDL_Window* g_window{};
 
@@ -104,6 +105,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	auto& timerManager = TimerManager::GetInstance();
 	sceneManager.Init();
 	float lag{0.f};
 
@@ -124,6 +126,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			lag -= FIXED_TIME_STEP;
 		}
 		sceneManager.OnCollisionUpdate();
+		timerManager.Update();
 		sceneManager.Update();
 		renderer.Render();
 

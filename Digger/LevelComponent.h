@@ -31,5 +31,6 @@ private:
 	glm::vec2 m_SpawnPointEnemy;
 	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
 	void CreateEmeraldAtIndex(int index);
+	void CreateMoneyBagAtIndex(int index);
 };
 
