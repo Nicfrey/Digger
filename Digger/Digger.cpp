@@ -13,6 +13,7 @@
 #include "InputManager.h"
 #include "LevelComponent.h"
 #include "Minigin.h"
+#include "Observer.h"
 #include "ResourceManager.h"
 #include "Scene.h"
 #include "SceneManager.h"
@@ -22,9 +23,13 @@
 #include "Widget.h"
 #include "WidgetManager.h"
 
-void TestTimerManager()
+void OnClickLoadLevel1()
 {
-	std::cout << "Prout HAHAHAHAHA\n";
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("Digger");
+	dae::SceneManager::GetInstance().SetActiveScene("Digger");
+	auto go = std::make_shared<dae::GameObject>();
+	go->AddComponent(std::make_shared<LevelComponent>());
+	scene.Add(go);
 }
 
 void load()
@@ -38,7 +43,7 @@ void load()
 	auto& ss{ ServiceSoundLocator::GetSoundSystem() };
 	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), "Sounds/ProjectileHit.wav");
 
-	dae::SceneManager::GetInstance().CreateScene("Digger");
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("MenuDigger");
 	dae::SceneManager::GetInstance().SetActiveScene("Digger");
 
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
@@ -143,10 +148,14 @@ void load()
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);*/
 
+	auto go = std::make_shared<dae::GameObject>();
+	go->AddComponent(std::make_shared<LevelComponent>());
+	scene.Add(go);
+
 	auto& widgetManager{ WidgetManager::GetInstance() };
 	auto newWidget{std::make_shared<Widget>("TestUI")};
-	auto newButton{ std::make_shared<ButtonComponent>("ButtonTest",glm::vec3{100,100,0},"MyButton",fontSmall) };
-	newButton->SetOnButtonClick(TestTimerManager);
+	auto newButton{ std::make_shared<ButtonComponent>("LoadLevel1Button",glm::vec3{100,100,0},"Level1",fontSmall) };
+	newButton->SetOnButtonClick(OnClickLoadLevel1);
 	newWidget->AddElement(newButton);
 	widgetManager.AddWidget(newWidget);
 

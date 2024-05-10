@@ -34,6 +34,7 @@ namespace dae
 		std::vector<GameObject*> GetGameObjectsByTag(const std::string& tag) const;
 		std::vector<std::shared_ptr<GameObject>> GetAllGameObject() const;
 		void Destroy();
+		std::shared_ptr<dae::Scene> GetScene(const std::string& name);
 
 	private:
 		friend class Singleton<SceneManager>;

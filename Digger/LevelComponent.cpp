@@ -20,6 +20,7 @@
 #include "ResourceManager.h"
 #include "SpriteComponent.h"
 #include "HealthComponent.h"
+#include "Observer.h"
 #include "PlayerComponent.h"
 #include "ScoreComponent.h"
 #include "UIPlayerComponent.h"
@@ -78,74 +79,24 @@ std::shared_ptr<BaseComponent> LevelComponent::Clone() const
 	return std::make_shared<LevelComponent>(*this);
 }
 
+void LevelComponent::Update()
+{
+	for(auto& player: m_Players)
+	{
+		auto node{ m_pGraph->GetClosestNode(player->GetWorldPosition()) };
+		if(!node->CanBeVisited())
+		{
+			node->SetCanBeVisited(true);
+		}
+	}
+}
+
 
 void LevelComponent::Init()
 {
-	constexpr int maxRow{ 10 };
-	constexpr int maxColumn{ 15 };
-
-	// Read from json
-	nlohmann::json json{dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level1.json")};
-	// Init background
-	int numberLevel{ json["NumberLevel"].get<int>() };
-	CreateBackgroundLevel(numberLevel);
-
-	// Init graph
-	for (int i{}; i < maxRow; ++i)
-	{
-		for (int j{}; j < maxColumn; ++j)
-		{
-			const int currentIndex{ i * maxColumn + j };
-			GraphUtils::GraphNode* current{
-				m_pGraph->AddNode(glm::vec3{
-					m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0
-				})
-			};
-			current->SetCanBeVisited(false);
-			if (j != 0)
-			{
-				GraphUtils::GraphNode* left{ m_pGraph->GetNode(currentIndex - 1) };
-				left->AddNeighbor(current, glm::distance(current->GetPosition(), left->GetPosition()));
-				current->AddNeighbor(left, glm::distance(current->GetPosition(), left->GetPosition()));
-			}
-			const int indexTop{ currentIndex - maxColumn };
-			if (i > 0)
-			{
-				GraphUtils::GraphNode* top{ m_pGraph->GetNode(indexTop) };
-				top->AddNeighbor(current, glm::distance(current->GetPosition(), top->GetPosition()));
-				current->AddNeighbor(top, glm::distance(current->GetPosition(), top->GetPosition()));
-			}
-		}
-	}
-
-
-	// Init Players
-	int indexPlayer{};
-	for(auto data: json["SpawnPointPlayers"])
-	{
-		// TODO Check if we are selecting 2 players coop
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
-		CreatePlayerAtIndex(GetIndexFromPosition(pos,maxColumn),indexPlayer);
-		++indexPlayer;
-	}
-
-	// Init the spawn point
-	auto spawnEnemy = json["SpawnPointEnemy"];
-	m_SpawnPointEnemy = GetVectorFromJson(json["SpawnPointEnemy"]);
-	// TODO Check if we are selecting 2 players versus
-
-	// Set the graph index to be visited
-	for (auto data : json["CanBeVisited"])
-	{
-		const glm::vec2 pos{data.at("x"), data.at("y")};
-		m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x))->SetCanBeVisited(true);
-	}
-
-	for (auto data : json["Emerald"])
-	{
-		const glm::vec2 pos{data.at("x"), data.at("y")};
-		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
-	}
+	EventManager::GetInstance().AddEvent("LoadLevel1", this, &LevelComponent::LoadLevel);
+	EventManager::GetInstance().AddEvent("LoadLevel2",this,&LevelComponent::SecondLevel);
+	EventManager::GetInstance().AddEvent("LoadLevel3", this, &LevelComponent::ThirdLevel);
 }
 
 void LevelComponent::RenderGUI()
@@ -182,6 +133,109 @@ void LevelComponent::RenderGUI()
 		                                            15, IM_COL32(255, 255, 255, 255));
 	}
 	ImGui::End();
+}
+
+void LevelComponent::FirstLevel()
+{
+	LoadLevel(1);
+}
+
+void LevelComponent::SecondLevel()
+{
+	LoadLevel(2);
+}
+
+void LevelComponent::ThirdLevel()
+{
+	LoadLevel(3);
+}
+
+void LevelComponent::LoadLevel(int level)
+{
+	constexpr int maxRow{ 10 };
+	constexpr int maxColumn{ 15 };
+
+	// Read from json
+	nlohmann::json json{ dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level1.json") };
+	// Init background
+	int numberLevel{ json["NumberLevel"].get<int>() };
+	CreateBackgroundLevel(numberLevel);
+
+	// Init graph
+	for (int i{}; i < maxRow; ++i)
+	{
+		for (int j{}; j < maxColumn; ++j)
+		{
+			const int currentIndex{ i * maxColumn + j };
+			GraphUtils::GraphNode* current{
+				m_pGraph->AddNode(glm::vec3{
+					m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0
+				})
+			};
+			current->SetCanBeVisited(false);
+			if (j != 0)
+			{
+				GraphUtils::GraphNode* left{ m_pGraph->GetNode(currentIndex - 1) };
+				left->AddNeighbor(current, glm::distance(current->GetPosition(), left->GetPosition()));
+				current->AddNeighbor(left, glm::distance(current->GetPosition(), left->GetPosition()));
+			}
+			const int indexTop{ currentIndex - maxColumn };
+			if (i > 0)
+			{
+				GraphUtils::GraphNode* top{ m_pGraph->GetNode(indexTop) };
+				top->AddNeighbor(current, glm::distance(current->GetPosition(), top->GetPosition()));
+				current->AddNeighbor(top, glm::distance(current->GetPosition(), top->GetPosition()));
+			}
+		}
+	}
+
+
+	// Init Players
+	int indexPlayer{};
+	for (auto data : json["SpawnPointPlayers"])
+	{
+		// TODO Check if we are selecting 2 players coop
+		if (m_IsCoop)
+		{
+
+		}
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		CreatePlayerAtIndex(GetIndexFromPosition(pos, maxColumn), indexPlayer);
+		++indexPlayer;
+	}
+
+	// Init the spawn point
+	auto spawnEnemy = json["SpawnPointEnemy"];
+	m_SpawnPointEnemy = GetVectorFromJson(json["SpawnPointEnemy"]);
+	// TODO Check if we are selecting 2 players versus
+
+	// Set the graph index to be visited
+	for (auto data : json["CanBeVisited"])
+	{
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x))->SetCanBeVisited(true);
+	}
+
+	for (auto data : json["Emerald"])
+	{
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
+	}
+}
+
+void LevelComponent::SetToCoop()
+{
+	m_GameMode = GameMode::Coop;
+}
+
+void LevelComponent::SetToSinglePlayer()
+{
+	m_GameMode = GameMode::SinglePlayer;
+}
+
+void LevelComponent::SetToVersus()
+{
+	m_GameMode = GameMode::Versus;
 }
 
 glm::vec2 LevelComponent::GetVectorFromJson(const nlohmann::json& json)
@@ -307,6 +361,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	dae::InputManager::GetInstance().AddController(gamepadController);
 	go->SetLocalPosition(pos);
 	dae::SceneManager::GetInstance().Instantiate(go);
+	m_Players.emplace_back(go);
 }
 
 int LevelComponent::GetIndexFromPosition(const glm::vec2& pos, int maxColumn)
