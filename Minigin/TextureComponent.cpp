@@ -5,7 +5,11 @@
 #include "ResourceManager.h"
 #include "Texture2D.h"
 
-TextureComponent::TextureComponent(const std::string& filename): BaseComponent{nullptr}, m_Offset{}
+TextureComponent::TextureComponent(const std::string& name) : UIElementComponent{ name }, BaseComponent(nullptr), m_Offset{}
+{
+}
+
+TextureComponent::TextureComponent(const std::string& name, const std::string& filename) : UIElementComponent{ name }, BaseComponent{ nullptr }, m_Offset {}
 {
 	SetTexture(filename);
 }

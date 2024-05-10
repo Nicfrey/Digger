@@ -9,6 +9,7 @@
 #include "SceneManager.h"
 #include "Texture2D.h"
 #include "Utils.h"
+#include "WidgetManager.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl2.h"
 
@@ -48,6 +49,7 @@ void dae::Renderer::Render() const
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderClear(m_renderer);
 
+	WidgetManager::GetInstance().Render();
 	SceneManager::GetInstance().Render();
 
 

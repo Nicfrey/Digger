@@ -19,6 +19,7 @@
 #include "ResourceManager.h"
 #include "TimeEngine.h"
 #include "Utils.h"
+#include "WidgetManager.h"
 
 SDL_Window* g_window{};
 

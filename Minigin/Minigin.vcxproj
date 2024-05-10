@@ -224,6 +224,7 @@
     <ClInclude Include="AnimatorComponent.h" />
     <ClInclude Include="Blackboard.h" />
     <ClInclude Include="BoxCollider2D.h" />
+    <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Collider2D.h" />
     <ClInclude Include="Command.h" />
@@ -254,7 +255,10 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TrashTheCacheComponent.h" />
     <ClInclude Include="TrashTheCacheGOComponent.h" />
+    <ClInclude Include="UIElementComponent.h" />
+    <ClInclude Include="Widget.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="WidgetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\imgui\backends\imgui_impl_opengl3.cpp" />
@@ -271,6 +275,7 @@
     <ClCompile Include="AnimatorComponent.cpp" />
     <ClCompile Include="Blackboard.cpp" />
     <ClCompile Include="BoxCollider2D.cpp" />
+    <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Collider2D.cpp" />
     <ClCompile Include="Command.cpp" />
@@ -300,7 +305,10 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TrashTheCacheComponent.cpp" />
     <ClCompile Include="TrashTheCacheGOComponent.cpp" />
+    <ClCompile Include="UIElementComponent.cpp" />
+    <ClCompile Include="Widget.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="WidgetManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

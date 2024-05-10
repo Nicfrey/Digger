@@ -37,6 +37,27 @@ void TimerManager::Update()
 	});
 }
 
+bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect)
+{
+	return point.x >= rect.bottomLeft.x && point.x <= rect.bottomLeft.x + rect.width &&
+		point.y >= rect.bottomLeft.y && point.y <= rect.bottomLeft.y + rect.height;
+}
+
+bool IsPointInRectangle(float x, float y, const Rectf& rect)
+{
+	return IsPointInRectangle(glm::vec2(x, y),rect);
+}
+
+bool IsPointInCircle(const glm::vec2& point, const Circlef& circle)
+{
+	return glm::distance(point, circle.center) <= circle.radius;
+}
+
+bool IsPointInCircle(float x, float y, const Circlef& circle)
+{
+	return IsPointInCircle(glm::vec2(x, y), circle);
+}
+
 bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1,
                      glm::vec2& intersectPoint)
 {

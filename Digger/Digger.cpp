@@ -6,6 +6,7 @@
 #include <windows.h>
 #include <iostream>
 
+#include "ButtonComponent.h"
 #include "Controller.h"
 #include "DiggerUtils.h"
 #include "GameObject.h"
@@ -17,6 +18,9 @@
 #include "SceneManager.h"
 #include "SoundSystemEngine.h"
 #include "SpriteComponent.h"
+#include "TextComponent.h"
+#include "Widget.h"
+#include "WidgetManager.h"
 
 void TestTimerManager()
 {
@@ -34,7 +38,7 @@ void load()
 	auto& ss{ ServiceSoundLocator::GetSoundSystem() };
 	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), "Sounds/ProjectileHit.wav");
 
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Digger");
+	dae::SceneManager::GetInstance().CreateScene("Digger");
 	dae::SceneManager::GetInstance().SetActiveScene("Digger");
 
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
@@ -128,19 +132,23 @@ void load()
 	go->SetLocalPosition(50, 210);
 	scene.Add(go);
 
-	
-
 	auto fontTiny = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 12);
-	go = std::make_shared<dae::GameObject>();
+	auto go = std::make_shared<dae::GameObject>();
 	auto text = std::make_shared<dae::TextComponent>("Press WASD to move and SPACEBAR to shoot projectile to enemy or player", fontTiny);
 	go->SetLocalPosition(0, 20);
 	go->AddComponent(text);
 	scene.Add(go);
-	*/
 
 	auto go = std::make_shared<dae::GameObject>();
 	go->AddComponent(std::make_shared<LevelComponent>());
-	scene.Add(go);
+	scene.Add(go);*/
+
+	auto& widgetManager{ WidgetManager::GetInstance() };
+	auto newWidget{std::make_shared<Widget>("TestUI")};
+	auto newButton{ std::make_shared<ButtonComponent>("ButtonTest",glm::vec3{100,100,0},"MyButton",fontSmall) };
+	newButton->SetOnButtonClick(TestTimerManager);
+	newWidget->AddElement(newButton);
+	widgetManager.AddWidget(newWidget);
 
 	TimerManager::GetInstance().AddTimer(TestTimerManager, 2.f);
 }

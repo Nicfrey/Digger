@@ -2,7 +2,10 @@
 #include <backends/imgui_impl_sdl2.h>
 #include "InputManager.h"
 
+#include <glm/vec2.hpp>
+
 #include "Command.h"
+#include "WidgetManager.h"
 
 
 bool dae::InputManager::ProcessInput()
@@ -27,7 +30,8 @@ bool dae::InputManager::ProcessInput()
 			}
 		}
 		if (e.type == SDL_MOUSEBUTTONDOWN) {
-			
+			const glm::vec3 posMouse{ e.button.x,e.button.y,0 };
+			WidgetManager::GetInstance().HandleOnClickEvent(posMouse);
 		}
 		if(e.type == SDL_KEYUP)
 		{
