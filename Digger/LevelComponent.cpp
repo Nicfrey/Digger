@@ -94,7 +94,7 @@ void LevelComponent::Update()
 
 void LevelComponent::Init()
 {
-	EventManager::GetInstance().AddEvent("LoadLevel1", this, &LevelComponent::LoadLevel);
+	//EventManager::GetInstance().AddEvent("LoadLevel1", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("LoadLevel2",this,&LevelComponent::SecondLevel);
 	EventManager::GetInstance().AddEvent("LoadLevel3", this, &LevelComponent::ThirdLevel);
 }
@@ -156,7 +156,7 @@ void LevelComponent::LoadLevel(int level)
 	constexpr int maxColumn{ 15 };
 
 	// Read from json
-	nlohmann::json json{ dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level1.json") };
+	nlohmann::json json{ dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(level) + ".json") };
 	// Init background
 	int numberLevel{ json["NumberLevel"].get<int>() };
 	CreateBackgroundLevel(numberLevel);
@@ -195,10 +195,6 @@ void LevelComponent::LoadLevel(int level)
 	for (auto data : json["SpawnPointPlayers"])
 	{
 		// TODO Check if we are selecting 2 players coop
-		if (m_IsCoop)
-		{
-
-		}
 		const glm::vec2 pos{ data.at("x"), data.at("y") };
 		CreatePlayerAtIndex(GetIndexFromPosition(pos, maxColumn), indexPlayer);
 		++indexPlayer;
