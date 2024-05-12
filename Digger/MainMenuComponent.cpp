@@ -1,6 +1,7 @@
 #include "MainMenuComponent.h"
 
 #include "GameObject.h"
+#include "LevelComponent.h"
 
 std::shared_ptr<BaseComponent> MainMenuComponent::Clone() const
 {

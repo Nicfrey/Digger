@@ -32,6 +32,11 @@ void OnClickLoadLevel1()
 	scene.Add(go);
 }
 
+void TestTimeManager()
+{
+	std::cout << "Test Time manager\n";
+}
+
 void load()
 {
 #if _DEBUG
@@ -44,7 +49,7 @@ void load()
 	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), "Sounds/ProjectileHit.wav");
 
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("MenuDigger");
-	dae::SceneManager::GetInstance().SetActiveScene("Digger");
+	dae::SceneManager::GetInstance().SetActiveScene("MenuDigger");
 
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
 
@@ -159,7 +164,7 @@ void load()
 	newWidget->AddElement(newButton);
 	widgetManager.AddWidget(newWidget);
 
-	TimerManager::GetInstance().AddTimer(TestTimerManager, 2.f);
+	TimerManager::GetInstance().AddTimer(TestTimeManager, 2.f);
 }
 
 int main()
