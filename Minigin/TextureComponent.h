@@ -4,17 +4,18 @@
 
 #include "BaseComponent.h"
 #include "Transform.h"
+#include "UIElementComponent.h"
 
 namespace dae
 {
 	class Texture2D;
 }
 
-class TextureComponent : public BaseComponent
+class TextureComponent : public UIElementComponent, public BaseComponent
 {
 public:
-	TextureComponent() = default;
-	TextureComponent(const std::string& filename);
+	TextureComponent(const std::string& name);
+	TextureComponent(const std::string& name, const std::string& filename);
 	void SetTexture(const std::string& filename);
 	void SetTexture(const std::shared_ptr<dae::Texture2D>& texture);
 	void SetPositionOffset(float x, float y);

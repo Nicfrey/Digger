@@ -5,7 +5,7 @@
 #include "Font.h"
 #include "Texture2D.h"
 
-dae::TextComponent::TextComponent(std::string text, const std::shared_ptr<Font>& font) : TextureComponent{},
+dae::TextComponent::TextComponent(std::string text, const std::shared_ptr<Font>& font) : TextureComponent{text},
 	m_needsUpdate{true}, m_Text{std::move(text)}, m_Font{font}
 {
 	
@@ -71,6 +71,11 @@ void dae::TextComponent::Update()
 }
 
 void dae::TextComponent::Render() const
+{
+	TextureComponent::Render();
+}
+
+void dae::TextComponent::RenderElement() const
 {
 	TextureComponent::Render();
 }

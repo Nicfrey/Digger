@@ -11,6 +11,8 @@
 class GamepadController::GamepadControllerImpl
 {
 	public:
+		GamepadControllerImpl();
+		~GamepadControllerImpl();
 		struct InputActionController
 		{
 			InputActionController(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown) : triggerType{ triggerType }, button{ button }, pCommand{ pCommand }
@@ -24,6 +26,7 @@ class GamepadController::GamepadControllerImpl
 		void DoBindAction(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown);
 
 private:
+	static DWORD m_TotalController;
 	DWORD m_ControllerIndex{};
 	int m_ButtonsPressedThisFrame{};
 	int m_ButtonsReleasedThisFrame{};
@@ -39,6 +42,19 @@ private:
 	bool IsDown(unsigned int button) const;
 	bool IsThumbsNotInDeadZone() const;
 };
+
+DWORD GamepadController::GamepadControllerImpl::m_TotalController = 0;
+
+GamepadController::GamepadControllerImpl::GamepadControllerImpl()
+{
+	m_ControllerIndex = m_TotalController;
+	++m_TotalController;
+}
+
+GamepadController::GamepadControllerImpl::~GamepadControllerImpl()
+{
+	--m_TotalController;
+}
 
 void GamepadController::GamepadControllerImpl::DoProcessInput()
 {

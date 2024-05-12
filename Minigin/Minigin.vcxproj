@@ -99,7 +99,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -128,7 +128,7 @@
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,7 +155,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -188,7 +188,7 @@
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\steamworks\public\steam;$(SolutionDir)3rdParty\lemon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\imgui;$(SolutionDir)3rdParty\lemon\include;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -220,9 +220,11 @@
     <ClInclude Include="..\3rdParty\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\3rdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="..\3rdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\3rdParty\nlohmann\json.hpp" />
     <ClInclude Include="AnimatorComponent.h" />
     <ClInclude Include="Blackboard.h" />
     <ClInclude Include="BoxCollider2D.h" />
+    <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Collider2D.h" />
     <ClInclude Include="Command.h" />
@@ -253,7 +255,10 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TrashTheCacheComponent.h" />
     <ClInclude Include="TrashTheCacheGOComponent.h" />
+    <ClInclude Include="UIElementComponent.h" />
+    <ClInclude Include="Widget.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="WidgetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\imgui\backends\imgui_impl_opengl3.cpp" />
@@ -270,6 +275,7 @@
     <ClCompile Include="AnimatorComponent.cpp" />
     <ClCompile Include="Blackboard.cpp" />
     <ClCompile Include="BoxCollider2D.cpp" />
+    <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Collider2D.cpp" />
     <ClCompile Include="Command.cpp" />
@@ -299,7 +305,10 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TrashTheCacheComponent.cpp" />
     <ClCompile Include="TrashTheCacheGOComponent.cpp" />
+    <ClCompile Include="UIElementComponent.cpp" />
+    <ClCompile Include="Widget.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="WidgetManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

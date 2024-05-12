@@ -1,5 +1,7 @@
 #include "PlayerComponent.h"
 
+#include <iostream>
+
 #include "AnimatorComponent.h"
 #include "GameObject.h"
 #include "HealthComponent.h"

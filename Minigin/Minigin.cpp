@@ -11,7 +11,6 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
-#include <steam_api_common.h>
 #include <thread>
 
 #include "InputManager.h"
@@ -19,6 +18,8 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include "TimeEngine.h"
+#include "Utils.h"
+#include "WidgetManager.h"
 
 SDL_Window* g_window{};
 
@@ -105,6 +106,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	auto& timerManager = TimerManager::GetInstance();
 	sceneManager.Init();
 	float lag{0.f};
 
@@ -112,7 +114,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	bool doContinue = true;
 	while (doContinue)
 	{
-		SteamAPI_RunCallbacks();
 		const auto currentTime{ std::chrono::high_resolution_clock::now() };
 		TimeEngine::GetInstance().SetDeltaTime(std::chrono::duration<float>(currentTime - lastTime).count());
 		lastTime = currentTime;
@@ -126,6 +127,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			lag -= FIXED_TIME_STEP;
 		}
 		sceneManager.OnCollisionUpdate();
+		timerManager.Update();
 		sceneManager.Update();
 		renderer.Render();
 

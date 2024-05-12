@@ -1,7 +1,10 @@
 #pragma once
+#include <functional>
 #include <string>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
+#include "Singleton.h"
 
 #pragma region structs
 
@@ -38,9 +41,65 @@ namespace dae
 		dae::GameObject* pGameObject;
 	};
 
+	struct Color3f final
+	{
+		int r{};
+		int g{};
+		int b{};
+	};
+
+	struct Color4f final
+	{
+		int r{};
+		int g{};
+		int b{};
+		int a{ 255 };
+	};
+
+	struct Timer
+	{
+		float timer{};
+		float currentTimer{};
+	};
+
+	using DelegateFnc = std::function<void()>;
+
+	class TimerManager final : public dae::Singleton<TimerManager>
+	{
+	public:
+		template<typename ClassType>
+		void AddTimer(ClassType* obj, void (ClassType::* funcPtr)(),float timer);
+		void AddTimer(const DelegateFnc& function, float timer);
+		void Update();
+	private:
+		struct TimerHandler
+		{
+			Timer timer;
+			DelegateFnc func;
+		};
+		std::vector<TimerHandler> m_TimerHandlers;
+	};
+
+template <typename ClassType>
+void TimerManager::AddTimer(ClassType* obj, void(ClassType::* funcPtr)(), float timer)
+{
+	Timer newTimer{ .timer = timer };
+	TimerHandler newHandler{ .timer = newTimer, .func = [obj, funcPtr]()
+	{
+		(obj->*funcPtr)();
+	} };
+	m_TimerHandlers.emplace_back(newHandler);
+}
+
 #pragma endregion structs
 
 #pragma region Functions
+
+	bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect);
+	bool IsPointInRectangle(float x, float y, const Rectf& rect);
+
+	bool IsPointInCircle(const glm::vec2& point, const Circlef& circle);
+	bool IsPointInCircle(float x, float y, const Circlef& circle);
 
 	bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1, glm::vec2& intersectPoint);
 	bool LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersectPoint);

@@ -59,3 +59,13 @@ float MathUtils::Dot2D(const glm::vec2& a, const glm::vec2& b)
 	return a.x * b.x + a.y * b.y;
 }
 
+float MathUtils::Pow(float value, int exponent)
+{
+	return std::powf(value, static_cast<float>(exponent));
+}
+
+float MathUtils::Sqrt(float x)
+{
+	return std::sqrtf(x);
+}
+

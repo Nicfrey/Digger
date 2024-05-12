@@ -70,17 +70,29 @@
     <Filter Include="Engine\Sources Files\Components">
       <UniqueIdentifier>{6ea7a708-2e66-434a-8d46-945e0c148a9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{61101b28-1ea9-4802-b868-a3b50548ff80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\UI">
+      <UniqueIdentifier>{73243038-5771-4e89-b7f5-b197516c6dda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\UI">
+      <UniqueIdentifier>{3aabcbe6-027c-4eae-85d3-0af529eb6ce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\Utils">
+      <UniqueIdentifier>{dd0b7468-2596-48a5-9860-8bc91a566394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources Files\Singleton">
+      <UniqueIdentifier>{7fc91fa5-17f0-47e1-8861-5aca9bb19ded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\Utils">
+      <UniqueIdentifier>{03ca893d-d2db-4b06-b21b-3c4d550db8bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files\Singleton">
+      <UniqueIdentifier>{b4eff23f-390b-4064-9ff9-4851283858c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Singleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,25 +105,10 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Minigin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FpsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdParty\imgui\imconfig.h">
@@ -168,15 +165,6 @@
     <ClInclude Include="TrashTheCacheGOComponent.h">
       <Filter>Engine\Header Files\TrashTheCacheExercises</Filter>
     </ClInclude>
-    <ClInclude Include="Observer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Engine\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MathUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graph.h">
       <Filter>Engine\Header Files\Graph</Filter>
     </ClInclude>
@@ -198,23 +186,65 @@
     <ClInclude Include="SpriteComponent.h">
       <Filter>Engine\Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdParty\nlohmann\json.hpp">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget.h">
+      <Filter>Engine\Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIElementComponent.h">
+      <Filter>Engine\Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonComponent.h">
+      <Filter>Engine\Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TextComponent.h">
+      <Filter>Engine\Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="TextureComponent.h">
+      <Filter>Engine\Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Engine\Header Files\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Engine\Header Files\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Engine\Header Files\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Engine\Header Files\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundSystemEngine.h">
+      <Filter>Engine\Header Files\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="FpsComponent.h">
       <Filter>Engine\Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="AnimatorComponent.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine\Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="SoundSystemEngine.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="BaseComponent.h">
+      <Filter>Engine\Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Engine\Header Files\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="MathUtils.h">
+      <Filter>Engine\Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Engine\Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeEngine.h">
+      <Filter>Engine\Header Files\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="WidgetManager.h">
+      <Filter>Engine\Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -227,25 +257,10 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Minigin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FpsComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\imgui\imgui.cpp">
@@ -302,15 +317,6 @@
     <ClCompile Include="TrashTheCacheGOComponent.cpp">
       <Filter>Source Files\TrashTheCacheExercises</Filter>
     </ClCompile>
-    <ClCompile Include="Observer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Engine\Sources Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MathUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BoxCollider2D.cpp">
       <Filter>Engine\Sources Files\Collision</Filter>
     </ClCompile>
@@ -332,14 +338,56 @@
     <ClCompile Include="SpriteComponent.cpp">
       <Filter>Engine\Sources Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="UIElementComponent.cpp">
+      <Filter>Engine\Sources Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget.cpp">
+      <Filter>Engine\Sources Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonComponent.cpp">
+      <Filter>Engine\Sources Files\UI</Filter>
+    </ClCompile>
     <ClCompile Include="TextureComponent.cpp">
+      <Filter>Engine\Sources Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="TextComponent.cpp">
+      <Filter>Engine\Sources Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Engine\Sources Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MathUtils.cpp">
+      <Filter>Engine\Sources Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Engine\Sources Files\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Engine\Sources Files\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>Engine\Sources Files\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeEngine.cpp">
+      <Filter>Engine\Sources Files\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundSystemEngine.cpp">
+      <Filter>Engine\Sources Files\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine\Sources Files\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseComponent.cpp">
+      <Filter>Engine\Sources Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsComponent.cpp">
       <Filter>Engine\Sources Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="AnimatorComponent.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine\Sources Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="SoundSystemEngine.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="WidgetManager.cpp">
+      <Filter>Engine\Sources Files\Singleton</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

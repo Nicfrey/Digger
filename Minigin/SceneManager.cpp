@@ -61,7 +61,7 @@ void dae::SceneManager::SetActiveScene(std::shared_ptr<Scene> scene)
 
 void dae::SceneManager::Instantiate(std::shared_ptr<GameObject> object)
 {
-	m_ActiveScene->Add(std::move(object));
+	m_ActiveScene->Instantiate(std::move(object));
 }
 
 dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) const
@@ -94,6 +94,20 @@ std::vector<std::shared_ptr<dae::GameObject>> dae::SceneManager::GetAllGameObjec
 void dae::SceneManager::Destroy()
 {
 	m_ActiveScene->Remove();
+}
+
+std::shared_ptr<dae::Scene> dae::SceneManager::GetScene(const std::string& name)
+{
+	const auto it{ std::ranges::find_if(m_scenes,[name](const std::shared_ptr<Scene>& other)
+	{
+		return other->GetName() == name;
+	}) };
+	if (it != m_scenes.end())
+	{
+		return *it;
+	}
+	std::cerr << "Scene with name: " << name << " not found\n";
+	return nullptr;
 }
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)

@@ -20,6 +20,7 @@ namespace dae
 		std::shared_ptr<BaseComponent> Clone() const override;
 		void Update() override;
 		void Render() const override;
+		void RenderElement() const override;
 
 		void SetFont(const std::shared_ptr<Font>& font);
 		void SetText(const std::string& text);

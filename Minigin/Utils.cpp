@@ -1,17 +1,65 @@
 #include "Utils.h"
 
+#include <iostream>
+
 #include "Collider2D.h"
 #include "GameObject.h"
 #include "MathUtils.h"
 #include "SceneManager.h"
+#include "TimeEngine.h"
 
 glm::vec2 Rectf::GetCenter() const
 {
 	return { bottomLeft.x + width / 2,bottomLeft.y + height / 2 };
 }
 
+void TimerManager::AddTimer(const DelegateFnc& function, float timer)
+{
+	Timer newTimer{ .timer = timer };
+	TimerHandler newTimerHandler{ newTimer, function };
+	m_TimerHandlers.emplace_back(newTimerHandler);
+}
+
+
+void TimerManager::Update()
+{
+	for (auto& handler : m_TimerHandlers)
+	{
+		handler.timer.currentTimer += TimeEngine::GetInstance().GetDeltaTime();
+		if(handler.timer.currentTimer >= handler.timer.timer)
+		{
+			handler.func();
+		}
+	}
+	std::erase_if(m_TimerHandlers, [&](const TimerHandler& other)
+	{
+		return other.timer.currentTimer >= other.timer.timer;
+	});
+}
+
+bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect)
+{
+	return point.x >= rect.bottomLeft.x && point.x <= rect.bottomLeft.x + rect.width &&
+		point.y >= rect.bottomLeft.y && point.y <= rect.bottomLeft.y + rect.height;
+}
+
+bool IsPointInRectangle(float x, float y, const Rectf& rect)
+{
+	return IsPointInRectangle(glm::vec2(x, y),rect);
+}
+
+bool IsPointInCircle(const glm::vec2& point, const Circlef& circle)
+{
+	return glm::distance(point, circle.center) <= circle.radius;
+}
+
+bool IsPointInCircle(float x, float y, const Circlef& circle)
+{
+	return IsPointInCircle(glm::vec2(x, y), circle);
+}
+
 bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1,
-	glm::vec2& intersectPoint)
+                     glm::vec2& intersectPoint)
 {
 	const glm::vec2 u1{ p1 - p0 };
 	const glm::vec2 u2{ q1 - q0 };

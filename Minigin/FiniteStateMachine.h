@@ -54,6 +54,7 @@ public:
 	void SetStartNode(FSMStateNode* startNode);
 	void AddStateNode(FSMStateNode* stateNode);
 	void AddTransition(FSMStateNode* startNode, FSMStateNode* endNode, FSMTransition* condition);
+	FSMStateNode* GetCurrentState() const { return m_pCurrentState; };
 	void Update();
 	Blackboard* GetBlackboard() const;
 protected:

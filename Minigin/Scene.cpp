@@ -108,6 +108,11 @@ void Scene::Add(std::shared_ptr<GameObject> object)
 	m_objects.emplace_back(std::move(object));
 }
 
+void Scene::Instantiate(std::shared_ptr<GameObject> object)
+{
+	m_ObjectsToBeAdded.emplace_back(std::move(object));
+}
+
 void Scene::Remove()
 {
 	auto it{ std::find_if(m_objects.begin(), m_objects.end(), [&](const std::shared_ptr<dae::GameObject>& other)
@@ -135,6 +140,12 @@ void Scene::RemoveAll()
 
 void Scene::Update()
 {
+	for (const auto& objectAdded : m_ObjectsToBeAdded)
+	{
+		objectAdded->Init();
+	}
+	m_objects.insert(m_objects.end(), m_ObjectsToBeAdded.begin(), m_ObjectsToBeAdded.end());
+	m_ObjectsToBeAdded.clear();
 	for(const auto& object : m_objects)
 	{
 		object->Update();

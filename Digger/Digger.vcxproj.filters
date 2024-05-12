@@ -33,9 +33,6 @@
     <ClCompile Include="UIPlayerComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Achievement.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="ProjectileComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
@@ -66,6 +63,12 @@
     <ClCompile Include="DiggerUtils.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="MoneyBagComponent.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuComponent.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ScoreComponent.h">
@@ -76,9 +79,6 @@
     </ClInclude>
     <ClInclude Include="UIPlayerComponent.h">
       <Filter>Fichiers d%27en-tête\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Achievement.h">
-      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="ProjectileComponent.h">
       <Filter>Fichiers d%27en-tête\Components</Filter>
@@ -108,6 +108,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="DiggerUtils.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="MoneyBagComponent.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuComponent.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

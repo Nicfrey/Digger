@@ -186,6 +186,15 @@ void AnimatorComponent::Update()
 	m_pAnimationController->Update();
 }
 
+bool AnimatorComponent::CurrentAnimationIsFinished() const
+{
+	if(const auto animState{ dynamic_cast<AnimationStateNode*>(m_pAnimationController->GetCurrentState()) })
+	{
+		return animState->IsFinished();
+	}
+	return false;
+}
+
 bool AnimatorComponent::SetStartAnimation(const Animation& anim) const
 {
 	if (const auto startNode{ m_pAnimationController->GetStateNode(anim.name) })

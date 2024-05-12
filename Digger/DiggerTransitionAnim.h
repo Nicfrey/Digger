@@ -1,27 +1,58 @@
 #pragma once
 #include "FiniteStateMachine.h"
-
-class TransitionNoProjectile : public FSMTransition
+class TransitionPlayerNoProjectile : public FSMTransition
 {
 public:
-	TransitionNoProjectile() = default;
+	TransitionPlayerNoProjectile() = default;
 	bool CalculateCondition(Blackboard* pBlackBoard) const override;
-	~TransitionNoProjectile() override = default;
+	~TransitionPlayerNoProjectile() override = default;
 };
 
-class TransitionProjectile : public TransitionNoProjectile
+class TransitionPlayerHasProjectile : public TransitionPlayerNoProjectile
 {
 public:
-	TransitionProjectile() = default;
+	TransitionPlayerHasProjectile() = default;
 	bool CalculateCondition(Blackboard* pBlackBoard) const override;
-	~TransitionProjectile() override = default;
+	~TransitionPlayerHasProjectile() override = default;
 };
 
-class TransitionDead : public FSMTransition
+class TransitionPlayerIsDead : public FSMTransition
 {
 public:
-	TransitionDead() = default;
+	TransitionPlayerIsDead() = default;
 	bool CalculateCondition(Blackboard* pBlackBoard) const override;
-	~TransitionDead() override = default;
+	~TransitionPlayerIsDead() override = default;
+};
+
+class TransitionMoneyBagCanFall : public FSMTransition
+{
+public:
+	TransitionMoneyBagCanFall() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionMoneyBagCanFall() override = default;
+};
+
+class TransitionMoneyBagIsIdle : public FSMTransition
+{
+public:
+	TransitionMoneyBagIsIdle() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionMoneyBagIsIdle() override = default;
+};
+
+class TransitionMoneyBagIsDestroyed : public FSMTransition
+{
+public:
+	TransitionMoneyBagIsDestroyed() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionMoneyBagIsDestroyed() override = default;
+};
+
+class TransitionMoneyBagIsDestroyedIdle : public FSMTransition
+{
+public:
+	TransitionMoneyBagIsDestroyedIdle() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionMoneyBagIsDestroyedIdle() override = default;
 };
 
