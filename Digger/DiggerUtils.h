@@ -10,4 +10,9 @@ namespace DiggerUtils
 		ENEMY_DIED,
 		PLAYER_DIED
 	};
+
+	void OnLoadLevel1();
+	void OnLoadLevel2();
+	void OnLoadLevel3();
+
 }

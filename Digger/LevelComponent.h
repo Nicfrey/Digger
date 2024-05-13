@@ -40,9 +40,9 @@ private:
 	glm::vec2 m_SpawnPointEnemy;
 	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
 
-	void FirstLevel();
-	void SecondLevel();
-	void ThirdLevel();
+	void LoadFirstLevel();
+	void LoadSecondLevel();
+	void LoadThirdLevel();
 	void LoadLevel(int level);
 	void SetToCoop();
 	void SetToSinglePlayer();

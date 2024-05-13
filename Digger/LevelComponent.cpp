@@ -27,6 +27,9 @@
 
 LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}}
 {
+	EventManager::GetInstance().AddEvent("LoadLevel1", this, &LevelComponent::LoadFirstLevel);
+	EventManager::GetInstance().AddEvent("LoadLevel2", this, &LevelComponent::LoadSecondLevel);
+	EventManager::GetInstance().AddEvent("LoadLevel3", this, &LevelComponent::LoadThirdLevel);
 }
 
 LevelComponent::~LevelComponent()
@@ -94,9 +97,6 @@ void LevelComponent::Update()
 
 void LevelComponent::Init()
 {
-	//EventManager::GetInstance().AddEvent("LoadLevel1", this, &LevelComponent::LoadLevel);
-	EventManager::GetInstance().AddEvent("LoadLevel2",this,&LevelComponent::SecondLevel);
-	EventManager::GetInstance().AddEvent("LoadLevel3", this, &LevelComponent::ThirdLevel);
 }
 
 void LevelComponent::RenderGUI()
@@ -135,19 +135,22 @@ void LevelComponent::RenderGUI()
 	ImGui::End();
 }
 
-void LevelComponent::FirstLevel()
+void LevelComponent::LoadFirstLevel()
 {
 	LoadLevel(1);
+	EventManager::GetInstance().RemoveEvent("LoadLevel1", this, &LevelComponent::LoadFirstLevel);
 }
 
-void LevelComponent::SecondLevel()
+void LevelComponent::LoadSecondLevel()
 {
 	LoadLevel(2);
+	EventManager::GetInstance().RemoveEvent("LoadLevel2", this, &LevelComponent::LoadSecondLevel);
 }
 
-void LevelComponent::ThirdLevel()
+void LevelComponent::LoadThirdLevel()
 {
 	LoadLevel(3);
+	EventManager::GetInstance().RemoveEvent("LoadLevel3", this, &LevelComponent::LoadThirdLevel);
 }
 
 void LevelComponent::LoadLevel(int level)
@@ -243,7 +246,7 @@ void LevelComponent::CreateEmeraldAtIndex(int index)
 {
 	const auto pos = m_pGraph->GetNode(index)->GetPosition();
 	const std::shared_ptr emerald{std::make_shared<dae::GameObject>()};
-	const auto sprite = std::make_shared<SpriteComponent>("SpritesItems.png", 3, 3);
+	const auto sprite = std::make_shared<SpriteComponent>("Emerald", "SpritesItems.png", 3, 3);
 	emerald->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
 	const auto item{std::make_shared<EmeraldComponent>()};
 	emerald->AddComponent(sprite);
@@ -256,7 +259,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 {
 	const auto pos{m_pGraph->GetNode(index)->GetPosition()};
 	const std::shared_ptr moneyBag{std::make_shared<dae::GameObject>()};
-	const auto sprite{std::make_shared<SpriteComponent>("SpriteItems.png", 3, 3)};
+	const auto sprite{ std::make_shared<SpriteComponent>("MoneyBag","SpriteItems.png", 3, 3) };
 	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
 	const auto item{std::make_shared<MoneyBagComponent>()};
 	const auto animator{std::make_shared<AnimatorComponent>()};
@@ -301,7 +304,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
 	const auto pos{ m_pGraph->GetNode(index)->GetPosition() };
 	auto go{ std::make_shared<dae::GameObject>() };
-	const auto spritePlayer1{ std::make_shared<SpriteComponent>("SpritesPlayers.png",4,4) };
+	const auto spritePlayer1{ std::make_shared<SpriteComponent>("PlayerSprite" + std::to_string(player),"SpritesPlayers.png",4,4) };
 	auto healthComponent{ std::make_shared<HealthComponent>() };
 	auto scoreComponent{ std::make_shared<ScoreComponent>() };
 	auto uiComponent{ std::make_shared<UIPlayerComponent>(fontSmall) };

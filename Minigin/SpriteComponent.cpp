@@ -8,7 +8,7 @@
 #include "MathUtils.h"
 
 
-SpriteComponent::SpriteComponent(const std::string& filename): TextureComponent{filename}
+SpriteComponent::SpriteComponent(const std::string& name, const std::string& filename): TextureComponent{name,filename}
 {
 	m_NrCols = 0;
 	m_NrRows = 0;
@@ -17,7 +17,7 @@ SpriteComponent::SpriteComponent(const std::string& filename): TextureComponent{
 	SetShape();
 }
 
-SpriteComponent::SpriteComponent(const std::string& filename, unsigned nrCols, unsigned nrRows): SpriteComponent{filename}
+SpriteComponent::SpriteComponent(const std::string& name, const std::string& filename, unsigned nrCols, unsigned nrRows): SpriteComponent{name, filename}
 {
 	m_NrCols = nrCols;
 	m_NrRows = nrRows;

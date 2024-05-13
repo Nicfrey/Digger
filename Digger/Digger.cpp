@@ -23,22 +23,9 @@
 #include "Widget.h"
 #include "WidgetManager.h"
 
-void OnClickLoadLevel1()
-{
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Digger");
-	dae::SceneManager::GetInstance().SetActiveScene("Digger");
-	auto go = std::make_shared<dae::GameObject>();
-	go->AddComponent(std::make_shared<LevelComponent>());
-	scene.Add(go);
-}
-
-void TestTimeManager()
-{
-	std::cout << "Test Time manager\n";
-}
-
 void load()
 {
+	dae::ResourceManager::GetInstance().Init("../Data/");
 #if _DEBUG
 	ServiceSoundLocator::RegisterSoundSystem(std::make_unique<LoggingSoundSystem>(std::make_unique<SoundSystemEngine>()));
 
@@ -48,7 +35,7 @@ void load()
 	auto& ss{ ServiceSoundLocator::GetSoundSystem() };
 	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), "Sounds/ProjectileHit.wav");
 
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("MenuDigger");
+	dae::SceneManager::GetInstance().CreateScene("MenuDigger");
 	dae::SceneManager::GetInstance().SetActiveScene("MenuDigger");
 
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
@@ -153,18 +140,19 @@ void load()
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);*/
 
-	auto go = std::make_shared<dae::GameObject>();
-	go->AddComponent(std::make_shared<LevelComponent>());
-	scene.Add(go);
 
 	auto& widgetManager{ WidgetManager::GetInstance() };
-	auto newWidget{std::make_shared<Widget>("TestUI")};
+	const auto newWidget{std::make_shared<Widget>("TestUI")};
 	auto newButton{ std::make_shared<ButtonComponent>("LoadLevel1Button",glm::vec3{100,100,0},"Level1",fontSmall) };
-	newButton->SetOnButtonClick(OnClickLoadLevel1);
+	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel1);
+	newWidget->AddElement(newButton);
+	newButton = std::make_shared<ButtonComponent>("LoadLevel2Button",glm::vec3{100,120,0},"Level2",fontSmall);
+	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel2);
+	newWidget->AddElement(newButton);
+	newButton = std::make_shared<ButtonComponent>("LoadLevel3Button",glm::vec3{100,140,0},"Level3",fontSmall);
+	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel3);
 	newWidget->AddElement(newButton);
 	widgetManager.AddWidget(newWidget);
-
-	TimerManager::GetInstance().AddTimer(TestTimeManager, 2.f);
 }
 
 int main()
