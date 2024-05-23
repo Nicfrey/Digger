@@ -6,12 +6,11 @@
 
 #include "json.hpp"
 
-enum class GameMode
+
+namespace DiggerUtils
 {
-	SinglePlayer,
-	Coop,
-	Versus
-};
+	enum class DiggerGameMode;
+}
 
 namespace GraphUtils
 {
@@ -33,20 +32,14 @@ public:
 	void Init() override;
 	void RenderGUI() override;
 private:
-	GameMode m_GameMode{};
+	DiggerUtils::DiggerGameMode m_GameMode{};
 	GraphUtils::Graph* m_pGraph;
 	std::vector<GraphUtils::GraphNode*> m_ShortestPath;
 	glm::vec2 m_StartPos{20,20};
 	glm::vec2 m_SpawnPointEnemy;
 	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
 
-	void LoadFirstLevel();
-	void LoadSecondLevel();
-	void LoadThirdLevel();
-	void LoadLevel(int level);
-	void SetToCoop();
-	void SetToSinglePlayer();
-	void SetToVersus();
+	void LoadLevel();
 	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
 	void CreateEmeraldAtIndex(int index);
 	void CreateMoneyBagAtIndex(int index);

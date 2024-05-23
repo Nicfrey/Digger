@@ -9,6 +9,7 @@
 #include "ResourceManager.h"
 
 std::unique_ptr<SoundSystem> ServiceSoundLocator::m_SoundSystemInstance = nullptr;
+std::unique_ptr<MusicSystem> ServiceMusicLocator::m_MusicSystemInstance = nullptr;
 
 class SoundSystemEngine::SoundSystemImpl
 {
@@ -186,6 +187,62 @@ void LoggingSoundSystem::Add(const SoundId& id, const std::string& filepath)
 	std::cout << "Added " << id << " at path " << filepath << "\n";
 }
 
+MusicSystem& ServiceMusicLocator::GetMusicSystem()
+{
+	return *m_MusicSystemInstance;
+}
+
+void ServiceMusicLocator::RegisterMusicSystem(std::unique_ptr<MusicSystem>&& ms)
+{
+	m_MusicSystemInstance = std::move(ms);
+}
+
+LoggingMusicSystem::LoggingMusicSystem(std::unique_ptr<MusicSystem>&& ms)
+{
+	m_RealMusicSystem = std::move(ms);
+}
+
+void LoggingMusicSystem::Play(MusicId id, bool loop)
+{
+	m_RealMusicSystem->Play(id, loop);
+	std::cout << "Play " << id << "music\n";
+}
+
+void LoggingMusicSystem::Pause()
+{
+	std::cout << "Pause the current music\n";
+	m_RealMusicSystem->Pause();
+}
+
+void LoggingMusicSystem::Resume()
+{
+	std::cout << "Resume the current music\n";
+	m_RealMusicSystem->Resume();
+}
+
+void LoggingMusicSystem::Stop()
+{
+	std::cout << "Stop the current music\n";
+	m_RealMusicSystem->Stop();
+}
+
+bool LoggingMusicSystem::IsPlaying() const
+{
+	if(m_RealMusicSystem->IsPlaying())
+	{
+		std::cout << "A music is currently playing\n";
+		return true;
+	}
+	std::cout << "A music is not currently playing\n";
+	return false;
+}
+
+void LoggingMusicSystem::Add(MusicId id, const std::string& filePath)
+{
+	std::cout << "Adding the music with id " << id << "from path: " << filePath << "\n";
+	m_RealMusicSystem->Add(id, filePath);
+}
+
 SoundSystemEngine::SoundSystemEngine()
 {
 	m_pImpl = new SoundSystemImpl{};
@@ -222,7 +279,7 @@ void SoundSystemEngine::Add(const SoundId& id, const std::string& filepath)
 	m_pImpl->DoAddSound(id, filepath);
 }
 
-class MusicSystemTest::MusicSystemImpl
+class MusicSystemEngine::MusicSystemImpl
 {
 public:
 	MusicSystemImpl() = default;
@@ -231,11 +288,13 @@ public:
 	MusicSystemImpl(MusicSystemImpl&& other) = delete;
 	MusicSystemImpl& operator=(const MusicSystemImpl& other) = delete;
 	MusicSystemImpl& operator=(MusicSystemImpl&& other) = delete;
+	void DoAdd(MusicId id, const std::string& filepath);
 	void DoPlayMusic(MusicId id, bool loop);
 	void DoPlayMusic(const Music& music, bool loop);
 	void DoPause();
 	void DoResume();
 	void DoStop();
+	bool DoIsPlaying() const;
 
 private:
 	struct MusicSDL
@@ -247,7 +306,7 @@ private:
 	std::vector<MusicSDL> m_Musics;
 };
 
-MusicSystemTest::MusicSystemImpl::~MusicSystemImpl()
+MusicSystemEngine::MusicSystemImpl::~MusicSystemImpl()
 {
 	for (MusicSDL& music : m_Musics)
 	{
@@ -256,7 +315,34 @@ MusicSystemTest::MusicSystemImpl::~MusicSystemImpl()
 	}
 }
 
-void MusicSystemTest::MusicSystemImpl::DoPlayMusic(MusicId id, bool loop)
+void MusicSystemEngine::MusicSystemImpl::DoAdd(MusicId id, const std::string& filepath)
+{
+	const auto it{
+		std::ranges::find_if(m_Musics.begin(), m_Musics.end(), [id](const MusicSDL& other)
+		{
+			return other.baseMusic.id == id;
+		})
+	};
+	if (it == m_Musics.end())
+	{
+		MusicSDL musicSDL{ Music{id,filepath},Mix_LoadMUS(std::string{ dae::ResourceManager::GetInstance().GetDataPath() + filepath }.c_str()) };
+		if (musicSDL.pMusic == NULL)
+		{
+			std::cerr << "Can't load sound at : " << filepath << "with error: " << Mix_GetError() << "\n";
+		}
+		else
+		{
+			m_Musics.emplace_back(musicSDL);
+		}
+	}
+}
+
+bool MusicSystemEngine::MusicSystemImpl::DoIsPlaying() const
+{
+	return Mix_PlayingMusic();
+}
+
+void MusicSystemEngine::MusicSystemImpl::DoPlayMusic(MusicId id, bool loop)
 {
 	const auto it{
 		std::ranges::find_if(m_Musics.begin(), m_Musics.end(), [id](const MusicSDL& other)
@@ -270,7 +356,7 @@ void MusicSystemTest::MusicSystemImpl::DoPlayMusic(MusicId id, bool loop)
 	}
 }
 
-void MusicSystemTest::MusicSystemImpl::DoPlayMusic(const Music& music, bool loop)
+void MusicSystemEngine::MusicSystemImpl::DoPlayMusic(const Music& music, bool loop)
 {
 	const auto it{
 		std::ranges::find_if(m_Musics.begin(), m_Musics.end(), [music](const MusicSDL& other)
@@ -284,42 +370,57 @@ void MusicSystemTest::MusicSystemImpl::DoPlayMusic(const Music& music, bool loop
 	}
 }
 
-void MusicSystemTest::MusicSystemImpl::DoPause()
+void MusicSystemEngine::MusicSystemImpl::DoPause()
 {
 	Mix_PauseMusic();
 }
 
-void MusicSystemTest::MusicSystemImpl::DoResume()
+void MusicSystemEngine::MusicSystemImpl::DoResume()
 {
 	Mix_ResumeMusic();
 }
 
-void MusicSystemTest::MusicSystemImpl::DoStop()
+void MusicSystemEngine::MusicSystemImpl::DoStop()
 {
 	Mix_HaltMusic();
 }
 
-void MusicSystemTest::PlayMusic(MusicId id, bool loop)
+MusicSystemEngine::MusicSystemEngine(): m_pImpl{new MusicSystemImpl{}}
+{
+}
+
+MusicSystemEngine::~MusicSystemEngine()
+{
+	delete m_pImpl;
+	m_pImpl = nullptr;
+}
+
+void MusicSystemEngine::Play(MusicId id, bool loop)
 {
 	m_pImpl->DoPlayMusic(id, loop);
 }
 
-void MusicSystemTest::PlayMusic(const Music& music, bool loop)
-{
-	m_pImpl->DoPlayMusic(music, loop);
-}
-
-void MusicSystemTest::Pause()
+void MusicSystemEngine::Pause()
 {
 	m_pImpl->DoPause();
 }
 
-void MusicSystemTest::Resume()
+void MusicSystemEngine::Resume()
 {
 	m_pImpl->DoResume();
 }
 
-void MusicSystemTest::Stop()
+void MusicSystemEngine::Stop()
 {
 	m_pImpl->DoStop();
+}
+
+bool MusicSystemEngine::IsPlaying() const
+{
+	return m_pImpl->DoIsPlaying();
+}
+
+void MusicSystemEngine::Add(MusicId id, const std::string& filePath)
+{
+	m_pImpl->DoAdd(id, filePath);
 }

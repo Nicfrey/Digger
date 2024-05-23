@@ -10,6 +10,7 @@
 #include "DiggerCommands.h"
 #include "DiggerTransitionAnim.h"
 #include "EmeraldComponent.h"
+#include "GameInstance.h"
 #include "GameObject.h"
 #include "Graph.h"
 #include "imgui.h"
@@ -27,9 +28,7 @@
 
 LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}}
 {
-	EventManager::GetInstance().AddEvent("LoadLevel1", this, &LevelComponent::LoadFirstLevel);
-	EventManager::GetInstance().AddEvent("LoadLevel2", this, &LevelComponent::LoadSecondLevel);
-	EventManager::GetInstance().AddEvent("LoadLevel3", this, &LevelComponent::LoadThirdLevel);
+	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 }
 
 LevelComponent::~LevelComponent()
@@ -135,26 +134,10 @@ void LevelComponent::RenderGUI()
 	ImGui::End();
 }
 
-void LevelComponent::LoadFirstLevel()
+void LevelComponent::LoadLevel()
 {
-	LoadLevel(1);
-	EventManager::GetInstance().RemoveEvent("LoadLevel1", this, &LevelComponent::LoadFirstLevel);
-}
-
-void LevelComponent::LoadSecondLevel()
-{
-	LoadLevel(2);
-	EventManager::GetInstance().RemoveEvent("LoadLevel2", this, &LevelComponent::LoadSecondLevel);
-}
-
-void LevelComponent::LoadThirdLevel()
-{
-	LoadLevel(3);
-	EventManager::GetInstance().RemoveEvent("LoadLevel3", this, &LevelComponent::LoadThirdLevel);
-}
-
-void LevelComponent::LoadLevel(int level)
-{
+	int level;
+	GameInstance::GetInstance().GetValue("CurrentLevel", level);
 	constexpr int maxRow{ 10 };
 	constexpr int maxColumn{ 15 };
 
@@ -220,21 +203,7 @@ void LevelComponent::LoadLevel(int level)
 		const glm::vec2 pos{ data.at("x"), data.at("y") };
 		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
 	}
-}
 
-void LevelComponent::SetToCoop()
-{
-	m_GameMode = GameMode::Coop;
-}
-
-void LevelComponent::SetToSinglePlayer()
-{
-	m_GameMode = GameMode::SinglePlayer;
-}
-
-void LevelComponent::SetToVersus()
-{
-	m_GameMode = GameMode::Versus;
 }
 
 glm::vec2 LevelComponent::GetVectorFromJson(const nlohmann::json& json)

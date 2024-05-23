@@ -243,6 +243,12 @@
     <ClInclude Include="WidgetManager.h">
       <Filter>Engine\Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Texture2D.cpp">
@@ -388,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="WidgetManager.cpp">
       <Filter>Engine\Sources Files\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

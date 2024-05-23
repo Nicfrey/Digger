@@ -183,10 +183,13 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(OutputPath)" /R /Y</C
   <ItemGroup>
     <ClCompile Include="Digger.cpp" />
     <ClCompile Include="DiggerCommands.cpp" />
+    <ClCompile Include="DiggerStates.cpp" />
     <ClCompile Include="DiggerTransitionAnim.cpp" />
+    <ClCompile Include="DiggerTransitions.cpp" />
     <ClCompile Include="DiggerUtils.cpp" />
     <ClCompile Include="EmeraldComponent.cpp" />
     <ClCompile Include="EnemyComponent.cpp" />
+    <ClCompile Include="GameStateComponent.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="ItemComponent.cpp" />
     <ClCompile Include="LevelUtils.cpp" />
@@ -200,10 +203,13 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(OutputPath)" /R /Y</C
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DiggerCommands.h" />
+    <ClInclude Include="DiggerStates.h" />
     <ClInclude Include="DiggerTransitionAnim.h" />
+    <ClInclude Include="DiggerTransitions.h" />
     <ClInclude Include="DiggerUtils.h" />
     <ClInclude Include="EmeraldComponent.h" />
     <ClInclude Include="EnemyComponent.h" />
+    <ClInclude Include="GameStateComponent.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="ItemComponent.h" />
     <ClInclude Include="LevelUtils.h" />

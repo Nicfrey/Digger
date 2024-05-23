@@ -2,8 +2,6 @@
 #include <memory>
 #include <string>
 
-#include "Singleton.h"
-
 using SoundId = unsigned short;
 using MusicId = unsigned short;
 
@@ -43,16 +41,30 @@ private:
 	SoundSystemImpl* m_pImpl;
 };
 
-class MusicSystemTest : public dae::Singleton<MusicSystemTest>
+class MusicSystem
 {
 public:
-	MusicSystemTest() = default;
-	~MusicSystemTest() override = default;
-	void PlayMusic(MusicId id, bool loop);
-	void PlayMusic(const Music& music, bool loop);
-	void Pause();
-	void Resume();
-	void Stop();
+	virtual ~MusicSystem() = default;
+	virtual void Play(MusicId id, bool loop) = 0;
+	virtual void Add(MusicId id, const std::string& filePath) = 0;
+	virtual void Pause() = 0;
+	virtual void Resume() = 0;
+	virtual void Stop() = 0;
+	virtual bool IsPlaying() const = 0;
+};
+
+class MusicSystemEngine : public MusicSystem
+{
+public:
+	MusicSystemEngine();
+	~MusicSystemEngine() override;
+	void Play(MusicId id, bool loop) override;
+	void Pause() override;
+	void Resume() override;
+	void Stop() override;
+	bool IsPlaying() const override;
+	void Add(MusicId id, const std::string& filePath) override;
+
 private:
 	class MusicSystemImpl;
 	MusicSystemImpl* m_pImpl;
@@ -79,5 +91,32 @@ public:
 	void Add(const SoundId& id, const std::string& filepath) override;
 private:
 	std::unique_ptr<SoundSystem> m_RealSoundSystem;
+};
+
+class ServiceMusicLocator final
+{
+public:
+	static MusicSystem& GetMusicSystem();
+	static void RegisterMusicSystem(std::unique_ptr<MusicSystem>&& ms);
+private:
+	static std::unique_ptr<MusicSystem> m_MusicSystemInstance;
+};
+
+class LoggingMusicSystem final : public MusicSystem
+{
+public:
+	LoggingMusicSystem() = delete;
+	LoggingMusicSystem(const LoggingMusicSystem& other) = delete;
+	LoggingMusicSystem(std::unique_ptr<MusicSystem>&& ms);
+	~LoggingMusicSystem() override = default;
+	void Play(MusicId id, bool loop) override;
+	void Pause() override;
+	void Resume() override;
+	void Stop() override;
+	bool IsPlaying() const override;
+	void Add(MusicId id, const std::string& filePath) override;
+
+private:
+	std::unique_ptr<MusicSystem> m_RealMusicSystem;
 };
 

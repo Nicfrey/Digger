@@ -1,5 +1,6 @@
 #include "DiggerUtils.h"
 
+#include "GameInstance.h"
 #include "GameObject.h"
 #include "LevelComponent.h"
 #include "Observer.h"
@@ -12,7 +13,8 @@ void DiggerUtils::OnLoadLevel1()
 	const auto go{ std::make_shared<dae::GameObject>() };
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);
-	EventManager::GetInstance().NotifyEvent("LoadLevel1");
+	GameInstance::GetInstance().ChangeValue("CurrentLevel", 1);
+	EventManager::GetInstance().NotifyEvent("LoadLevel");
 }
 
 void DiggerUtils::OnLoadLevel2()
@@ -21,7 +23,8 @@ void DiggerUtils::OnLoadLevel2()
 	const auto go{ std::make_shared<dae::GameObject>() };
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);
-	EventManager::GetInstance().NotifyEvent("LoadLevel2");
+	GameInstance::GetInstance().ChangeValue("CurrentLevel", 2);
+	EventManager::GetInstance().NotifyEvent("LoadLevel");
 }
 
 void DiggerUtils::OnLoadLevel3()
@@ -30,5 +33,24 @@ void DiggerUtils::OnLoadLevel3()
 	const auto go{ std::make_shared<dae::GameObject>() };
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);
-	EventManager::GetInstance().NotifyEvent("LoadLevel3");
+	GameInstance::GetInstance().ChangeValue("CurrentLevel", 3);
+	EventManager::GetInstance().NotifyEvent("LoadLevel");
+}
+
+void DiggerUtils::SelectSinglePlayer()
+{
+	EventManager::GetInstance().NotifyEvent("SelectGameMode");
+	GameInstance::GetInstance().ChangeValue("CurrentGameMode", DiggerGameMode::SinglePlayer);
+}
+
+void DiggerUtils::SelectCoop()
+{
+	EventManager::GetInstance().NotifyEvent("SelectGameMode");
+	GameInstance::GetInstance().ChangeValue("CurrentGameMode", DiggerGameMode::Coop);
+}
+
+void DiggerUtils::SelectVersus()
+{
+	EventManager::GetInstance().NotifyEvent("SelectGameMode");
+	GameInstance::GetInstance().ChangeValue("CurrentGameMode", DiggerGameMode::Versus);
 }

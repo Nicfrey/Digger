@@ -15,6 +15,8 @@ public:
 	void AddWidget(const std::shared_ptr<Widget>& widget);
 	void SetActiveWidget(const std::shared_ptr<Widget>& widget);
 	void SetActiveWidget(int index);
+	void SetActiveWidget(const std::string& name);
+	void RemoveActiveWidget();
 	void Render() const;
 	void HandleOnClickEvent(const glm::vec3& vec);
 

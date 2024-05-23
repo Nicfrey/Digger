@@ -20,7 +20,7 @@ void WidgetManager::AddWidget(const std::shared_ptr<Widget>& widget)
 
 void WidgetManager::SetActiveWidget(const std::shared_ptr<Widget>& widget)
 {
-	auto it{ std::ranges::find_if(m_Widgets, [widget](const std::shared_ptr<Widget>& other)
+	const auto it{ std::ranges::find_if(m_Widgets, [widget](const std::shared_ptr<Widget>& other)
 	{
 		return widget.get() == other.get();
 	})};
@@ -38,6 +38,28 @@ void WidgetManager::SetActiveWidget(int index)
 		return;
 	}
 	m_ActiveWidget = m_Widgets[index];
+}
+
+void WidgetManager::SetActiveWidget(const std::string& name)
+{
+	if(!HasElementWithName(name))
+	{
+		std::cerr << "Widget with name '" << name << "' does not exist\n";
+		return;
+	}
+	const auto it{ std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
+	{
+		return other->GetName() == name;
+	}) };
+	if(it != m_Widgets.end())
+	{
+		m_ActiveWidget = *it;
+	}
+}
+
+void WidgetManager::RemoveActiveWidget()
+{
+	m_ActiveWidget = nullptr;
 }
 
 void WidgetManager::Render() const
@@ -58,7 +80,7 @@ void WidgetManager::HandleOnClickEvent(const glm::vec3& vec)
 
 bool WidgetManager::HasElementWithName(const std::string& name) const
 {
-	auto it{ std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
+	const auto it{ std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
 	{
 		return other->GetName() == name;
 	})};

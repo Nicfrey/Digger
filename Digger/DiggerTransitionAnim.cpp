@@ -1,7 +1,6 @@
 #include "DiggerTransitionAnim.h"
 
 #include "Blackboard.h"
-#include "GameObject.h"
 #include "MoneyBagComponent.h"
 
 bool TransitionPlayerNoProjectile::CalculateCondition(Blackboard* pBlackBoard) const
