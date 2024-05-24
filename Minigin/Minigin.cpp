@@ -22,6 +22,7 @@
 #include "WidgetManager.h"
 
 SDL_Window* g_window{};
+const glm::vec2 dae::Minigin::m_Window{ 640, 480 };
 
 void PrintSDLVersion()
 {
@@ -74,8 +75,8 @@ dae::Minigin::Minigin(const std::string &dataPath)
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		640,
-		480,
+		static_cast<int>(m_Window.x),
+		static_cast<int>(m_Window.y),
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 
@@ -131,7 +132,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		sceneManager.Update();
 		renderer.Render();
 
-		sceneManager.Destroy();
+		sceneManager.OnDestroy();
 		const auto sleepTime{ currentTime + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
 		std::this_thread::sleep_for(sleepTime);
 	}

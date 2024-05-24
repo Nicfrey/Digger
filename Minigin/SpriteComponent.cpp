@@ -10,8 +10,8 @@
 
 SpriteComponent::SpriteComponent(const std::string& name, const std::string& filename): TextureComponent{name,filename}
 {
-	m_NrCols = 0;
-	m_NrRows = 0;
+	m_NrCols = 1;
+	m_NrRows = 1;
 	m_CurrentCol = 0;
 	m_CurrentRow = 0;
 	SetShape();

@@ -104,6 +104,8 @@ void TimerManager::AddTimer(ClassType* obj, void(ClassType::* funcPtr)(), float 
 	bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1, glm::vec2& intersectPoint);
 	bool LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersectPoint);
 
+	bool IsOverlapping(const Rectf& rect1, const Rectf& rect2);
+
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo);
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo);
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo, const std::string& tag);

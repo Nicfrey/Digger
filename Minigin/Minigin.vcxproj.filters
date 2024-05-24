@@ -249,6 +249,12 @@
     <ClInclude Include="GameInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="QuadTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCollision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Texture2D.cpp">
@@ -396,6 +402,12 @@
       <Filter>Engine\Sources Files\Singleton</Filter>
     </ClCompile>
     <ClCompile Include="GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCollision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -86,6 +86,7 @@ namespace dae
 		bool m_IsDestroyed{};
 
 		void SetPositionIsDirty();
+		bool GetPositionIsDirty() const;
 		void UpdateWorldPosition();
 		void SetRotationIsDirty();
 		void UpdateWorldRotation();

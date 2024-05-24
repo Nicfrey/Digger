@@ -5,6 +5,7 @@
 #include "Collider2D.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include "SceneManager.h"
 #include "TextureComponent.h"
 
 dae::GameObject::~GameObject() = default;
@@ -359,6 +360,11 @@ void dae::GameObject::SetPositionIsDirty()
 	{
 		child->SetPositionIsDirty();
 	}
+}
+
+bool dae::GameObject::GetPositionIsDirty() const
+{
+	return m_PositionIsDirty;
 }
 
 void dae::GameObject::UpdateWorldPosition()

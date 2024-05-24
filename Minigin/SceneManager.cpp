@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 #include <iostream>
+#include <thread>
 #include <utility>
 
 #include "Scene.h"
@@ -27,7 +28,13 @@ void dae::SceneManager::FixedUpdate()
 
 void dae::SceneManager::OnCollisionUpdate()
 {
-	m_ActiveScene->OnCollisionUpdate();
+	std::jthread thread([this]
+		{
+			m_MutexCollision.lock();
+			m_ActiveScene->OnCollisionUpdate();
+			m_MutexCollision.unlock();
+		});
+	// m_ActiveScene->OnCollisionUpdate();
 }
 
 void dae::SceneManager::SetActiveScene(const std::string& name)
@@ -91,7 +98,7 @@ std::vector<std::shared_ptr<dae::GameObject>> dae::SceneManager::GetAllGameObjec
 	return m_ActiveScene->GetAllGameObject();
 }
 
-void dae::SceneManager::Destroy()
+void dae::SceneManager::OnDestroy()
 {
 	m_ActiveScene->Remove();
 }

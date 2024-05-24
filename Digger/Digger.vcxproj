@@ -181,6 +181,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(OutputPath)" /R /Y</C
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BackgroundComponent.cpp" />
     <ClCompile Include="Digger.cpp" />
     <ClCompile Include="DiggerCommands.cpp" />
     <ClCompile Include="DiggerStates.cpp" />
@@ -202,6 +203,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(OutputPath)" /R /Y</C
     <ClCompile Include="UIPlayerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BackgroundComponent.h" />
     <ClInclude Include="DiggerCommands.h" />
     <ClInclude Include="DiggerStates.h" />
     <ClInclude Include="DiggerTransitionAnim.h" />

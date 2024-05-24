@@ -82,6 +82,14 @@ bool LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersec
 	return LineIntersect2D(line1.p0, line1.p1, line2.p0, line2.p1, intersectPoint);
 }
 
+bool IsOverlapping(const Rectf& rect1, const Rectf& rect2)
+{
+	return rect1.bottomLeft.x < rect2.bottomLeft.x + rect2.width &&
+		rect1.bottomLeft.x + rect1.width > rect2.bottomLeft.x &&
+		rect1.bottomLeft.y < rect2.bottomLeft.y + rect2.height &&
+		rect1.bottomLeft.y + rect1.height > rect2.bottomLeft.y;
+}
+
 bool Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo)
 {
 	const glm::vec2 end = origin + direction * maxDistance;

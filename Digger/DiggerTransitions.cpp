@@ -24,11 +24,11 @@ bool HasSelectedLevelTransition::CalculateCondition(Blackboard* pBlackBoard) con
 bool LoadLevelTransition::CalculateCondition(Blackboard* pBlackBoard) const
 {
 	bool isTransition;
-	if(pBlackBoard->GetValue("isLoaded",isTransition))
+	if(pBlackBoard->GetValue("hasLoadedLevel",isTransition))
 	{
 		return isTransition;
 	}
-	std::cerr << "LoadLevelTransition: Could not find isLoaded in blackboard\n";
+	std::cerr << "LoadLevelTransition: Could not find hasLoadedLevel in blackboard\n";
 	return false;
 }
 

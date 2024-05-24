@@ -14,7 +14,7 @@ void DiggerUtils::OnLoadLevel1()
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);
 	GameInstance::GetInstance().ChangeValue("CurrentLevel", 1);
-	EventManager::GetInstance().NotifyEvent("LoadLevel");
+	EventManager::GetInstance().NotifyEvent("SelectLevel");
 }
 
 void DiggerUtils::OnLoadLevel2()
@@ -24,7 +24,7 @@ void DiggerUtils::OnLoadLevel2()
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);
 	GameInstance::GetInstance().ChangeValue("CurrentLevel", 2);
-	EventManager::GetInstance().NotifyEvent("LoadLevel");
+	EventManager::GetInstance().NotifyEvent("SelectLevel");
 }
 
 void DiggerUtils::OnLoadLevel3()
@@ -34,7 +34,7 @@ void DiggerUtils::OnLoadLevel3()
 	go->AddComponent(std::make_shared<LevelComponent>());
 	scene.Add(go);
 	GameInstance::GetInstance().ChangeValue("CurrentLevel", 3);
-	EventManager::GetInstance().NotifyEvent("LoadLevel");
+	EventManager::GetInstance().NotifyEvent("SelectLevel");
 }
 
 void DiggerUtils::SelectSinglePlayer()

@@ -6,6 +6,7 @@
 
 
 #include "AnimatorComponent.h"
+#include "BackgroundComponent.h"
 #include "BoxCollider2D.h"
 #include "DiggerCommands.h"
 #include "DiggerTransitionAnim.h"
@@ -21,8 +22,10 @@
 #include "ResourceManager.h"
 #include "SpriteComponent.h"
 #include "HealthComponent.h"
+#include "Minigin.h"
 #include "Observer.h"
 #include "PlayerComponent.h"
+#include "Renderer.h"
 #include "ScoreComponent.h"
 #include "UIPlayerComponent.h"
 
@@ -203,7 +206,7 @@ void LevelComponent::LoadLevel()
 		const glm::vec2 pos{ data.at("x"), data.at("y") };
 		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
 	}
-
+	EventManager::GetInstance().NotifyEvent("LevelLoaded");
 }
 
 glm::vec2 LevelComponent::GetVectorFromJson(const nlohmann::json& json)
@@ -262,10 +265,26 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 
 void LevelComponent::CreateBackgroundLevel(int level)
 {
-	const std::shared_ptr background{ std::make_shared<dae::GameObject>() };
-	const std::shared_ptr texture{ std::make_shared<TextureComponent>("Backgrounds/" + std::to_string(level) + ".png") };
-	background->AddComponent(texture);
-	dae::SceneManager::GetInstance().Instantiate(background);
+	auto windowSize{ dae::Minigin::m_Window };
+	glm::vec2 currentSize{0,0};
+	const std::shared_ptr sprite{ std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png") };
+	while(currentSize.y <= windowSize.y)
+	{
+		while (currentSize.x <= windowSize.x)
+		{
+			const std::shared_ptr spriteComponent{ std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png") };
+			const std::shared_ptr background{ std::make_shared<dae::GameObject>() };
+			const std::shared_ptr component{ std::make_shared<BackgroundComponent>() };
+			background->AddComponent(spriteComponent);
+			background->AddComponent(component);
+			background->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
+			background->SetLocalPosition(currentSize.x, currentSize.y);
+			dae::SceneManager::GetInstance().Instantiate(background);
+			currentSize.x += sprite->GetShape().width;
+		}
+		currentSize.x = 0;
+		currentSize.y += sprite->GetShape().height;
+	}
 }
 
 void LevelComponent::CreatePlayerAtIndex(int index, int player)

@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <mutex>
+
 #include "Singleton.h"
 
 namespace dae
@@ -33,7 +35,8 @@ namespace dae
 		GameObject* GetGameObjectByTag(const std::string& tag) const;
 		std::vector<GameObject*> GetGameObjectsByTag(const std::string& tag) const;
 		std::vector<std::shared_ptr<GameObject>> GetAllGameObject() const;
-		void Destroy();
+		void OnDestroy();
+
 		std::shared_ptr<dae::Scene> GetScene(const std::string& name);
 
 	private:
@@ -41,6 +44,9 @@ namespace dae
 		SceneManager() = default;
 		std::vector<std::shared_ptr<Scene>> m_scenes;
 		std::shared_ptr<Scene> m_ActiveScene;
+
+		std::mutex m_MutexCollision;
+		std::jthread m_CollisionThread;
 	};
 
 	template <typename T>

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include <glm/vec2.hpp>
 
 namespace dae
 {
@@ -15,5 +16,6 @@ namespace dae
 		Minigin(Minigin&& other) = delete;
 		Minigin& operator=(const Minigin& other) = delete;
 		Minigin& operator=(Minigin&& other) = delete;
+		static const glm::vec2 m_Window;
 	};
 }

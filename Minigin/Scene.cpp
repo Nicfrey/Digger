@@ -4,12 +4,21 @@
 #include <algorithm>
 
 #include "Collider2D.h"
+#include "Minigin.h"
+#include "Observer.h"
+#include "QuadTree.h"
+#include "Utils.h"
 
 using namespace dae;
 
 unsigned int Scene::m_idCounter = 0;
 
-Scene::Scene(const std::string& name) : m_name(name) {}
+Scene::Scene(std::string name) : m_name(std::move(name))
+{
+	m_QuadTree = std::make_shared<QuadTree>(Rectf{ {0.f,0.f},Minigin::m_Window.x,Minigin::m_Window.y });
+	EventManager::GetInstance().AddEvent("ObjectsDestroyed", this, &Scene::UpdateQuadTree);
+	EventManager::GetInstance().AddEvent("ObjectMoving", this, &Scene::UpdateQuadTree);
+}
 
 Scene::~Scene() = default;
 
@@ -25,6 +34,7 @@ void Scene::Init()
 {
 	for (const auto& object : m_objects)
 	{
+		m_QuadTree->Insert(object);
 		object->Init();
 	}
 }
@@ -39,24 +49,18 @@ void Scene::RenderGUI()
 
 void Scene::OnCollisionUpdate()
 {
-	for(auto& go : m_objects)
+	for (auto& go : m_objects)
 	{
-		if(go->HasComponent<ColliderComponent>())
-		{
-			for(auto& goOther : m_objects)
-			{
-				if(go == goOther)
-					continue;
+		m_QuadTree->Collide(go);
+	}
+}
 
-				if (goOther->HasComponent<Collider2D>())
-				{
-					const auto otherCollider{ goOther->GetComponent<Collider2D>() };
-					otherCollider->IsOverlapping(go);
-					const auto goCollider{ go->GetComponent<Collider2D>() };
-					goCollider->IsOverlapping(goOther);
-				}
-			}
-		}
+void Scene::UpdateQuadTree()
+{
+	m_QuadTree->Reset();
+	for (const auto& object : m_objects)
+	{
+		m_QuadTree->Insert(object);
 	}
 }
 
@@ -119,12 +123,17 @@ void Scene::Remove()
 		{
 			return other->IsDestroyed();
 		}) };
-	if(it != m_objects.end())
+	while(it != m_objects.end())
 	{
 		it->get()->OnDestroy();
 		it->reset();
-		m_objects.erase(it);
+		it = m_objects.erase(it);
+		it = std::find_if(it, m_objects.end(), [&](const std::shared_ptr<dae::GameObject>& other)
+		{
+			return other->IsDestroyed();
+		});
 	}
+	EventManager::GetInstance().NotifyEvent("ObjectsDestroyed");
 }
 
 void Scene::Remove(std::shared_ptr<GameObject>& object)

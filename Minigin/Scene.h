@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 
+class QuadTree;
+
 namespace dae
 {
 	class GameObject;
@@ -23,6 +25,7 @@ namespace dae
 		void Init();
 		void RenderGUI();
 		void OnCollisionUpdate();
+		void UpdateQuadTree();
 		std::string GetName() const { return m_name; }
 
 		template<typename T>
@@ -37,11 +40,12 @@ namespace dae
 		Scene& operator=(Scene&& other) = delete;
 
 	private: 
-		explicit Scene(const std::string& name);
+		explicit Scene(std::string name);
 
 		std::string m_name;
 		std::vector < std::shared_ptr<GameObject>> m_objects{};
 		std::vector < std::shared_ptr<GameObject>> m_ObjectsToBeAdded{};
+		std::shared_ptr<QuadTree> m_QuadTree;
 
 		static unsigned int m_idCounter; 
 	};

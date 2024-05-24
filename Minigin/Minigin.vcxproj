@@ -238,10 +238,12 @@
     <ClInclude Include="GameObjectCommand.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="GridCollision.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="QuadTree.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RotateComponent.h" />
@@ -290,10 +292,12 @@
     <ClCompile Include="GameObjectCommand.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="GridCollision.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RotateComponent.cpp" />

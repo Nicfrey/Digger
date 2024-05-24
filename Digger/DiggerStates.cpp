@@ -1,7 +1,9 @@
 #include "DiggerStates.h"
 
 #include "Blackboard.h"
+#include "DiggerUtils.h"
 #include "Observer.h"
+#include "SoundSystemEngine.h"
 #include "Utils.h"
 #include "WidgetManager.h"
 
@@ -63,6 +65,7 @@ void LoadState::Enter(Blackboard* pBlackboard)
 	EventManager::GetInstance().AddEvent("LevelLoaded", this, &LoadState::HasLoadedLevel);
 	// Change the state of load level
 	pBlackboard->ChangeValue("hasLoadedLevel", false);
+	EventManager::GetInstance().NotifyEvent("LoadLevel");
 }
 
 void LoadState::Update(Blackboard* pBlackboard)
@@ -94,6 +97,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	EventManager::GetInstance().AddEvent("PlayerDied",this,&PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	// TODO Play music of the game
+	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME), true);
 }
 
 void PlayState::Update(Blackboard* pBlackboard)
