@@ -23,6 +23,7 @@ class LevelComponent : public BaseComponent
 public:
 	LevelComponent();
 	~LevelComponent() override;
+	GraphUtils::Graph* GetGraph() const;
 	LevelComponent(const LevelComponent& other);
 	LevelComponent(LevelComponent&& other) noexcept;
 	LevelComponent& operator=(const LevelComponent& other);

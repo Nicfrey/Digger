@@ -86,3 +86,8 @@ void EnemyComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemyComponent::OnDestroy);
 }
+
+EnemyComponent::EnemyType EnemyComponent::GetType() const
+{
+	return m_Type;
+}

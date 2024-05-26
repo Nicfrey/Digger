@@ -40,6 +40,11 @@ LevelComponent::~LevelComponent()
 	m_pGraph = nullptr;
 }
 
+GraphUtils::Graph* LevelComponent::GetGraph() const
+{
+	return m_pGraph;
+}
+
 LevelComponent::LevelComponent(const LevelComponent& other): BaseComponent(other),
                                                              m_pGraph{new GraphUtils::Graph{*other.m_pGraph}}
 {
@@ -104,6 +109,7 @@ void LevelComponent::Init()
 void LevelComponent::RenderGUI()
 {
 	dae::GameObject* player{dae::SceneManager::GetInstance().GetGameObjectByTag("Player")};
+	ImGui::SetNextWindowPos(ImVec2{ 20.f,100.f },ImGuiCond_Always);
 	ImGui::Begin("Graph");
 	for (size_t i{}; i < m_pGraph->GetNodes().size(); ++i)
 	{
@@ -146,9 +152,7 @@ void LevelComponent::LoadLevel()
 
 	// Read from json
 	nlohmann::json json{ dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(level) + ".json") };
-	// Init background
-	int numberLevel{ json["NumberLevel"].get<int>() };
-	CreateBackgroundLevel(numberLevel);
+	
 
 	// Init graph
 	for (int i{}; i < maxRow; ++i)
@@ -178,6 +182,17 @@ void LevelComponent::LoadLevel()
 		}
 	}
 
+	// Set the graph index to be visited
+	for (auto data : json["CanBeVisited"])
+	{
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x))->SetCanBeVisited(true);
+	}
+
+	// Init background
+	int numberLevel{ json["NumberLevel"].get<int>() };
+	CreateBackgroundLevel(numberLevel);
+
 
 	// Init Players
 	int indexPlayer{};
@@ -194,12 +209,7 @@ void LevelComponent::LoadLevel()
 	m_SpawnPointEnemy = GetVectorFromJson(json["SpawnPointEnemy"]);
 	// TODO Check if we are selecting 2 players versus
 
-	// Set the graph index to be visited
-	for (auto data : json["CanBeVisited"])
-	{
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
-		m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x))->SetCanBeVisited(true);
-	}
+	
 
 	for (auto data : json["Emerald"])
 	{
@@ -272,6 +282,13 @@ void LevelComponent::CreateBackgroundLevel(int level)
 	{
 		while (currentSize.x <= windowSize.x)
 		{
+			GraphUtils::GraphNode* current{m_pGraph->GetClosestNode(glm::vec3{currentSize, 0})};
+			if (current->CanBeVisited() && glm::distance(current->GetPosition(), glm::vec3{ currentSize,0 }) < 20.f)
+			{
+				
+				currentSize.x += sprite->GetShape().width;
+				continue;
+			}
 			const std::shared_ptr spriteComponent{ std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png") };
 			const std::shared_ptr background{ std::make_shared<dae::GameObject>() };
 			const std::shared_ptr component{ std::make_shared<BackgroundComponent>() };

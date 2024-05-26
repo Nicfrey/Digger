@@ -56,3 +56,11 @@ public:
 	~TransitionMoneyBagIsDestroyedIdle() override = default;
 };
 
+class TransitionEnemyIsDead : public FSMTransition
+{
+public:
+	TransitionEnemyIsDead() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionEnemyIsDead() override = default;
+};
+

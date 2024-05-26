@@ -17,6 +17,7 @@ public:
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
 	void OnEnemyDead();
 	void OnDestroy() override;
+	EnemyType GetType() const;
 
 private:
 	static int m_ScoreKilled;
