@@ -65,6 +65,8 @@ namespace dae
 		void Destroy();
 		bool IsDestroyed() const;
 		void OnDestroy();
+		bool GetIsMoving() const;
+		void SetIsNotMoving();
 
 		GameObject() = default;
 		GameObject(const glm::vec3& pos);
@@ -84,9 +86,10 @@ namespace dae
 		std::vector<GameObject*> m_ChildrenObject{};
 		std::string m_Tag{};
 		bool m_IsDestroyed{};
+		bool m_IsMoving{};
 
 		void SetPositionIsDirty();
-		bool GetPositionIsDirty() const;
+		void SetIsMoving();
 		void UpdateWorldPosition();
 		void SetRotationIsDirty();
 		void UpdateWorldRotation();

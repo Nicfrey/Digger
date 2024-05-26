@@ -238,7 +238,7 @@
     <ClInclude Include="GameObjectCommand.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graph.h" />
-    <ClInclude Include="GridCollision.h" />
+    <ClInclude Include="SpatialGrid.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="Minigin.h" />
@@ -292,7 +292,7 @@
     <ClCompile Include="GameObjectCommand.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Graph.cpp" />
-    <ClCompile Include="GridCollision.cpp" />
+    <ClCompile Include="SpatialGrid.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="Minigin.cpp" />

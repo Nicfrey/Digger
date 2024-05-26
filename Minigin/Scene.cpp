@@ -7,6 +7,7 @@
 #include "Minigin.h"
 #include "Observer.h"
 #include "QuadTree.h"
+#include "SpatialGrid.h"
 #include "Utils.h"
 
 using namespace dae;
@@ -16,8 +17,9 @@ unsigned int Scene::m_idCounter = 0;
 Scene::Scene(std::string name) : m_name(std::move(name))
 {
 	m_QuadTree = std::make_shared<QuadTree>(Rectf{ {0.f,0.f},Minigin::m_Window.x,Minigin::m_Window.y });
-	EventManager::GetInstance().AddEvent("ObjectsDestroyed", this, &Scene::UpdateQuadTree);
-	EventManager::GetInstance().AddEvent("ObjectMoving", this, &Scene::UpdateQuadTree);
+	m_SpatialGrid = std::make_shared<SpatialGrid>(25, 25);
+	//EventManager::GetInstance().AddEvent("ObjectsDestroyed", this, &Scene::UpdateQuadTree);
+	//EventManager::GetInstance().AddEvent("ObjectMoving", this, &Scene::UpdateQuadTree);
 }
 
 Scene::~Scene() = default;
@@ -34,7 +36,8 @@ void Scene::Init()
 {
 	for (const auto& object : m_objects)
 	{
-		m_QuadTree->Insert(object);
+		m_SpatialGrid->Add(object);
+		//m_QuadTree-;>Insert(object);
 		object->Init();
 	}
 }
@@ -49,9 +52,11 @@ void Scene::RenderGUI()
 
 void Scene::OnCollisionUpdate()
 {
+
 	for (auto& go : m_objects)
 	{
-		m_QuadTree->Collide(go);
+		// m_QuadTree->Collide(go);
+		m_SpatialGrid->OnCollisionUpdate(go);
 	}
 }
 
@@ -152,6 +157,7 @@ void Scene::Update()
 	for (const auto& objectAdded : m_ObjectsToBeAdded)
 	{
 		objectAdded->Init();
+		m_SpatialGrid->Add(objectAdded);
 	}
 	m_objects.insert(m_objects.end(), m_ObjectsToBeAdded.begin(), m_ObjectsToBeAdded.end());
 	m_ObjectsToBeAdded.clear();

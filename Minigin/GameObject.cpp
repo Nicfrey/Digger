@@ -362,9 +362,27 @@ void dae::GameObject::SetPositionIsDirty()
 	}
 }
 
-bool dae::GameObject::GetPositionIsDirty() const
+void dae::GameObject::SetIsMoving()
 {
-	return m_PositionIsDirty;
+	m_IsMoving = true;
+	for (const auto& child : m_ChildrenObject)
+	{
+		child->SetIsMoving();
+	}
+}
+
+bool dae::GameObject::GetIsMoving() const
+{
+	return m_IsMoving;
+}
+
+void dae::GameObject::SetIsNotMoving()
+{
+	m_IsMoving = false;
+	for(const auto& child: m_ChildrenObject)
+	{
+		child->SetIsNotMoving();
+	}
 }
 
 void dae::GameObject::UpdateWorldPosition()

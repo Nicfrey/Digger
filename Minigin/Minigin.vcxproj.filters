@@ -252,7 +252,7 @@
     <ClInclude Include="QuadTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GridCollision.h">
+    <ClInclude Include="SpatialGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -407,7 +407,7 @@
     <ClCompile Include="QuadTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GridCollision.cpp">
+    <ClCompile Include="SpatialGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

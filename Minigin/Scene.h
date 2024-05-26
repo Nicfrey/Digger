@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 
+class SpatialGrid;
 class QuadTree;
 
 namespace dae
@@ -46,6 +47,7 @@ namespace dae
 		std::vector < std::shared_ptr<GameObject>> m_objects{};
 		std::vector < std::shared_ptr<GameObject>> m_ObjectsToBeAdded{};
 		std::shared_ptr<QuadTree> m_QuadTree;
+		std::shared_ptr<SpatialGrid> m_SpatialGrid;
 
 		static unsigned int m_idCounter; 
 	};
