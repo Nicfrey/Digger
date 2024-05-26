@@ -15,7 +15,7 @@ namespace dae
 
 	struct Rectf final
 	{
-		glm::vec2 bottomLeft;
+		glm::vec2 topLeft;
 		float width;
 		float height;
 		glm::vec2 GetCenter() const;

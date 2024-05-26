@@ -10,8 +10,8 @@ BoxCollider2D::BoxCollider2D(): Collider2D{}
 {
 	if(GetGameObject())
 	{
-		m_BoxCollider.bottomLeft.x = GetGameObject()->GetWorldPosition().x;
-		m_BoxCollider.bottomLeft.y = GetGameObject()->GetWorldPosition().y;
+		m_BoxCollider.topLeft.x = GetGameObject()->GetWorldPosition().x;
+		m_BoxCollider.topLeft.y = GetGameObject()->GetWorldPosition().y;
 	}
 }
 
@@ -60,15 +60,15 @@ void BoxCollider2D::Init()
 	Collider2D::Init();
 	if (GetGameObject())
 	{
-		m_BoxCollider.bottomLeft.x = GetGameObject()->GetWorldPosition().x;
-		m_BoxCollider.bottomLeft.y = GetGameObject()->GetWorldPosition().y;
+		m_BoxCollider.topLeft.x = GetGameObject()->GetWorldPosition().x;
+		m_BoxCollider.topLeft.y = GetGameObject()->GetWorldPosition().y;
 	}
 }
 
 void BoxCollider2D::RenderGUI()
 {
-	const ImVec2 TopLeft{m_BoxCollider.bottomLeft.x , m_BoxCollider.bottomLeft.y};
-	const ImVec2 bottomRight{ m_BoxCollider.bottomLeft.x + m_BoxCollider.width,m_BoxCollider.bottomLeft.y + m_BoxCollider.height };
+	const ImVec2 TopLeft{m_BoxCollider.topLeft.x , m_BoxCollider.topLeft.y};
+	const ImVec2 bottomRight{ m_BoxCollider.topLeft.x + m_BoxCollider.width,m_BoxCollider.topLeft.y + m_BoxCollider.height };
 	ImGui::Begin("Collisions BoxCollider2D");
 	ImGui::GetWindowDrawList()->AddRect(TopLeft, bottomRight, IM_COL32(0, 255, 0, 255));
 	ImGui::End();
@@ -83,8 +83,8 @@ void BoxCollider2D::Update()
 {
 	if(GetGameObject())
 	{
-		m_BoxCollider.bottomLeft.x = GetGameObject()->GetLocalPosition().x;
-		m_BoxCollider.bottomLeft.y = GetGameObject()->GetLocalPosition().y;
+		m_BoxCollider.topLeft.x = GetGameObject()->GetWorldPosition().x;
+		m_BoxCollider.topLeft.y = GetGameObject()->GetWorldPosition().y;
 	}
 }
 
@@ -100,7 +100,7 @@ bool BoxCollider2D::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 	if (const auto otherBox{ dynamic_cast<BoxCollider2D*>(otherCollider) })
 	{
 		// If one rectangle is on left side of the other
-		if (m_BoxCollider.bottomLeft.x + m_BoxCollider.width < otherBox->GetBoxCollider().bottomLeft.x || (otherBox->GetBoxCollider().bottomLeft.x + otherBox->GetBoxCollider().width) < m_BoxCollider.bottomLeft.x)
+		if (m_BoxCollider.topLeft.x + m_BoxCollider.width < otherBox->GetBoxCollider().topLeft.x || (otherBox->GetBoxCollider().topLeft.x + otherBox->GetBoxCollider().width) < m_BoxCollider.topLeft.x)
 		{
 			if(GetOther())
 			{
@@ -111,7 +111,7 @@ bool BoxCollider2D::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 		}
 
 		// If one rectangle is under the other
-		if (m_BoxCollider.bottomLeft.y + m_BoxCollider.height < otherBox->GetBoxCollider().bottomLeft.y || (otherBox->GetBoxCollider().bottomLeft.y + otherBox->GetBoxCollider().height) < m_BoxCollider.bottomLeft.y)
+		if (m_BoxCollider.topLeft.y + m_BoxCollider.height < otherBox->GetBoxCollider().topLeft.y || (otherBox->GetBoxCollider().topLeft.y + otherBox->GetBoxCollider().height) < m_BoxCollider.topLeft.y)
 		{
 			if (GetOther())
 			{
@@ -138,10 +138,10 @@ bool BoxCollider2D::Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec
 {
 	// Regroup every point of the box
 	std::vector<glm::vec2> points;
-	points.emplace_back(m_BoxCollider.bottomLeft);
-	points.emplace_back(m_BoxCollider.bottomLeft + glm::vec2{ m_BoxCollider.width,0 });
-	points.emplace_back(m_BoxCollider.bottomLeft + glm::vec2{ 0,m_BoxCollider.height });
-	points.emplace_back(m_BoxCollider.bottomLeft + glm::vec2{ m_BoxCollider.width , m_BoxCollider.height });
+	points.emplace_back(m_BoxCollider.topLeft);
+	points.emplace_back(m_BoxCollider.topLeft + glm::vec2{ m_BoxCollider.width,0 });
+	points.emplace_back(m_BoxCollider.topLeft + glm::vec2{ 0,m_BoxCollider.height });
+	points.emplace_back(m_BoxCollider.topLeft + glm::vec2{ m_BoxCollider.width , m_BoxCollider.height });
 
 	for(size_t i{}; i < points.size(); ++i)
 	{

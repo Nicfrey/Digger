@@ -44,6 +44,7 @@ void Scene::Init()
 
 void Scene::RenderGUI()
 {
+	m_SpatialGrid->RenderGUI();
 	for (const auto& object : m_objects)
 	{
 		object->RenderGUI();
@@ -124,6 +125,7 @@ void Scene::Instantiate(std::shared_ptr<GameObject> object)
 
 void Scene::Remove()
 {
+	m_SpatialGrid->Clear();
 	auto it{ std::find_if(m_objects.begin(), m_objects.end(), [&](const std::shared_ptr<dae::GameObject>& other)
 		{
 			return other->IsDestroyed();

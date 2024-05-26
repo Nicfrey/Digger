@@ -275,9 +275,11 @@ void LevelComponent::CreateBackgroundLevel(int level)
 			const std::shared_ptr spriteComponent{ std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png") };
 			const std::shared_ptr background{ std::make_shared<dae::GameObject>() };
 			const std::shared_ptr component{ std::make_shared<BackgroundComponent>() };
+			const std::shared_ptr boxCollider{ std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height) };
+			boxCollider->SetIsStatic(true);
 			background->AddComponent(spriteComponent);
 			background->AddComponent(component);
-			background->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
+			background->AddComponent(boxCollider);
 			background->SetLocalPosition(currentSize.x, currentSize.y);
 			dae::SceneManager::GetInstance().Instantiate(background);
 			currentSize.x += sprite->GetShape().width;

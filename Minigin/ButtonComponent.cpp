@@ -66,5 +66,5 @@ void ButtonComponent::SetTextButton(const std::string& text)
 {
 	m_Text->SetText(text);
 	m_Text->Update();
-	m_Box = Rectf{ m_Box.bottomLeft, static_cast<float>(m_Text->GetSize().x), static_cast<float>(m_Text->GetSize().y) };
+	m_Box = Rectf{ m_Box.topLeft, static_cast<float>(m_Text->GetSize().x), static_cast<float>(m_Text->GetSize().y) };
 }

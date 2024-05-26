@@ -24,8 +24,9 @@ public:
 	SpatialGrid(int nbCellsWidth, int nbCellsHeight);
 	void Init(const std::vector<std::shared_ptr<dae::GameObject>>& objects);
 	void Add(const std::shared_ptr<dae::GameObject>& object);
-	void Update();
 	void OnCollisionUpdate(std::shared_ptr<dae::GameObject>& go) const;
+	void RenderGUI() const;
+	void Clear();
 private:
 	struct Grid
 	{

@@ -49,16 +49,16 @@ void QuadTree::Insert(const std::shared_ptr<dae::GameObject>& object)
 			m_IsLeaf = false;
 
 			Rectf childShape{};
-			childShape = Rectf{ m_Shape.bottomLeft, m_Shape.width / 2, m_Shape.height / 2 };
+			childShape = Rectf{ m_Shape.topLeft, m_Shape.width / 2, m_Shape.height / 2 };
 			m_NordWestTree = new QuadTree(childShape);
 			m_NordWestTree->m_Depth = m_Depth + 1;
-			childShape = Rectf{ glm::vec2{m_Shape.bottomLeft.x + m_Shape.width / 2, m_Shape.bottomLeft.y}, m_Shape.width / 2, m_Shape.height / 2 };
+			childShape = Rectf{ glm::vec2{m_Shape.topLeft.x + m_Shape.width / 2, m_Shape.topLeft.y}, m_Shape.width / 2, m_Shape.height / 2 };
 			m_NordEastTree = new QuadTree(childShape);
 			m_NordEastTree->m_Depth = m_Depth + 1;
-			childShape = Rectf{ glm::vec2{m_Shape.bottomLeft.x, m_Shape.bottomLeft.y + m_Shape.height / 2}, m_Shape.width / 2, m_Shape.height / 2 };
+			childShape = Rectf{ glm::vec2{m_Shape.topLeft.x, m_Shape.topLeft.y + m_Shape.height / 2}, m_Shape.width / 2, m_Shape.height / 2 };
 			m_SouthWestTree = new QuadTree(childShape);
 			m_SouthWestTree->m_Depth = m_Depth + 1;
-			childShape = Rectf{ glm::vec2{m_Shape.bottomLeft.x + m_Shape.width / 2, m_Shape.bottomLeft.y + m_Shape.height / 2}, m_Shape.width / 2, m_Shape.height / 2 };
+			childShape = Rectf{ glm::vec2{m_Shape.topLeft.x + m_Shape.width / 2, m_Shape.topLeft.y + m_Shape.height / 2}, m_Shape.width / 2, m_Shape.height / 2 };
 			m_SouthEastTree = new QuadTree(childShape);
 			m_SouthEastTree->m_Depth = m_Depth + 1;
 

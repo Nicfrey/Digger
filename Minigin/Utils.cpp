@@ -10,7 +10,7 @@
 
 glm::vec2 Rectf::GetCenter() const
 {
-	return { bottomLeft.x + width / 2,bottomLeft.y + height / 2 };
+	return { topLeft.x + width / 2,topLeft.y + height / 2 };
 }
 
 void TimerManager::AddTimer(const DelegateFnc& function, float timer)
@@ -39,8 +39,8 @@ void TimerManager::Update()
 
 bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect)
 {
-	return point.x >= rect.bottomLeft.x && point.x <= rect.bottomLeft.x + rect.width &&
-		point.y >= rect.bottomLeft.y && point.y <= rect.bottomLeft.y + rect.height;
+	return point.x >= rect.topLeft.x && point.x <= rect.topLeft.x + rect.width &&
+		point.y >= rect.topLeft.y && point.y <= rect.topLeft.y + rect.height;
 }
 
 bool IsPointInRectangle(float x, float y, const Rectf& rect)
@@ -84,10 +84,10 @@ bool LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersec
 
 bool IsOverlapping(const Rectf& rect1, const Rectf& rect2)
 {
-	return rect1.bottomLeft.x < rect2.bottomLeft.x + rect2.width &&
-		rect1.bottomLeft.x + rect1.width > rect2.bottomLeft.x &&
-		rect1.bottomLeft.y < rect2.bottomLeft.y + rect2.height &&
-		rect1.bottomLeft.y + rect1.height > rect2.bottomLeft.y;
+	return rect1.topLeft.x < rect2.topLeft.x + rect2.width &&
+		rect1.topLeft.x + rect1.width > rect2.topLeft.x &&
+		rect1.topLeft.y < rect2.topLeft.y + rect2.height &&
+		rect1.topLeft.y + rect1.height > rect2.topLeft.y;
 }
 
 bool Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo)

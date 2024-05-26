@@ -5,6 +5,7 @@
 #include "BoxCollider2D.h"
 #include "ColliderComponent.h"
 #include "GameObject.h"
+#include "imgui_plot.h"
 #include "Minigin.h"
 
 SpatialGrid::SpatialGrid(int nbCellsWidth, int nbCellsHeight) : m_NbCellsWidth{nbCellsWidth},
@@ -54,39 +55,19 @@ void SpatialGrid::Add(const std::shared_ptr<dae::GameObject>& object)
 	m_Cells[m_CellWidth * cellY + cellX].objects.emplace_back(object);
 }
 
-void SpatialGrid::Update()
-{
-	for (auto& cell : m_Cells)
-	{
-		for (auto& object : cell.objects)
-		{
-			if (object->GetIsMoving())
-			{
-				const auto pos{object->GetWorldPosition()};
-				const auto cellX{static_cast<int>(pos.x) / m_CellWidth};
-				const auto cellY{static_cast<int>(pos.y) / m_CellHeight};
-				if (cellX != static_cast<int>(cell.position.x) || static_cast<int>(cellY != cell.position.y))
-				{
-					auto it{std::find(cell.objects.begin(), cell.objects.end(), object)};
-					if (it != cell.objects.end())
-					{
-						cell.objects.erase(it);
-						m_Cells[m_CellWidth * cellY + cellX ].objects.emplace_back(object);
-					}
-				}
-				object->SetIsNotMoving();
-			}
-		}
-	}
-}
 
 void SpatialGrid::OnCollisionUpdate(std::shared_ptr<dae::GameObject>& go) const
 {
-	if(!go->HasComponent<ColliderComponent>())
+	if (!go->HasComponent<ColliderComponent>())
 	{
 		return;
 	}
-	auto cells{GetCellsCollided(go)};
+	if (go->GetComponent<ColliderComponent>()->GetIsStatic())
+	{
+		return;
+	}
+
+	auto cells{ GetCellsCollided(go) };
 	for (auto& otherCell : cells)
 	{
 		for (auto& otherObject : otherCell.objects)
@@ -97,12 +78,51 @@ void SpatialGrid::OnCollisionUpdate(std::shared_ptr<dae::GameObject>& go) const
 			}
 			const auto boxCollider{go->GetComponent<BoxCollider2D>()};
 			const auto otherBoxCollider{otherObject->GetComponent<BoxCollider2D>()};
-			if(boxCollider->IsOverlapping(otherObject))
+			if (boxCollider->IsOverlapping(otherObject))
 			{
 				go->OnCollisionEnter(otherObject);
 				otherObject->OnCollisionEnter(go);
 			}
 		}
+	}
+}
+
+void SpatialGrid::RenderGUI() const
+{
+	ImGui::Begin("SpatialGrid");
+
+	// Récupérer le contexte de dessin
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	// Définir la position de départ du dessin dans la fenêtre ImGui
+	// ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+
+	// Couleur et épaisseur des lignes
+	ImU32 gridColor = IM_COL32(200, 200, 200, 100);
+
+	// Dessiner la grille
+	for (int i = 0; i <= m_NbCellsWidth; ++i)
+	{
+		for (int j = 0; j <= m_NbCellsHeight; ++j)
+		{
+			ImVec2 cellTopLeft = ImVec2{static_cast<float>(j * m_CellWidth), static_cast<float>(i * m_CellHeight)};
+			ImVec2 cellBottomRight = ImVec2(static_cast<float>(cellTopLeft.x + m_CellWidth), static_cast<float>(cellTopLeft.y + m_CellHeight));
+
+			drawList->AddRect(cellTopLeft, cellBottomRight, gridColor, 0.0f, 0, 1.f);
+		}
+	}
+
+	ImGui::End();
+}
+
+void SpatialGrid::Clear()
+{
+	for(auto& grid: m_Cells)
+	{
+		std::erase_if(grid.objects, [](const std::shared_ptr<dae::GameObject>& go)
+		{
+			return go->IsDestroyed();
+		});
 	}
 }
 
@@ -117,12 +137,10 @@ std::vector<SpatialGrid::Grid> SpatialGrid::GetCellsCollided(const std::shared_p
 {
 	std::vector<Grid> cells;
 	const auto boxCollider{go->GetComponent<BoxCollider2D>()};
-	const auto bottomLeft{boxCollider->GetBoxCollider().bottomLeft};
-	const auto topRight{
-		bottomLeft + glm::vec2{boxCollider->GetBoxCollider().width, boxCollider->GetBoxCollider().height}
-	};
-	const auto bottomRight{bottomLeft + glm::vec2{boxCollider->GetBoxCollider().width, 0}};
-	const auto topLeft{bottomLeft + glm::vec2{0, boxCollider->GetBoxCollider().height}};
+	const glm::vec2 topLeft{boxCollider->GetBoxCollider().topLeft};
+	const glm::vec2 topRight{ topLeft + glm::vec2{boxCollider->GetBoxCollider().width,0} };
+	const glm::vec2 bottomLeft{ topLeft + glm::vec2{0,boxCollider->GetBoxCollider().height} };
+	const glm::vec2 bottomRight{ topLeft + glm::vec2{boxCollider->GetBoxCollider().width, boxCollider->GetBoxCollider().height} };
 	auto cellBottomLeft{GetCell(bottomLeft)};
 	auto cellTopRight{GetCell(topRight)};
 	auto cellBottomRight{GetCell(bottomRight)};

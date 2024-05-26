@@ -65,6 +65,16 @@ dae::GameObject* ColliderComponent::GetOther() const
 	return m_Other;
 }
 
+bool ColliderComponent::GetIsStatic() const
+{
+	return m_IsStatic;
+}
+
+void ColliderComponent::SetIsStatic(bool isStatic)
+{
+	m_IsStatic = isStatic;
+}
+
 void ColliderComponent::SetOther(dae::GameObject* other)
 {
 	m_Other = other;
