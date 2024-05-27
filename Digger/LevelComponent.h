@@ -48,5 +48,6 @@ private:
 	void CreateBackgroundLevel(int level);
 	void CreatePlayerAtIndex(int index, int player);
 	int GetIndexFromPosition(const glm::vec2& pos, int maxColumn);
+	void UpdateGraph();
 };
 

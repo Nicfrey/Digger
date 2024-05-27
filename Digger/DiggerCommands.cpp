@@ -16,7 +16,7 @@ void MoveCommand::Execute()
 	const glm::vec2 velocity{ m_Direction * TimeEngine::GetInstance().GetDeltaTime() * m_Speed };
 	GetGameObject()->Translate(velocity);
 	GetGameObject()->SetLocalRotation(0, 0, MathUtils::Rad2Deg(MathUtils::Atan2(m_Direction.y, m_Direction.x)));
-	EventManager::GetInstance().NotifyEvent("ObjectMoving");
+	EventManager::GetInstance().NotifyEvent("PlayerMoving");
 }
 
 ShootCommand::ShootCommand(dae::GameObject* go): GameObjectCommand{ go }

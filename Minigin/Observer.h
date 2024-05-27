@@ -14,11 +14,8 @@ class IEventHandler
 public:
 	IEventHandler()	= default;
 	virtual ~IEventHandler() = default;
-	virtual void HandleEvent() const {}
-	virtual bool Equals(IEventHandler* event) const
-	{
-		return event != nullptr;
-	}
+	virtual void HandleEvent() const = 0;
+	virtual bool Equals(IEventHandler* event) const = 0;
 };
 
 template<typename ClassType>

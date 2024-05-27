@@ -2,9 +2,12 @@
 
 #include "GameObject.h"
 #include "HealthComponent.h"
+#include "MathUtils.h"
+#include "NavMeshAgentComponent.h"
 #include "Observer.h"
 #include "PlayerComponent.h"
 #include "ProjectileComponent.h"
+#include "Scene.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
 #include "SpriteComponent.h"
@@ -35,6 +38,17 @@ void EnemyComponent::Init()
 			sprite->SetCurrentRow(1);
 			break;
 		}
+	}
+	m_pNavMeshAgent = GetGameObject()->GetComponent<NavMeshAgentComponent>().get();
+}
+
+void EnemyComponent::Update()
+{
+	if(m_pNavMeshAgent->HasReachedDestination())
+	{
+		const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
+		const int index{MathUtils::Rand(0,players.size() - 1)};
+		m_pNavMeshAgent->SetPath(players[index]->GetWorldPosition());
 	}
 }
 

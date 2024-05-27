@@ -17,6 +17,7 @@ NavMeshAgentComponent::NavMeshAgentComponent(GraphUtils::Graph* graph, float spe
 
 void NavMeshAgentComponent::SetPath(const glm::vec2& pos)
 {
+	m_HasReachedDestination = false;
 	m_Path = m_Graph->GetShortestPath(m_Graph->GetClosestNode(GetGameObject()->GetWorldPosition()),
 	                                  m_Graph->GetClosestNode(glm::vec3{pos, 0}));
 	std::reverse(m_Path.begin(), m_Path.end());

@@ -8,9 +8,11 @@ class QuadTree;
 namespace dae
 {
 	class GameObject;
+
 	class Scene final
 	{
 		friend Scene& SceneManager::CreateScene(const std::string& name);
+
 	public:
 		void Add(std::shared_ptr<GameObject> object);
 		void Instantiate(std::shared_ptr<GameObject> object);
@@ -29,8 +31,9 @@ namespace dae
 		void UpdateQuadTree();
 		std::string GetName() const { return m_name; }
 
-		template<typename T>
+		template <typename T>
 		GameObject* GetGameObjectWithComponent() const;
+		template <typename T>
 		std::vector<GameObject*> GetGameObjectsWithComponent() const;
 		GameObject* GetGameObjectByTag(const std::string& tag) const;
 		std::vector<GameObject*> GetGameObjectsByTag(const std::string& tag) const;
@@ -40,16 +43,16 @@ namespace dae
 		Scene& operator=(const Scene& other) = delete;
 		Scene& operator=(Scene&& other) = delete;
 
-	private: 
+	private:
 		explicit Scene(std::string name);
 
 		std::string m_name;
-		std::vector < std::shared_ptr<GameObject>> m_objects{};
-		std::vector < std::shared_ptr<GameObject>> m_ObjectsToBeAdded{};
+		std::vector<std::shared_ptr<GameObject>> m_objects{};
+		std::vector<std::shared_ptr<GameObject>> m_ObjectsToBeAdded{};
 		std::shared_ptr<QuadTree> m_QuadTree;
 		std::shared_ptr<SpatialGrid> m_SpatialGrid;
 
-		static unsigned int m_idCounter; 
+		static unsigned int m_idCounter;
 	};
 
 	template <typename T>
@@ -63,5 +66,19 @@ namespace dae
 			}
 		}
 		return nullptr;
+	}
+
+	template <typename T>
+	std::vector<GameObject*> Scene::GetGameObjectsWithComponent() const
+	{
+		std::vector<GameObject*> objectsWithComponent;
+		for (const auto& object : m_objects)
+		{
+			if (object->HasComponent<T>())
+			{
+				objectsWithComponent.push_back(object.get());
+			}
+		}
+		return objectsWithComponent;
 	}
 }

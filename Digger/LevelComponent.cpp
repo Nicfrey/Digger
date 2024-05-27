@@ -4,7 +4,7 @@
 #include <iostream>
 #include <Xinput.h>
 
-
+#include "Scene.h"
 #include "AnimatorComponent.h"
 #include "BackgroundComponent.h"
 #include "BoxCollider2D.h"
@@ -33,6 +33,7 @@
 LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}}
 {
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
+	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
 }
 
 LevelComponent::~LevelComponent()
@@ -92,14 +93,7 @@ std::shared_ptr<BaseComponent> LevelComponent::Clone() const
 
 void LevelComponent::Update()
 {
-	for(const auto& player: m_Players)
-	{
-		const auto node{ m_pGraph->GetClosestNode(player->GetWorldPosition()) };
-		if(!node->CanBeVisited())
-		{
-			node->SetCanBeVisited(true);
-		}
-	}
+	
 }
 
 
@@ -110,8 +104,7 @@ void LevelComponent::Init()
 void LevelComponent::RenderGUI()
 {
 	dae::GameObject* player{dae::SceneManager::GetInstance().GetGameObjectByTag("Player")};
-	ImGui::SetNextWindowPos(ImVec2{ 20.f,100.f },ImGuiCond_Always);
-	ImGui::Begin("Graph");
+	ImGui::Begin("LevelComponent");
 	for (size_t i{}; i < m_pGraph->GetNodes().size(); ++i)
 	{
 		const GraphUtils::GraphNode* node{m_pGraph->GetNode(static_cast<int>(i))};
@@ -147,9 +140,9 @@ void LevelComponent::RenderGUI()
 void LevelComponent::CreateSpawnerEnemy(int index) const
 {
 	const glm::vec3 pos{m_pGraph->GetNode(index)->GetPosition()};
-	const auto go{ std::make_shared<dae::GameObject>() };
+	const auto go{std::make_shared<dae::GameObject>()};
 	go->SetLocalPosition(pos);
-	const auto spawnerEnemy{ std::make_shared<EnemySpawnerComponent>() };
+	const auto spawnerEnemy{std::make_shared<EnemySpawnerComponent>()};
 	go->AddComponent(spawnerEnemy);
 	dae::SceneManager::GetInstance().Instantiate(go);
 }
@@ -158,19 +151,21 @@ void LevelComponent::LoadLevel()
 {
 	int level;
 	GameInstance::GetInstance().GetValue("CurrentLevel", level);
-	constexpr int maxRow{ 10 };
-	constexpr int maxColumn{ 15 };
+	constexpr int maxRow{10};
+	constexpr int maxColumn{15};
 
 	// Read from json
-	nlohmann::json json{ dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(level) + ".json") };
-	
+	nlohmann::json json{
+		dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(level) + ".json")
+	};
+
 
 	// Init graph
 	for (int i{}; i < maxRow; ++i)
 	{
 		for (int j{}; j < maxColumn; ++j)
 		{
-			const int currentIndex{ i * maxColumn + j };
+			const int currentIndex{i * maxColumn + j};
 			GraphUtils::GraphNode* current{
 				m_pGraph->AddNode(glm::vec3{
 					m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0
@@ -179,14 +174,14 @@ void LevelComponent::LoadLevel()
 			current->SetCanBeVisited(false);
 			if (j != 0)
 			{
-				GraphUtils::GraphNode* left{ m_pGraph->GetNode(currentIndex - 1) };
+				GraphUtils::GraphNode* left{m_pGraph->GetNode(currentIndex - 1)};
 				left->AddNeighbor(current, glm::distance(current->GetPosition(), left->GetPosition()));
 				current->AddNeighbor(left, glm::distance(current->GetPosition(), left->GetPosition()));
 			}
-			const int indexTop{ currentIndex - maxColumn };
+			const int indexTop{currentIndex - maxColumn};
 			if (i > 0)
 			{
-				GraphUtils::GraphNode* top{ m_pGraph->GetNode(indexTop) };
+				GraphUtils::GraphNode* top{m_pGraph->GetNode(indexTop)};
 				top->AddNeighbor(current, glm::distance(current->GetPosition(), top->GetPosition()));
 				current->AddNeighbor(top, glm::distance(current->GetPosition(), top->GetPosition()));
 			}
@@ -196,12 +191,12 @@ void LevelComponent::LoadLevel()
 	// Set the graph index to be visited
 	for (auto data : json["CanBeVisited"])
 	{
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x))->SetCanBeVisited(true);
 	}
 
 	// Init background
-	int numberLevel{ json["NumberLevel"].get<int>() };
+	int numberLevel{json["NumberLevel"].get<int>()};
 	CreateBackgroundLevel(numberLevel);
 
 
@@ -210,7 +205,7 @@ void LevelComponent::LoadLevel()
 	for (auto data : json["SpawnPointPlayers"])
 	{
 		// TODO Check if we are selecting 2 players coop
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreatePlayerAtIndex(GetIndexFromPosition(pos, maxColumn), indexPlayer);
 		++indexPlayer;
 	}
@@ -221,11 +216,10 @@ void LevelComponent::LoadLevel()
 	m_SpawnPointEnemy = GetVectorFromJson(json["SpawnPointEnemy"]);
 	// TODO Check if we are selecting 2 players versus
 
-	
 
 	for (auto data : json["Emerald"])
 	{
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
 	}
 	EventManager::GetInstance().NotifyEvent("LevelLoaded");
@@ -241,7 +235,9 @@ void LevelComponent::CreateEmeraldAtIndex(int index)
 	const auto pos = m_pGraph->GetNode(index)->GetPosition();
 	const std::shared_ptr emerald{std::make_shared<dae::GameObject>()};
 	const auto sprite = std::make_shared<SpriteComponent>("Emerald", "SpritesItems.png", 3, 3);
-	emerald->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
+	const auto boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height);
+	boxCollider->SetIsStatic(true);
+	emerald->AddComponent(boxCollider);
 	const auto item{std::make_shared<EmeraldComponent>()};
 	emerald->AddComponent(sprite);
 	emerald->AddComponent(item);
@@ -253,7 +249,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 {
 	const auto pos{m_pGraph->GetNode(index)->GetPosition()};
 	const std::shared_ptr moneyBag{std::make_shared<dae::GameObject>()};
-	const auto sprite{ std::make_shared<SpriteComponent>("MoneyBag","SpriteItems.png", 3, 3) };
+	const auto sprite{std::make_shared<SpriteComponent>("MoneyBag", "SpriteItems.png", 3, 3)};
 	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
 	const auto item{std::make_shared<MoneyBagComponent>()};
 	const auto animator{std::make_shared<AnimatorComponent>()};
@@ -274,7 +270,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 	TransitionMoneyBagCanFall* transitionCanFall{new TransitionMoneyBagCanFall{}};
 	TransitionMoneyBagIsDestroyed* transitionDestroyed{new TransitionMoneyBagIsDestroyed{}};
 	TransitionMoneyBagIsDestroyedIdle* transitionDestroyedIdle{new TransitionMoneyBagIsDestroyedIdle{}};
-	animator->AddTransition(idle,isFalling,transitionCanFall);
+	animator->AddTransition(idle, isFalling, transitionCanFall);
 	animator->AddTransition(isFalling, idle, transitionIdle);
 	animator->AddTransition(idle, isDestroyed, transitionDestroyed);
 	animator->AddTransition(isDestroyed, isDestroyedIdle, transitionDestroyedIdle);
@@ -287,24 +283,29 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 
 void LevelComponent::CreateBackgroundLevel(int level)
 {
-	auto windowSize{ dae::Minigin::m_Window };
-	glm::vec2 currentSize{0,0};
-	const std::shared_ptr sprite{ std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png") };
-	while(currentSize.y <= windowSize.y)
+	auto windowSize{dae::Minigin::m_Window};
+	glm::vec2 currentSize{0, 0};
+	const std::shared_ptr sprite{
+		std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png")
+	};
+	while (currentSize.y <= windowSize.y)
 	{
 		while (currentSize.x <= windowSize.x)
 		{
 			const GraphUtils::GraphNode* current{m_pGraph->GetClosestNode(glm::vec3{currentSize, 0})};
-			if (current->CanBeVisited() && glm::distance(current->GetPosition(), glm::vec3{ currentSize,0 }) < 20.f)
+			if (current->CanBeVisited() && glm::distance(current->GetPosition(), glm::vec3{currentSize, 0}) < 20.f)
 			{
-				
 				currentSize.x += sprite->GetShape().width;
 				continue;
 			}
-			const std::shared_ptr spriteComponent{ std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png") };
-			const std::shared_ptr background{ std::make_shared<dae::GameObject>() };
-			const std::shared_ptr component{ std::make_shared<BackgroundComponent>() };
-			const std::shared_ptr boxCollider{ std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height) };
+			const std::shared_ptr spriteComponent{
+				std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png")
+			};
+			const std::shared_ptr background{std::make_shared<dae::GameObject>()};
+			const std::shared_ptr component{std::make_shared<BackgroundComponent>()};
+			const std::shared_ptr boxCollider{
+				std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height)
+			};
 			boxCollider->SetIsStatic(true);
 			background->AddComponent(spriteComponent);
 			background->AddComponent(component);
@@ -321,33 +322,39 @@ void LevelComponent::CreateBackgroundLevel(int level)
 void LevelComponent::CreatePlayerAtIndex(int index, int player)
 {
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-	const auto pos{ m_pGraph->GetNode(index)->GetPosition() };
-	auto go{ std::make_shared<dae::GameObject>() };
-	const auto spritePlayer1{ std::make_shared<SpriteComponent>("PlayerSprite" + std::to_string(player),"SpritesPlayers.png",4,4) };
-	auto healthComponent{ std::make_shared<HealthComponent>() };
-	auto scoreComponent{ std::make_shared<ScoreComponent>() };
-	auto uiComponent{ std::make_shared<UIPlayerComponent>(fontSmall) };
-	auto boxCollider{ std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width,spritePlayer1->GetShape().height) };
-	auto playerComponent{ std::make_shared<PlayerComponent>() };
-	auto animator{ std::make_shared<AnimatorComponent>() };
-	Animation idlePlayer{ .name = "Idle",.frames = {0,1,2},.frameTime = 0.1f, .spriteComponent = spritePlayer1 };
-	if(player == 1)
-	{
-		idlePlayer.frames = { 8,9,10 };
-	}
-	Animation idleWithoutShoot{ .name = "IdleWithoutShoot",.frames{4,5,6},.frameTime = 0.1f,.spriteComponent = spritePlayer1 };
+	const auto pos{m_pGraph->GetNode(index)->GetPosition()};
+	auto go{std::make_shared<dae::GameObject>()};
+	const auto spritePlayer1{
+		std::make_shared<SpriteComponent>("PlayerSprite" + std::to_string(player), "SpritesPlayers.png", 4, 4)
+	};
+	auto healthComponent{std::make_shared<HealthComponent>()};
+	auto scoreComponent{std::make_shared<ScoreComponent>()};
+	auto uiComponent{std::make_shared<UIPlayerComponent>(fontSmall)};
+	auto boxCollider{
+		std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width, spritePlayer1->GetShape().height)
+	};
+	auto playerComponent{std::make_shared<PlayerComponent>()};
+	auto animator{std::make_shared<AnimatorComponent>()};
+	Animation idlePlayer{.name = "Idle", .frames = {0, 1, 2}, .frameTime = 0.1f, .spriteComponent = spritePlayer1};
 	if (player == 1)
 	{
-		idleWithoutShoot.frames = { 12,13,14 };
+		idlePlayer.frames = {8, 9, 10};
 	}
-	Animation deadAnim{ .name = "DeadAnim", .frames = {3},.spriteComponent = spritePlayer1 };
+	Animation idleWithoutShoot{
+		.name = "IdleWithoutShoot", .frames{4, 5, 6}, .frameTime = 0.1f, .spriteComponent = spritePlayer1
+	};
 	if (player == 1)
 	{
-		idleWithoutShoot.frames = { 11 };
+		idleWithoutShoot.frames = {12, 13, 14};
 	}
-	TransitionPlayerNoProjectile* transitionNoProjectile{ new TransitionPlayerNoProjectile() };
-	TransitionPlayerHasProjectile* transitionProjectile{ new TransitionPlayerHasProjectile{} };
-	TransitionPlayerIsDead* transitionDead{ new TransitionPlayerIsDead{} };
+	Animation deadAnim{.name = "DeadAnim", .frames = {3}, .spriteComponent = spritePlayer1};
+	if (player == 1)
+	{
+		idleWithoutShoot.frames = {11};
+	}
+	TransitionPlayerNoProjectile* transitionNoProjectile{new TransitionPlayerNoProjectile()};
+	TransitionPlayerHasProjectile* transitionProjectile{new TransitionPlayerHasProjectile{}};
+	TransitionPlayerIsDead* transitionDead{new TransitionPlayerIsDead{}};
 	animator->AddTransition(idlePlayer, idleWithoutShoot, transitionNoProjectile);
 	animator->AddTransition(idleWithoutShoot, idlePlayer, transitionProjectile);
 	animator->AddTransition(idlePlayer, deadAnim, transitionDead);
@@ -364,13 +371,13 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	go->AddComponent(boxCollider);
 	go->AddComponent(playerComponent);
 	go->AddComponent(animator);
-	std::shared_ptr moveUpCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,-1}) };
-	std::shared_ptr moveDownCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{0,1}) };
-	std::shared_ptr moveLeftCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{-1,0}) };
-	std::shared_ptr moveRightCommand{ std::make_shared<MoveCommand>(go.get(),glm::vec2{1,0}) };
-	std::shared_ptr shootCommand{ std::make_shared<ShootCommand>(go.get()) };
+	std::shared_ptr moveUpCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{0, -1})};
+	std::shared_ptr moveDownCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{0, 1})};
+	std::shared_ptr moveLeftCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{-1, 0})};
+	std::shared_ptr moveRightCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{1, 0})};
+	std::shared_ptr shootCommand{std::make_shared<ShootCommand>(go.get())};
 
-	GamepadController* gamepadController{ new GamepadController{} };
+	GamepadController* gamepadController{new GamepadController{}};
 	gamepadController->BindAction(moveUpCommand, XINPUT_GAMEPAD_DPAD_UP);
 	gamepadController->BindAction(moveDownCommand, XINPUT_GAMEPAD_DPAD_DOWN);
 	gamepadController->BindAction(moveLeftCommand, XINPUT_GAMEPAD_DPAD_LEFT);
@@ -385,4 +392,17 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 int LevelComponent::GetIndexFromPosition(const glm::vec2& pos, int maxColumn)
 {
 	return static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x);
+}
+
+void LevelComponent::UpdateGraph()
+{
+	const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
+	for (const auto player: players)
+	{
+		const auto node{m_pGraph->GetClosestNode(player->GetWorldPosition())};
+		if (!node->CanBeVisited())
+		{
+			node->SetCanBeVisited(true);
+		}
+	}
 }
