@@ -25,6 +25,8 @@ public:
 	void Init(const std::vector<std::shared_ptr<dae::GameObject>>& objects);
 	void Add(const std::shared_ptr<dae::GameObject>& object);
 	void OnCollisionUpdate(std::shared_ptr<dae::GameObject>& go) const;
+	glm::vec2 FindPosInCell(const std::shared_ptr<dae::GameObject>& go);
+	void Update(const std::shared_ptr<dae::GameObject>& go);
 	void RenderGUI() const;
 	void Clear();
 private:

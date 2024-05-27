@@ -150,7 +150,9 @@ std::shared_ptr<dae::GameObject> PlayerComponent::CreateProjectile() const
 	const auto projectileComponent{ std::make_shared<ProjectileComponent>(forward) };
 	newProjectile->AddComponent(projectileComponent);
 	const auto sprite = std::make_shared<SpriteComponent>("Projectile", "SpritesFire.png", 3, 2);
-	newProjectile->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
+	const auto boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height);
+	boxCollider->SetIsStatic(false);
+	newProjectile->AddComponent(boxCollider);
 	newProjectile->AddComponent(sprite);
 	newProjectile->GetComponent<ProjectileComponent>()->Activate(GetGameObject());
 	newProjectile->SetLocalPosition(GetGameObject()->GetWorldPosition().x + 5 * forward.x, GetGameObject()->GetWorldPosition().y + 5 * forward.y);

@@ -2,11 +2,13 @@
 
 #include "GameObject.h"
 #include "Graph.h"
+#include "SceneManager.h"
 #include "TimeEngine.h"
 #include "Utils.h"
+#include "../Digger/PlayerComponent.h"
 
 NavMeshAgentComponent::NavMeshAgentComponent(GraphUtils::Graph* graph, float speed) : BaseComponent{ nullptr }, m_Target(),
-	m_HasReachedDestination(false), m_Direction()
+                                                                                      m_HasReachedDestination(false), m_Direction()
 {
 	m_Graph = graph;
 	m_Speed = speed;
@@ -18,8 +20,16 @@ void NavMeshAgentComponent::SetPath(const glm::vec2& pos)
 	m_Path = m_Graph->GetShortestPath(m_Graph->GetClosestNode(GetGameObject()->GetWorldPosition()),
 	                                  m_Graph->GetClosestNode(glm::vec3{pos, 0}));
 	std::reverse(m_Path.begin(), m_Path.end());
+	if(m_Path.empty() || m_Path.size() == 1) 
+	{
+		m_HasReachedDestination = true;
+		return;
+	}
+	m_Path.pop_back();
 	m_Target = m_Path.back()->GetPosition();
+
 	m_Direction = glm::normalize(m_Target - glm::vec2{GetGameObject()->GetWorldPosition()});
+
 }
 
 void NavMeshAgentComponent::Update()
@@ -42,6 +52,7 @@ void NavMeshAgentComponent::Update()
 			return;
 		}
 		m_Target = m_Path.back()->GetPosition();
+		m_Direction = glm::normalize(m_Target - glm::vec2{ GetGameObject()->GetWorldPosition() });
 	}
 }
 

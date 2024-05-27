@@ -11,6 +11,7 @@ public:
 	void GainOneLife();
 	int GetLifeRemaining() const;
 	bool IsDead() const;
+	void OnDestroy() override;
 private:
 	int m_LifeRemaining;
 

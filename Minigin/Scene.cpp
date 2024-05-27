@@ -166,6 +166,7 @@ void Scene::Update()
 	for(const auto& object : m_objects)
 	{
 		object->Update();
+		m_SpatialGrid->Update(object);
 	}
 }
 

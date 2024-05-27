@@ -31,10 +31,11 @@ void TimerManager::Update()
 			handler.func();
 		}
 	}
-	std::erase_if(m_TimerHandlers, [&](const TimerHandler& other)
+	const auto it =std::ranges::find_if(m_TimerHandlers, [](const TimerHandler& handler) { return handler.timer.currentTimer >= handler.timer.timer; });
+	if(it != m_TimerHandlers.end())
 	{
-		return other.timer.currentTimer >= other.timer.timer;
-	});
+		m_TimerHandlers.erase(it);
+	}
 }
 
 bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect)

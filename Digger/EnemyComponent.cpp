@@ -13,7 +13,6 @@ int EnemyComponent::m_ScoreKilled{ 250 };
 
 EnemyComponent::EnemyComponent(): BaseComponent{nullptr}
 {
-	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::OnEnemyDead);
 }
 
 EnemyComponent::EnemyComponent(EnemyType type): EnemyComponent()
@@ -23,6 +22,7 @@ EnemyComponent::EnemyComponent(EnemyType type): EnemyComponent()
 
 void EnemyComponent::Init()
 {
+	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
 	if(GetGameObject()->HasComponent<SpriteComponent>())
 	{
 		const auto sprite{ GetGameObject()->GetComponent<SpriteComponent>() };
@@ -70,7 +70,7 @@ void EnemyComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 	}
 }
 
-void EnemyComponent::OnEnemyDead()
+void EnemyComponent::HandleDeadEnemy() 
 {
 	if(GetGameObject()->HasComponent<HealthComponent>())
 	{
@@ -84,7 +84,7 @@ void EnemyComponent::OnEnemyDead()
 
 void EnemyComponent::OnDestroy()
 {
-	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemyComponent::OnDestroy);
+	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
 }
 
 EnemyComponent::EnemyType EnemyComponent::GetType() const

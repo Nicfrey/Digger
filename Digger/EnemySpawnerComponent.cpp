@@ -15,6 +15,7 @@
 #include "Observer.h"
 #include "PlayerComponent.h"
 #include "SpriteComponent.h"
+#include "TimeEngine.h"
 #include "Utils.h"
 
 std::shared_ptr<BaseComponent> EnemySpawnerComponent::Clone() const
@@ -24,8 +25,17 @@ std::shared_ptr<BaseComponent> EnemySpawnerComponent::Clone() const
 
 void EnemySpawnerComponent::Init()
 {
-	TimerManager::GetInstance().AddTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, m_SpawnRate);
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemySpawnerComponent::DecreaseEnemyCount);
+}
+
+void EnemySpawnerComponent::Update()
+{
+	m_CurrentTimer += TimeEngine::GetInstance().GetDeltaTime();
+	if(m_CurrentTimer >= m_SpawnTimer)
+	{
+		m_CurrentTimer = 0.f;
+		SpawnNewEnemy();
+	}
 }
 
 void EnemySpawnerComponent::OnDestroy()
@@ -33,7 +43,7 @@ void EnemySpawnerComponent::OnDestroy()
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemySpawnerComponent::DecreaseEnemyCount);
 }
 
-void EnemySpawnerComponent::CreateNewEnemy() const
+void EnemySpawnerComponent::CreateNewEnemy()
 {
 	const auto go = std::make_shared<dae::GameObject>();
 	const auto sprite{ std::make_shared<SpriteComponent>("Enemy","SpritesEnemies.png",4,2) };
@@ -58,7 +68,6 @@ void EnemySpawnerComponent::CreateNewEnemy() const
 	const auto levelObject = dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>();
 	const auto navMeshAgentComponent{ std::make_shared<NavMeshAgentComponent>(levelObject->GetComponent<LevelComponent>()->GetGraph()) };
 	const auto player = dae::SceneManager::GetInstance().GetGameObjectWithComponent<PlayerComponent>();
-	navMeshAgentComponent->SetPath(player->GetWorldPosition());
 	go->AddComponent(sprite);
 	go->AddComponent(healthComponent);
 	go->AddComponent(boxCollider);
@@ -66,6 +75,7 @@ void EnemySpawnerComponent::CreateNewEnemy() const
 	go->AddComponent(animatorComponent);
 	go->AddComponent(navMeshAgentComponent);
 	go->SetLocalPosition(GetGameObject()->GetWorldPosition());
+	navMeshAgentComponent->SetPath(player->GetWorldPosition());
 	go->SetTag("Enemy");
 	dae::SceneManager::GetInstance().Instantiate(go);
 }
@@ -80,15 +90,10 @@ void EnemySpawnerComponent::SpawnNewEnemy()
 	CreateNewEnemy();
 	--m_EnemyToSpawn;
 	++m_EnemyCount;
-	TimerManager::GetInstance().AddTimer(this, &EnemySpawnerComponent::SpawnNewEnemy,m_SpawnRate);
 }
 
 
 void EnemySpawnerComponent::DecreaseEnemyCount()
 {
 	--m_EnemyCount;
-	if(m_EnemyToSpawn > 0)
-	{
-		TimerManager::GetInstance().AddTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, m_SpawnRate);
-	}
 }

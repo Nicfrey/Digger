@@ -22,4 +22,5 @@ namespace MathUtils
 	float Dot2D(const glm::vec2& a, const glm::vec2& b);
 	float Pow(float value, int exponent);
 	float Sqrt(float x);
+	int Rand(int min, int max);
 }

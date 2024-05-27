@@ -28,12 +28,7 @@ void dae::SceneManager::FixedUpdate()
 
 void dae::SceneManager::OnCollisionUpdate()
 {
-	std::jthread thread([this]
-		{
-			m_MutexCollision.lock();
-			m_ActiveScene->OnCollisionUpdate();
-			m_MutexCollision.unlock();
-		});
+	m_ActiveScene->OnCollisionUpdate();
 	// m_ActiveScene->OnCollisionUpdate();
 }
 

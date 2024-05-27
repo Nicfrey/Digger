@@ -1,5 +1,6 @@
 #include "HealthComponent.h"
 
+#include "EnemyComponent.h"
 #include "GameObject.h"
 #include "Observer.h"
 #include "PlayerComponent.h"
@@ -28,9 +29,10 @@ void HealthComponent::LoseOneLife()
 		{
 			EventManager::GetInstance().NotifyEvent("PlayerDied");
 		}
-		else
+		if(GetGameObject()->HasComponent<EnemyComponent>())
 		{
 			EventManager::GetInstance().NotifyEvent("EnemyDied");
+
 		}
 	}
 	EventManager::GetInstance().NotifyEvent("LifeLost");
@@ -50,5 +52,10 @@ int HealthComponent::GetLifeRemaining() const
 bool HealthComponent::IsDead() const
 {
 	return m_LifeRemaining <= 0;
+}
+
+void HealthComponent::OnDestroy()
+{
+
 }
 

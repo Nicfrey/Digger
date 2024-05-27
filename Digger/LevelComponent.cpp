@@ -11,6 +11,7 @@
 #include "DiggerCommands.h"
 #include "DiggerTransitionAnim.h"
 #include "EmeraldComponent.h"
+#include "EnemySpawnerComponent.h"
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "Graph.h"
@@ -91,9 +92,9 @@ std::shared_ptr<BaseComponent> LevelComponent::Clone() const
 
 void LevelComponent::Update()
 {
-	for(auto& player: m_Players)
+	for(const auto& player: m_Players)
 	{
-		auto node{ m_pGraph->GetClosestNode(player->GetWorldPosition()) };
+		const auto node{ m_pGraph->GetClosestNode(player->GetWorldPosition()) };
 		if(!node->CanBeVisited())
 		{
 			node->SetCanBeVisited(true);
@@ -141,6 +142,16 @@ void LevelComponent::RenderGUI()
 		                                            15, IM_COL32(255, 255, 255, 255));
 	}
 	ImGui::End();
+}
+
+void LevelComponent::CreateSpawnerEnemy(int index) const
+{
+	const glm::vec3 pos{m_pGraph->GetNode(index)->GetPosition()};
+	const auto go{ std::make_shared<dae::GameObject>() };
+	go->SetLocalPosition(pos);
+	const auto spawnerEnemy{ std::make_shared<EnemySpawnerComponent>() };
+	go->AddComponent(spawnerEnemy);
+	dae::SceneManager::GetInstance().Instantiate(go);
 }
 
 void LevelComponent::LoadLevel()
@@ -206,6 +217,7 @@ void LevelComponent::LoadLevel()
 
 	// Init the spawn point
 	auto spawnEnemy = json["SpawnPointEnemy"];
+	CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), maxColumn));
 	m_SpawnPointEnemy = GetVectorFromJson(json["SpawnPointEnemy"]);
 	// TODO Check if we are selecting 2 players versus
 
@@ -282,7 +294,7 @@ void LevelComponent::CreateBackgroundLevel(int level)
 	{
 		while (currentSize.x <= windowSize.x)
 		{
-			GraphUtils::GraphNode* current{m_pGraph->GetClosestNode(glm::vec3{currentSize, 0})};
+			const GraphUtils::GraphNode* current{m_pGraph->GetClosestNode(glm::vec3{currentSize, 0})};
 			if (current->CanBeVisited() && glm::distance(current->GetPosition(), glm::vec3{ currentSize,0 }) < 20.f)
 			{
 				

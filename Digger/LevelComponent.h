@@ -40,6 +40,7 @@ private:
 	glm::vec2 m_SpawnPointEnemy;
 	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
 
+	void CreateSpawnerEnemy(int index) const;
 	void LoadLevel();
 	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
 	void CreateEmeraldAtIndex(int index);

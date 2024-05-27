@@ -22,6 +22,7 @@ public:
 	void SetPath(const glm::vec2& pos);
 	void Update() override;
 	std::shared_ptr<BaseComponent> Clone() const override;
+	bool HasReachedDestination() const { return m_HasReachedDestination; }
 private:
 	std::vector<GraphUtils::GraphNode*> m_Path;
 	glm::vec2 m_Target;
