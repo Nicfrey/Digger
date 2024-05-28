@@ -195,6 +195,11 @@ bool AnimatorComponent::CurrentAnimationIsFinished() const
 	return false;
 }
 
+void AnimatorComponent::AddAnimation(const Animation& anim) const
+{
+	m_pAnimationController->AddStateNode(new AnimationStateNode{ anim });
+}
+
 bool AnimatorComponent::SetStartAnimation(const Animation& anim) const
 {
 	if (const auto startNode{ m_pAnimationController->GetStateNode(anim.name) })

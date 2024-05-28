@@ -151,9 +151,17 @@ std::shared_ptr<dae::GameObject> PlayerComponent::CreateProjectile() const
 	newProjectile->AddComponent(projectileComponent);
 	const auto sprite = std::make_shared<SpriteComponent>("Projectile", "SpritesFire.png", 3, 2);
 	const auto boxCollider = std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height);
+	const auto animator = std::make_shared<AnimatorComponent>();
+	const Animation idle{ .name = "Idle", .frames = {0,1,2}, .frameTime = 0.3f,.loop = true, .spriteComponent = sprite };
+	animator->AddAnimation(idle);
+	if(animator->SetStartAnimation(idle))
+	{
+		std::cerr << "Failed to start animation of Projectile object\n";
+	}
 	boxCollider->SetIsStatic(false);
 	newProjectile->AddComponent(boxCollider);
 	newProjectile->AddComponent(sprite);
+	newProjectile->AddComponent(animator);
 	newProjectile->GetComponent<ProjectileComponent>()->Activate(GetGameObject());
 	newProjectile->SetLocalPosition(GetGameObject()->GetWorldPosition().x + 5 * forward.x, GetGameObject()->GetWorldPosition().y + 5 * forward.y);
 	return newProjectile;

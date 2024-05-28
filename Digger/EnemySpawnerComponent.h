@@ -22,9 +22,6 @@ private:
 	void DecreaseEnemyCount();
 	int m_EnemyCount;
 	int m_EnemyToSpawn{ 10 };
-	float m_SpawnRate{ 5.f };
 
-	float m_CurrentTimer{};
-	float m_SpawnTimer{ 5.f };
 };
 
