@@ -13,29 +13,65 @@ glm::vec2 Rectf::GetCenter() const
 	return { topLeft.x + width / 2,topLeft.y + height / 2 };
 }
 
-void TimerManager::AddTimer(const DelegateFnc& function, float timer)
+TimerHandlerFunction::TimerHandlerFunction(const DelegateFnc& func, float timer, bool repeat): m_Handler{func}, m_Timer{.timer = timer, .repeat = repeat}
 {
-	Timer newTimer{ .timer = timer };
-	TimerHandler newTimerHandler{ newTimer, function };
-	m_TimerHandlers.emplace_back(newTimerHandler);
 }
 
+void TimerHandlerFunction::HandleTimer()
+{
+	m_Timer.currentTimer += TimeEngine::GetInstance().GetDeltaTime();
+	if(m_Timer.currentTimer >= m_Timer.timer)
+	{
+		m_Handler();
+		if(m_Timer.repeat)
+		{
+			m_Timer.currentTimer = 0.f;
+		}
+	}
+}
+
+bool TimerHandlerFunction::Equals(ITimerHandler* timer)
+{
+	if (auto* p = dynamic_cast<TimerHandlerFunction*>(timer))
+	{
+		return m_Handler.target<void()>() == p->m_Handler.target<void()>();
+	}
+	return false;
+}
+
+bool TimerHandlerFunction::IsDone() const
+{
+	return m_Timer.currentTimer >= m_Timer.timer;
+}
+
+void TimerManager::AddTimer(const DelegateFnc& function, float timer, bool repeat)
+{
+	m_TimerHandlers.emplace_back(std::make_unique<TimerHandlerFunction>(function, timer, repeat));
+}
 
 void TimerManager::Update()
 {
-	for (auto& handler : m_TimerHandlers)
+	for(const auto& timer: m_TimerHandlers)
 	{
-		handler.timer.currentTimer += TimeEngine::GetInstance().GetDeltaTime();
-		if(handler.timer.currentTimer >= handler.timer.timer)
+		timer->HandleTimer();
+	}
+	RemoveTimerDone();
+}
+
+void TimerManager::RemoveTimer(const DelegateFnc& function, float timer)
+{
+	std::erase_if(m_TimerHandlers, [function, timer](const std::unique_ptr<ITimerHandler>& other)
+	{
+		return other->Equals(new TimerHandlerFunction(function, timer));
+	});
+}
+
+void TimerManager::RemoveTimerDone()
+{
+	std::erase_if(m_TimerHandlers, [](const std::unique_ptr<ITimerHandler>& other)
 		{
-			handler.func();
-		}
-	}
-	const auto it =std::ranges::find_if(m_TimerHandlers, [](const TimerHandler& handler) { return handler.timer.currentTimer >= handler.timer.timer; });
-	if(it != m_TimerHandlers.end())
-	{
-		m_TimerHandlers.erase(it);
-	}
+			return other->IsDone();
+		});
 }
 
 bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect)

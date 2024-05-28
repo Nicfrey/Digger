@@ -26,21 +26,17 @@ std::shared_ptr<BaseComponent> EnemySpawnerComponent::Clone() const
 void EnemySpawnerComponent::Init()
 {
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemySpawnerComponent::DecreaseEnemyCount);
+	TimerManager::GetInstance().AddTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f,true);
 }
 
 void EnemySpawnerComponent::Update()
 {
-	m_CurrentTimer += TimeEngine::GetInstance().GetDeltaTime();
-	if(m_CurrentTimer >= m_SpawnTimer)
-	{
-		m_CurrentTimer = 0.f;
-		SpawnNewEnemy();
-	}
 }
 
 void EnemySpawnerComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemySpawnerComponent::DecreaseEnemyCount);
+	TimerManager::GetInstance().RemoveTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f);
 }
 
 void EnemySpawnerComponent::CreateNewEnemy()
