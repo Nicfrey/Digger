@@ -39,9 +39,9 @@ private:
 	GraphUtils::Graph* m_pGraph;
 	std::vector<GraphUtils::GraphNode*> m_ShortestPath;
 	glm::vec2 m_StartPos{20,20};
-	glm::vec2 m_SpawnPointEnemy;
-	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
 	std::unique_ptr<ThreadPool> m_pThreadPool;
+	std::vector<GraphUtils::GraphNode*> m_pPlayersPreviousNode;
+	std::vector<GraphUtils::GraphNode*> m_pPlayersCurrentNode;
 
 	void CreateSpawnerEnemy(int index) const;
 	void LoadLevel();

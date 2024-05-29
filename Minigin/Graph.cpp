@@ -77,14 +77,27 @@ float GraphUtils::GraphNode::GetDistance(const GraphNode* neighbor) const
 	return distance(m_Position, neighbor->m_Position);
 }
 
-void GraphUtils::GraphNode::AddNeighbor(GraphNode* neighbor, float distance)
+void GraphUtils::GraphNode::AddNeighbor(GraphNode* neighbor, float distance, bool canVisit)
 {
-	m_Neighbors.insert(std::make_pair(neighbor, distance));
+	m_Neighbors.insert(std::make_pair(neighbor, GraphTransition{ distance,canVisit }));
+}
+
+void GraphUtils::GraphNode::SetTransitionCanBeVisited(GraphNode* neighbor)
+{
+	if(m_Neighbors.contains(neighbor))
+	{
+		m_Neighbors[neighbor].canVisit = true;
+	}
+}
+
+bool GraphUtils::GraphNode::IsNodeNeighbor(GraphNode* neighbor) const
+{
+	return m_Neighbors.contains(neighbor);
 }
 
 GraphUtils::GraphNode* GraphUtils::GraphNode::GetTopNeighbor() const
 {
-	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, GraphTransition>& neighbor)
 	{
 		return neighbor.first->m_Position.y < m_Position.y && neighbor.first->m_Position.x == m_Position.x;
 	});
@@ -97,7 +110,7 @@ GraphUtils::GraphNode* GraphUtils::GraphNode::GetTopNeighbor() const
 
 GraphUtils::GraphNode* GraphUtils::GraphNode::GetRightNeighbor() const
 {
-	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, GraphTransition>& neighbor)
 	{
 		return neighbor.first->m_Position.x > m_Position.x && neighbor.first->m_Position.y == m_Position.y;
 	});
@@ -110,7 +123,7 @@ GraphUtils::GraphNode* GraphUtils::GraphNode::GetRightNeighbor() const
 
 GraphUtils::GraphNode* GraphUtils::GraphNode::GetBottomNeighbor() const
 {
-	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, GraphTransition>& neighbor)
 	{
 		return neighbor.first->m_Position.y > m_Position.y && neighbor.first->m_Position.x == m_Position.x;
 	});
@@ -123,7 +136,7 @@ GraphUtils::GraphNode* GraphUtils::GraphNode::GetBottomNeighbor() const
 
 GraphUtils::GraphNode* GraphUtils::GraphNode::GetLeftNeighbor() const
 {
-	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, GraphTransition>& neighbor)
 	{
 		return neighbor.first->m_Position.x < m_Position.x && neighbor.first->m_Position.y == m_Position.y;
 	});
@@ -298,11 +311,11 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode
 		}
 		for (auto neighbor : currentNodeRecord.pNode->GetNeighbors())
 		{
-			if (!canVisit && !neighbor.first->CanBeVisited())
+			if (!canVisit && (!neighbor.first->CanBeVisited() || !neighbor.second.canVisit))
 			{
 				continue;
 			}
-			const float costSoFar = currentNodeRecord.costSoFar + neighbor.second;
+			const float costSoFar = currentNodeRecord.costSoFar + neighbor.second.cost;
 			const float estimatedTotalCost = costSoFar + GetHeuristic(neighbor.first, pEnd);
 
 			// remove from closedList if costSoFar is less expensive

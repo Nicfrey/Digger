@@ -7,6 +7,12 @@
 
 namespace GraphUtils
 {
+
+	struct GraphTransition
+	{
+		float cost{};
+		bool canVisit{};
+	};
 	/**
 	 * \brief Node of a Graph
 	 * Can be inherited to add more functionality
@@ -23,13 +29,15 @@ namespace GraphUtils
 		GraphNode& operator=(GraphNode&& other) noexcept;
 
 		float GetDistance(const GraphNode* neighbor) const;
-		void AddNeighbor(GraphNode* neighbor, float distance);
+		void AddNeighbor(GraphNode* neighbor, float distance, bool canVisit = false);
 		glm::vec3 GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& value) { m_Position = value; }
-		std::map<GraphNode*, float> GetNeighbors() const { return m_Neighbors; }
+		std::map<GraphNode*, GraphTransition> GetNeighbors() const { return m_Neighbors; }
 		int GetId() const { return m_Id; }
 		bool CanBeVisited() const { return m_CanBeVisited; }
+		void SetTransitionCanBeVisited(GraphNode* neighbor);
 		void SetCanBeVisited(bool value) { m_CanBeVisited = value; }
+		bool IsNodeNeighbor(GraphNode* neighbor) const;
 		GraphNode* GetTopNeighbor() const;
 		GraphNode* GetRightNeighbor() const;
 		GraphNode* GetBottomNeighbor() const;
@@ -38,7 +46,7 @@ namespace GraphUtils
 	private:
 		int m_Id;
 		static int m_IdCounter;
-		std::map<GraphNode*,float> m_Neighbors;
+		std::map<GraphNode*,GraphTransition> m_Neighbors;
 		glm::vec3  m_Position;
 		bool m_CanBeVisited;
 	};

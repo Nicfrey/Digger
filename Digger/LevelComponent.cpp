@@ -37,6 +37,16 @@ LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUti
 {
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
+	m_pPlayersCurrentNode.resize(2);
+	for(auto& node : m_pPlayersCurrentNode)
+	{
+		node = nullptr;
+	}
+	m_pPlayersPreviousNode.resize(2);
+	for(auto& node : m_pPlayersPreviousNode)
+	{
+		node = nullptr;
+	}
 }
 
 LevelComponent::~LevelComponent()
@@ -193,10 +203,20 @@ void LevelComponent::LoadLevel()
 	}
 
 	// Set the graph index to be visited
+	GraphUtils::GraphNode* currentNode{nullptr};
+	GraphUtils::GraphNode* previousNode{nullptr};
 	for (auto data : json["CanBeVisited"])
 	{
+		
 		const glm::vec2 pos{data.at("x"), data.at("y")};
-		m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x))->SetCanBeVisited(true);
+		currentNode = m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
+		currentNode->SetCanBeVisited(true);
+		if(previousNode != nullptr && currentNode->IsNodeNeighbor(previousNode))
+		{
+			previousNode->SetTransitionCanBeVisited(currentNode);
+			currentNode->SetTransitionCanBeVisited(previousNode);
+		}
+		previousNode = currentNode;
 	}
 
 	// Init background
@@ -217,7 +237,6 @@ void LevelComponent::LoadLevel()
 	// Init the spawn point
 	auto spawnEnemy = json["SpawnPointEnemy"];
 	CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), maxColumn));
-	m_SpawnPointEnemy = GetVectorFromJson(json["SpawnPointEnemy"]);
 	// TODO Check if we are selecting 2 players versus
 
 
@@ -392,7 +411,6 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	dae::InputManager::GetInstance().AddController(gamepadController);
 	go->SetLocalPosition(pos);
 	dae::SceneManager::GetInstance().Instantiate(go);
-	m_Players.emplace_back(go);
 }
 
 int LevelComponent::GetIndexFromPosition(const glm::vec2& pos, int maxColumn)
@@ -403,12 +421,22 @@ int LevelComponent::GetIndexFromPosition(const glm::vec2& pos, int maxColumn)
 void LevelComponent::UpdateGraph()
 {
 	const auto players{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>()};
-	for (const auto player : players)
+	for (size_t i{}; i < players.size(); ++i)
 	{
-		const auto node{m_pGraph->GetClosestNode(player->GetWorldPosition())};
-		if (!node->CanBeVisited())
+		m_pPlayersCurrentNode[i] = m_pGraph->GetClosestNode(players[i]->GetWorldPosition());
+		if (m_pPlayersPreviousNode[i] == nullptr)
 		{
-			node->SetCanBeVisited(true);
+			m_pPlayersPreviousNode[i] = m_pPlayersCurrentNode[i];
+		}
+		if(m_pPlayersPreviousNode[i] != m_pPlayersCurrentNode[i])
+		{
+			m_pGraph->GetNode(m_pPlayersPreviousNode[i])->SetTransitionCanBeVisited(m_pPlayersCurrentNode[i]);
+			m_pGraph->GetNode(m_pPlayersCurrentNode[i])->SetTransitionCanBeVisited(m_pPlayersPreviousNode[i]);
+			m_pPlayersPreviousNode[i] = m_pPlayersCurrentNode[i];
+		}
+		if (!m_pPlayersCurrentNode[i]->CanBeVisited())
+		{
+			m_pPlayersCurrentNode[i]->SetCanBeVisited(true);
 			// Apply thread here
 			m_pThreadPool->EnqueueTask([this]
 			{
