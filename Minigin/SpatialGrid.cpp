@@ -80,8 +80,8 @@ void SpatialGrid::OnCollisionUpdate(std::shared_ptr<dae::GameObject>& go) const
 			}
 			const auto boxCollider{go->GetComponent<BoxCollider2D>()};
 			const auto otherBoxCollider{otherObject->GetComponent<BoxCollider2D>()};
-			boxCollider->IsOverlapping(otherObject);
-			otherBoxCollider->IsOverlapping(go);
+			boxCollider->HandleCollision(otherObject);
+			otherBoxCollider->HandleCollision(go);
 		}
 	}
 }

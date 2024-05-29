@@ -30,7 +30,7 @@ void ButtonComponent::SetOnButtonClick(const std::function<void()>& func)
 
 void ButtonComponent::OnClick(const glm::vec2& posMouse) const
 {
-	if(!IsPointInRectangle(posMouse,m_Box))
+	if(!Utils::IsPointInRectangle(posMouse,m_Box))
 	{
 		return;
 	}

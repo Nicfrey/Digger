@@ -1,7 +1,4 @@
 #include "BoxCollider2D.h"
-
-#include <iostream>
-
 #include "GameObject.h"
 #include "imgui.h"
 #include "Utils.h"
@@ -147,7 +144,7 @@ bool BoxCollider2D::Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec
 	{
 		const size_t j{ (i + 1) % points.size() };
 		glm::vec2 intersectPoint;
-		if(LineIntersect2D(p0,p1,points[i],points[j],intersectPoint))
+		if(Utils::LineIntersect2D(p0,p1,points[i],points[j],intersectPoint))
 		{
 			go = GetGameObject();
 			intersection = glm::vec3{ intersectPoint.x,intersectPoint.y,0 };
@@ -169,6 +166,54 @@ bool BoxCollider2D::IsRaycasting(std::shared_ptr<dae::GameObject>& other)
 		// TODO
 	}
 	return false;
+}
+
+bool BoxCollider2D::IsColliding(std::shared_ptr<dae::GameObject>& other)
+{
+	if(Collider2D::IsColliding(other))
+	{
+		return false;
+	}
+	bool collide{ false };
+	if(const auto otherBox{other->GetComponent<BoxCollider2D>()})
+	{
+		if (Utils::IsOverlapping(otherBox->GetBoxCollider(),GetBoxCollider()))
+		{
+			const float overlapX{ std::min(GetGameObject()->GetWorldPosition().x + GetBoxCollider().width - other->GetWorldPosition().x, other->GetWorldPosition().x + otherBox->GetBoxCollider().width - GetGameObject()->GetWorldPosition().x) };
+			const float overlapY{ std::min(GetGameObject()->GetWorldPosition().y + GetBoxCollider().height - other->GetWorldPosition().y, other->GetWorldPosition().y + otherBox->GetBoxCollider().height - GetGameObject()->GetWorldPosition().y) };
+			if(overlapX < overlapY)
+			{
+				if(GetGameObject()->GetWorldPosition().x < other->GetWorldPosition().x)
+				{
+					GetGameObject()->Translate(-overlapX / 2,0);
+					other->Translate(overlapX / 2,0);
+					collide = true;
+				}
+				else
+				{
+					GetGameObject()->Translate(overlapX / 2,0);
+					other->Translate(-overlapX / 2,0);
+					collide = true;
+				}
+			}
+			else
+			{
+				if(GetGameObject()->GetWorldPosition().y < other->GetWorldPosition().y)
+				{
+					GetGameObject()->Translate(0,-overlapY / 2);
+					other->Translate(0,overlapY / 2);
+					collide = true;
+				}
+				else
+				{
+					GetGameObject()->Translate(0,overlapY / 2);
+					other->Translate(0,-overlapY / 2);
+					collide = true;
+				}
+			}
+		}
+	}
+	return collide;
 }
 
 Rectf BoxCollider2D::GetBoxCollider() const

@@ -171,6 +171,8 @@ void TimerManager::RemoveTimer(ClassType* obj, void(ClassType::* funcPtr)(), flo
 
 #pragma endregion structs
 
+namespace Utils
+{
 #pragma region Functions
 
 	bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect);
@@ -188,4 +190,4 @@ void TimerManager::RemoveTimer(ClassType* obj, void(ClassType::* funcPtr)(), flo
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo);
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo, const std::string& tag);
 #pragma endregion Functions
-
+}

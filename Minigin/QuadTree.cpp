@@ -77,7 +77,7 @@ bool QuadTree::Contains(const std::shared_ptr<dae::GameObject>& object) const
 	{
 		const auto collider{ object->GetComponent<BoxCollider2D>() };
 		const auto box{ collider->GetBoxCollider() };
-		return IsOverlapping(m_Shape, box);
+		return Utils::IsOverlapping(m_Shape, box);
 	}
 	return false;
 }

@@ -44,7 +44,7 @@ void NavMeshAgentComponent::Update()
 
 	// Create the sphere of acceptance
 	const Circlef sphereOfAcceptance{m_Target, m_AcceptanceRadius};
-	if (IsPointInCircle(glm::vec2{pos}, sphereOfAcceptance))
+	if (Utils::IsPointInCircle(glm::vec2{pos}, sphereOfAcceptance))
 	{
 		m_Path.pop_back();
 		if (m_Path.empty())

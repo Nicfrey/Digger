@@ -74,28 +74,28 @@ void TimerManager::RemoveTimerDone()
 		});
 }
 
-bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect)
+bool Utils::IsPointInRectangle(const glm::vec2& point, const Rectf& rect)
 {
 	return point.x >= rect.topLeft.x && point.x <= rect.topLeft.x + rect.width &&
 		point.y >= rect.topLeft.y && point.y <= rect.topLeft.y + rect.height;
 }
 
-bool IsPointInRectangle(float x, float y, const Rectf& rect)
+bool Utils::IsPointInRectangle(float x, float y, const Rectf& rect)
 {
 	return IsPointInRectangle(glm::vec2(x, y),rect);
 }
 
-bool IsPointInCircle(const glm::vec2& point, const Circlef& circle)
+bool Utils::IsPointInCircle(const glm::vec2& point, const Circlef& circle)
 {
 	return glm::distance(point, circle.center) <= circle.radius;
 }
 
-bool IsPointInCircle(float x, float y, const Circlef& circle)
+bool Utils::IsPointInCircle(float x, float y, const Circlef& circle)
 {
 	return IsPointInCircle(glm::vec2(x, y), circle);
 }
 
-bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1,
+bool Utils::LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1,
                      glm::vec2& intersectPoint)
 {
 	const glm::vec2 u1{ p1 - p0 };
@@ -114,12 +114,12 @@ bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& 
 	return false;
 }
 
-bool LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersectPoint)
+bool Utils::LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersectPoint)
 {
 	return LineIntersect2D(line1.p0, line1.p1, line2.p0, line2.p1, intersectPoint);
 }
 
-bool IsOverlapping(const Rectf& rect1, const Rectf& rect2)
+bool Utils::IsOverlapping(const Rectf& rect1, const Rectf& rect2)
 {
 	return rect1.topLeft.x < rect2.topLeft.x + rect2.width &&
 		rect1.topLeft.x + rect1.width > rect2.topLeft.x &&
@@ -127,13 +127,13 @@ bool IsOverlapping(const Rectf& rect1, const Rectf& rect2)
 		rect1.topLeft.y + rect1.height > rect2.topLeft.y;
 }
 
-bool Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo)
+bool Utils::Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo)
 {
 	const glm::vec2 end = origin + direction * maxDistance;
-	return Raycast2D(origin, end, hitInfo);
+	return Utils::Raycast2D(origin, end, hitInfo);
 }
 
-bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo)
+bool Utils::Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo)
 {
 	const auto gameObjects{ dae::SceneManager::GetInstance().GetAllGameObject() };
 	for (const auto& gameObject : gameObjects)
@@ -156,7 +156,7 @@ bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& 
 	return false;
 }
 
-bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo, const std::string& tag)
+bool Utils::Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo, const std::string& tag)
 {
 	const auto gameObjects{ dae::SceneManager::GetInstance().GetGameObjectsByTag(tag) };
 	for (const auto& gameObject : gameObjects)
