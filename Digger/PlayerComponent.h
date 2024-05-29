@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseComponent.h"
+#include "NavMeshAgentComponent.h"
 
 class PlayerComponent : public BaseComponent
 {
@@ -21,6 +22,7 @@ public:
 private:
 	dae::GameObject* m_pProjectile;
 	std::unique_ptr<dae::GameObject> m_pDefaultProjectile;
+	std::shared_ptr<NavMeshAgentComponent> m_NavMeshComp;
 	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other) const;
 	std::shared_ptr<dae::GameObject> CreateProjectile() const;
 	void SetDeadAnim();

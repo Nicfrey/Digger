@@ -1,8 +1,8 @@
 #pragma once
 #include <list>
 #include <map>
-#include <SDL_opengl.h>
 #include <vector>
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 namespace GraphUtils
@@ -30,6 +30,10 @@ namespace GraphUtils
 		int GetId() const { return m_Id; }
 		bool CanBeVisited() const { return m_CanBeVisited; }
 		void SetCanBeVisited(bool value) { m_CanBeVisited = value; }
+		GraphNode* GetTopNeighbor() const;
+		GraphNode* GetRightNeighbor() const;
+		GraphNode* GetBottomNeighbor() const;
+		GraphNode* GetLeftNeighbor() const;
 
 	private:
 		int m_Id;
@@ -54,9 +58,10 @@ namespace GraphUtils
 		GraphNode* GetNode(int index) const;
 		GraphNode* GetNode(GraphNode* node);
 		GraphNode* GetClosestNode(const glm::vec3& position) const;
+		GraphNode* GetNextNode(GraphNode* pStart, const glm::vec2& direction);
 		void RemoveNode(GraphNode* node);
 		std::vector<GraphNode*> GetNodes() const;
-		std::vector<GraphNode*> GetShortestPath(GraphNode* pStart, GraphNode* pEnd);
+		std::vector<GraphNode*> GetShortestPath(GraphNode* pStart, GraphNode* pEnd, bool canVisit = false);
 	private:
 		struct NodeRecord
 		{

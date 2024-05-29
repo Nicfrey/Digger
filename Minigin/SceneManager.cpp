@@ -66,7 +66,7 @@ void dae::SceneManager::Instantiate(std::shared_ptr<GameObject> object)
 	m_ActiveScene->Instantiate(std::move(object));
 }
 
-dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) const
+std::shared_ptr<dae::GameObject> dae::SceneManager::GetGameObjectByTag(const std::string& tag) const
 {
 	const auto go = m_ActiveScene->GetGameObjectByTag(tag);
 	if (go != nullptr)
@@ -76,9 +76,9 @@ dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) c
 	return nullptr;
 }
 
-std::vector<dae::GameObject*> dae::SceneManager::GetGameObjectsByTag(const std::string& tag) const
+std::vector<std::shared_ptr<dae::GameObject>> dae::SceneManager::GetGameObjectsByTag(const std::string& tag) const
 {
-	std::vector<GameObject*> gameObjects;
+	std::vector<std::shared_ptr<GameObject>> gameObjects;
 
 	const auto go = m_ActiveScene->GetGameObjectsByTag(tag);
 	if (!go.empty())

@@ -70,26 +70,26 @@ void Scene::UpdateQuadTree()
 	}
 }
 
-GameObject* Scene::GetGameObjectByTag(const std::string& tag) const
+std::shared_ptr<GameObject> Scene::GetGameObjectByTag(const std::string& tag) const
 {
 	for (const auto& object : m_objects)
 	{
 		if (object->GetTag() == tag)
 		{
-			return object.get();
+			return object;
 		}
 	}
 	return nullptr;
 }
 
-std::vector<GameObject*> Scene::GetGameObjectsByTag(const std::string& tag) const
+std::vector<std::shared_ptr<GameObject>> Scene::GetGameObjectsByTag(const std::string& tag) const
 {
-	std::vector<GameObject*> objectsWithTag;
+	std::vector<std::shared_ptr<GameObject>> objectsWithTag;
 	for (const auto& object : m_objects)
 	{
 		if (object->GetTag() == tag)
 		{
-			objectsWithTag.push_back(object.get());
+			objectsWithTag.push_back(object);
 		}
 	}
 	return objectsWithTag;

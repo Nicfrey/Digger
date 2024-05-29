@@ -23,4 +23,5 @@ namespace MathUtils
 	float Pow(float value, int exponent);
 	float Sqrt(float x);
 	int Rand(int min, int max);
+	float Floor(float value);
 }

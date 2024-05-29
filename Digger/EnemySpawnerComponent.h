@@ -1,6 +1,4 @@
 #pragma once
-#include <vector>
-
 #include "BaseComponent.h"
 
 class EnemySpawnerComponent : public BaseComponent

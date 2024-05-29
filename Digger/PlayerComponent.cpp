@@ -9,6 +9,7 @@
 #include "SceneManager.h"
 #include "BoxCollider2D.h"
 #include "imgui.h"
+#include "NavMeshAgentComponent.h"
 #include "Observer.h"
 #include "SpriteComponent.h"
 #include "Scene.h"
@@ -67,6 +68,10 @@ std::shared_ptr<BaseComponent> PlayerComponent::Clone() const
 void PlayerComponent::Update()
 {
 	BaseComponent::Update();
+	if(!m_NavMeshComp->HasReachedDestination())
+	{
+		EventManager::GetInstance().NotifyEvent("PlayerMoving");
+	}
 }
 
 void PlayerComponent::Init()
@@ -78,7 +83,10 @@ void PlayerComponent::Init()
 		animator->AddParameter("HasProjectile", true);
 		animator->AddParameter("PlayerDied", false);
 	}
-	
+	if(GetGameObject()->HasComponent<NavMeshAgentComponent>())
+	{
+		m_NavMeshComp = GetGameObject()->GetComponent<NavMeshAgentComponent>();
+	}
 }
 
 void PlayerComponent::RenderGUI()

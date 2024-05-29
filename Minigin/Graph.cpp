@@ -82,6 +82,58 @@ void GraphUtils::GraphNode::AddNeighbor(GraphNode* neighbor, float distance)
 	m_Neighbors.insert(std::make_pair(neighbor, distance));
 }
 
+GraphUtils::GraphNode* GraphUtils::GraphNode::GetTopNeighbor() const
+{
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	{
+		return neighbor.first->m_Position.y < m_Position.y && neighbor.first->m_Position.x == m_Position.x;
+	});
+	if (it != m_Neighbors.end())
+	{
+		return it->first;
+	}
+	return nullptr;
+}
+
+GraphUtils::GraphNode* GraphUtils::GraphNode::GetRightNeighbor() const
+{
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	{
+		return neighbor.first->m_Position.x > m_Position.x && neighbor.first->m_Position.y == m_Position.y;
+	});
+	if (it != m_Neighbors.end())
+	{
+		return it->first;
+	}
+	return nullptr;
+}
+
+GraphUtils::GraphNode* GraphUtils::GraphNode::GetBottomNeighbor() const
+{
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	{
+		return neighbor.first->m_Position.y > m_Position.y && neighbor.first->m_Position.x == m_Position.x;
+	});
+	if (it != m_Neighbors.end())
+	{
+		return it->first;
+	}
+	return nullptr;
+}
+
+GraphUtils::GraphNode* GraphUtils::GraphNode::GetLeftNeighbor() const
+{
+	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, float>& neighbor)
+	{
+		return neighbor.first->m_Position.x < m_Position.x && neighbor.first->m_Position.y == m_Position.y;
+	});
+	if (it != m_Neighbors.end())
+	{
+		return it->first;
+	}
+	return nullptr;
+}
+
 GraphUtils::Graph::~Graph()
 {
 	for (auto node : m_Nodes)
@@ -186,6 +238,31 @@ GraphUtils::GraphNode* GraphUtils::Graph::GetClosestNode(const glm::vec3& positi
 	return closestNode;
 }
 
+GraphUtils::GraphNode* GraphUtils::Graph::GetNextNode(GraphNode* pStart, const glm::vec2& direction)
+{
+	if (GetNode(pStart) == nullptr)
+	{
+		return nullptr;
+	}
+	if (MathUtils::Floor(direction.x) == -1.f)
+	{
+		return pStart->GetLeftNeighbor();
+	}
+	if(MathUtils::Floor(direction.x) == 1.f)
+	{
+		return pStart->GetRightNeighbor();
+	}
+	if(MathUtils::Floor(direction.y) == -1.f)
+	{
+		return pStart->GetTopNeighbor();
+	}
+	if(MathUtils::Floor(direction.y) == 1.f)
+	{
+		return pStart->GetBottomNeighbor();
+	}
+	return nullptr;
+}
+
 void GraphUtils::Graph::RemoveNode(GraphNode* node)
 {
 	const auto it = std::ranges::find(m_Nodes, node);
@@ -202,18 +279,18 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetNodes() const
 	return m_Nodes;
 }
 
-std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode* pStart, GraphNode* pEnd)
+std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode* pStart, GraphNode* pEnd, bool canVisit)
 {
 	std::vector<GraphNode*> path{};
 	// Create node record and add to openlist
-	NodeRecord currentNodeRecord{ pStart, nullptr, 0.f, GetHeuristic(pStart, pEnd) };
+	NodeRecord currentNodeRecord{pStart, nullptr, 0.f, GetHeuristic(pStart, pEnd)};
 	std::list<NodeRecord> openList{};
 	std::list<NodeRecord> closedList{};
 	openList.emplace_back(currentNodeRecord);
 
 	while (!openList.empty())
 	{
-		const auto currentNodeRecordIt{ std::min_element(openList.begin(), openList.end()) };
+		const auto currentNodeRecordIt{std::min_element(openList.begin(), openList.end())};
 		currentNodeRecord = *currentNodeRecordIt;
 		if (currentNodeRecord.pNode->GetId() == pEnd->GetId())
 		{
@@ -221,7 +298,7 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode
 		}
 		for (auto neighbor : currentNodeRecord.pNode->GetNeighbors())
 		{
-			if(!neighbor.first->CanBeVisited())
+			if (!canVisit && !neighbor.first->CanBeVisited())
 			{
 				continue;
 			}
@@ -231,17 +308,17 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode
 			// remove from closedList if costSoFar is less expensive
 
 			closedList.remove_if([neighbor, costSoFar](const NodeRecord& node)
-				{
-					return node.pNode->GetId() == neighbor.first->GetId() && costSoFar < node.costSoFar;
-				});
+			{
+				return node.pNode->GetId() == neighbor.first->GetId() && costSoFar < node.costSoFar;
+			});
 			// remove from openList if costSoFar is less expensive
 			openList.remove_if([neighbor, costSoFar](const NodeRecord& node)
-				{
-					return node.pNode->GetId() == neighbor.first->GetId() && costSoFar < node.costSoFar;
-				});
+			{
+				return node.pNode->GetId() == neighbor.first->GetId() && costSoFar < node.costSoFar;
+			});
 
 			// Create NodeRecord and add it to openList
-			NodeRecord connectionNodeRecord{ neighbor.first, currentNodeRecord.pNode, costSoFar, estimatedTotalCost };
+			NodeRecord connectionNodeRecord{neighbor.first, currentNodeRecord.pNode, costSoFar, estimatedTotalCost};
 			openList.emplace_back(connectionNodeRecord);
 		}
 		openList.remove(currentNodeRecord);
@@ -311,6 +388,6 @@ float GraphUtils::Graph::GetDistance(const GraphNode* start, const GraphNode* en
 
 float GraphUtils::Graph::GetHeuristic(const GraphNode* start, const GraphNode* end)
 {
-	const glm::vec3 toVector{ end->GetPosition() - start->GetPosition() };
-	return std::max(MathUtils::Abs(toVector.x),MathUtils::Abs(toVector.y));
+	const glm::vec3 toVector{end->GetPosition() - start->GetPosition()};
+	return std::max(MathUtils::Abs(toVector.x), MathUtils::Abs(toVector.y));
 }

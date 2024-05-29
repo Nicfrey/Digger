@@ -24,6 +24,7 @@
 #include "SpriteComponent.h"
 #include "HealthComponent.h"
 #include "Minigin.h"
+#include "NavMeshAgentComponent.h"
 #include "Observer.h"
 #include "PlayerComponent.h"
 #include "Renderer.h"
@@ -31,7 +32,8 @@
 #include "ThreadPool.h"
 #include "UIPlayerComponent.h"
 
-LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}}, m_pThreadPool{std::make_unique<ThreadPool>(std::thread::hardware_concurrency())}
+LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}},
+                                   m_pThreadPool{std::make_unique<ThreadPool>(std::thread::hardware_concurrency())}
 {
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
@@ -94,7 +96,6 @@ std::shared_ptr<BaseComponent> LevelComponent::Clone() const
 
 void LevelComponent::Update()
 {
-	
 }
 
 
@@ -104,7 +105,9 @@ void LevelComponent::Init()
 
 void LevelComponent::RenderGUI()
 {
-	dae::GameObject* player{dae::SceneManager::GetInstance().GetGameObjectByTag("Player")};
+	ImGui::SetNextWindowSize(ImVec2(400, 200));
+	ImGui::SetNextWindowPos(ImVec2(100, 100));
+	const std::shared_ptr player{dae::SceneManager::GetInstance().GetGameObjectByTag("Player")};
 	ImGui::Begin("LevelComponent");
 	for (size_t i{}; i < m_pGraph->GetNodes().size(); ++i)
 	{
@@ -332,9 +335,10 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	auto scoreComponent{std::make_shared<ScoreComponent>()};
 	auto uiComponent{std::make_shared<UIPlayerComponent>(fontSmall)};
 	auto boxCollider{
-		std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width, spritePlayer1->GetShape().height)
+		std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width - 5, spritePlayer1->GetShape().height - 5)
 	};
 	auto playerComponent{std::make_shared<PlayerComponent>()};
+	auto navMeshAgentComponent{ std::make_shared<NavMeshAgentComponent>(m_pGraph,80.f, true) };
 	auto animator{std::make_shared<AnimatorComponent>()};
 	Animation idlePlayer{.name = "Idle", .frames = {0, 1, 2}, .frameTime = 0.1f, .spriteComponent = spritePlayer1};
 	if (player == 1)
@@ -372,6 +376,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	go->AddComponent(boxCollider);
 	go->AddComponent(playerComponent);
 	go->AddComponent(animator);
+	go->AddComponent(navMeshAgentComponent);
 	std::shared_ptr moveUpCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{0, -1})};
 	std::shared_ptr moveDownCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{0, 1})};
 	std::shared_ptr moveLeftCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{-1, 0})};
@@ -397,8 +402,8 @@ int LevelComponent::GetIndexFromPosition(const glm::vec2& pos, int maxColumn)
 
 void LevelComponent::UpdateGraph()
 {
-	const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
-	for (const auto player: players)
+	const auto players{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>()};
+	for (const auto player : players)
 	{
 		const auto node{m_pGraph->GetClosestNode(player->GetWorldPosition())};
 		if (!node->CanBeVisited())
@@ -406,18 +411,21 @@ void LevelComponent::UpdateGraph()
 			node->SetCanBeVisited(true);
 			// Apply thread here
 			m_pThreadPool->EnqueueTask([this]
+			{
+				const auto backgrounds{
+					dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
+				};
+				for (const auto background : backgrounds)
 				{
-					const auto backgrounds{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>() };
-					for(const auto background: backgrounds)
+					const auto node{background->GetWorldPosition()};
+					const auto closestNode{GetGraph()->GetClosestNode(node)};
+					if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
+					                                                 background->GetWorldPosition()) < 15.f)
 					{
-						const auto node{ background->GetWorldPosition() };
-						const auto closestNode{ GetGraph()->GetClosestNode(node) };
-						if(closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(), background->GetWorldPosition()) < 15.f)
-						{
-							background->Destroy();
-						}
+						background->Destroy();
 					}
-				});
+				}
+			});
 		}
 	}
 }

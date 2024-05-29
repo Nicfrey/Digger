@@ -32,11 +32,11 @@ namespace dae
 		std::string GetName() const { return m_name; }
 
 		template <typename T>
-		GameObject* GetGameObjectWithComponent() const;
+		std::shared_ptr<GameObject> GetGameObjectWithComponent() const;
 		template <typename T>
-		std::vector<GameObject*> GetGameObjectsWithComponent() const;
-		GameObject* GetGameObjectByTag(const std::string& tag) const;
-		std::vector<GameObject*> GetGameObjectsByTag(const std::string& tag) const;
+		std::vector<std::shared_ptr<GameObject>> GetGameObjectsWithComponent() const;
+		std::shared_ptr<GameObject> GetGameObjectByTag(const std::string& tag) const;
+		std::vector<std::shared_ptr<GameObject>> GetGameObjectsByTag(const std::string& tag) const;
 		std::vector<std::shared_ptr<GameObject>> GetAllGameObject();
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
@@ -56,27 +56,27 @@ namespace dae
 	};
 
 	template <typename T>
-	GameObject* Scene::GetGameObjectWithComponent() const
+	std::shared_ptr<GameObject> Scene::GetGameObjectWithComponent() const
 	{
 		for (const auto& object : m_objects)
 		{
 			if (object->HasComponent<T>())
 			{
-				return object.get();
+				return object;
 			}
 		}
 		return nullptr;
 	}
 
 	template <typename T>
-	std::vector<GameObject*> Scene::GetGameObjectsWithComponent() const
+	std::vector<std::shared_ptr<GameObject>> Scene::GetGameObjectsWithComponent() const
 	{
-		std::vector<GameObject*> objectsWithComponent;
+		std::vector<std::shared_ptr<GameObject>> objectsWithComponent;
 		for (const auto& object : m_objects)
 		{
 			if (object->HasComponent<T>())
 			{
-				objectsWithComponent.push_back(object.get());
+				objectsWithComponent.push_back(object);
 			}
 		}
 		return objectsWithComponent;
