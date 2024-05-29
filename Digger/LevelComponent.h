@@ -7,6 +7,8 @@
 #include "json.hpp"
 
 
+class ThreadPool;
+
 namespace DiggerUtils
 {
 	enum class DiggerGameMode;
@@ -39,6 +41,7 @@ private:
 	glm::vec2 m_StartPos{20,20};
 	glm::vec2 m_SpawnPointEnemy;
 	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
+	std::unique_ptr<ThreadPool> m_pThreadPool;
 
 	void CreateSpawnerEnemy(int index) const;
 	void LoadLevel();

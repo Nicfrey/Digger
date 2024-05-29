@@ -258,6 +258,9 @@
     <ClInclude Include="NavMeshAgentComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Texture2D.cpp">
@@ -414,6 +417,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NavMeshAgentComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

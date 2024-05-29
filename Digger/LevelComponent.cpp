@@ -28,9 +28,10 @@
 #include "PlayerComponent.h"
 #include "Renderer.h"
 #include "ScoreComponent.h"
+#include "ThreadPool.h"
 #include "UIPlayerComponent.h"
 
-LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}}
+LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUtils::Graph{}}, m_pThreadPool{std::make_unique<ThreadPool>(std::thread::hardware_concurrency())}
 {
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
@@ -403,6 +404,20 @@ void LevelComponent::UpdateGraph()
 		if (!node->CanBeVisited())
 		{
 			node->SetCanBeVisited(true);
+			// Apply thread here
+			m_pThreadPool->EnqueueTask([this]
+				{
+					const auto backgrounds{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>() };
+					for(const auto background: backgrounds)
+					{
+						const auto node{ background->GetWorldPosition() };
+						const auto closestNode{ GetGraph()->GetClosestNode(node) };
+						if(closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(), background->GetWorldPosition()) < 15.f)
+						{
+							background->Destroy();
+						}
+					}
+				});
 		}
 	}
 }
