@@ -448,7 +448,7 @@ void LevelComponent::UpdateGraph()
 					const auto node{background->GetWorldPosition()};
 					const auto closestNode{GetGraph()->GetClosestNode(node)};
 					if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
-					                                                 background->GetWorldPosition()) < 15.f)
+					                                                 background->GetWorldPosition()) < 10.f)
 					{
 						background->Destroy();
 					}

@@ -50,8 +50,10 @@ void dae::Renderer::Render() const
 	SDL_RenderClear(m_renderer);
 
 	WidgetManager::GetInstance().Render();
+	glPushMatrix();
+	glScalef(1.15f, 1.15f, 1.15f);
 	SceneManager::GetInstance().Render();
-
+	glPopMatrix();
 
 	// Display Demo ImGui
 	ImGui_ImplOpenGL3_NewFrame();
