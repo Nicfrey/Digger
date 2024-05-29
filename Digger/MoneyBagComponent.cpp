@@ -10,6 +10,11 @@
 #include "LevelComponent.h"
 #include "Scene.h"
 
+MoneyBagComponent::StateMoneyBag MoneyBagComponent::GetState() const
+{
+	return m_State;
+}
+
 MoneyBagComponent::MoneyBagComponent(const MoneyBagComponent& other): BaseComponent{other}, m_State{other.m_State}
 {
 }

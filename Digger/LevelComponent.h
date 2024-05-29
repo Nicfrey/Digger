@@ -25,12 +25,13 @@ class LevelComponent : public BaseComponent
 public:
 	LevelComponent();
 	~LevelComponent() override;
-	GraphUtils::Graph* GetGraph() const;
 	LevelComponent(const LevelComponent& other);
 	LevelComponent(LevelComponent&& other) noexcept;
 	LevelComponent& operator=(const LevelComponent& other);
 	LevelComponent& operator=(LevelComponent&& other) noexcept;
 	std::shared_ptr<BaseComponent> Clone() const override;
+	bool IsNodeMoneyBag(const GraphUtils::GraphNode* node) const;
+	GraphUtils::Graph* GetGraph() const;
 	void Update() override;
 	void Init() override;
 	void RenderGUI() override;

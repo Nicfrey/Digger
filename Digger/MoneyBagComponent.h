@@ -16,6 +16,7 @@ public:
 	};
 	MoneyBagComponent() = default;
 	~MoneyBagComponent() override = default;
+	StateMoneyBag GetState() const;
 	MoneyBagComponent(const MoneyBagComponent& other);
 	MoneyBagComponent(MoneyBagComponent&& other) noexcept;
 	MoneyBagComponent& operator=(const MoneyBagComponent& other);

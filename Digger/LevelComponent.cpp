@@ -38,12 +38,12 @@ LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUti
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
 	m_pPlayersCurrentNode.resize(2);
-	for(auto& node : m_pPlayersCurrentNode)
+	for (auto& node : m_pPlayersCurrentNode)
 	{
 		node = nullptr;
 	}
 	m_pPlayersPreviousNode.resize(2);
-	for(auto& node : m_pPlayersPreviousNode)
+	for (auto& node : m_pPlayersPreviousNode)
 	{
 		node = nullptr;
 	}
@@ -58,6 +58,22 @@ LevelComponent::~LevelComponent()
 GraphUtils::Graph* LevelComponent::GetGraph() const
 {
 	return m_pGraph;
+}
+
+bool LevelComponent::IsNodeMoneyBag(const GraphUtils::GraphNode* node) const
+{
+	const auto moneyBags{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<MoneyBagComponent>()};
+	for (auto& moneyBag : moneyBags)
+	{
+		if(moneyBag->GetComponent<MoneyBagComponent>()->GetState() == MoneyBagComponent::StateMoneyBag::Idle)
+		{
+			if (m_pGraph->GetClosestNode(moneyBag->GetWorldPosition()) == node)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 LevelComponent::LevelComponent(const LevelComponent& other): BaseComponent(other),
@@ -207,11 +223,10 @@ void LevelComponent::LoadLevel()
 	GraphUtils::GraphNode* previousNode{nullptr};
 	for (auto data : json["CanBeVisited"])
 	{
-		
 		const glm::vec2 pos{data.at("x"), data.at("y")};
 		currentNode = m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
 		currentNode->SetCanBeVisited(true);
-		if(previousNode != nullptr && currentNode->IsNodeNeighbor(previousNode))
+		if (previousNode != nullptr && currentNode->IsNodeNeighbor(previousNode))
 		{
 			previousNode->SetTransitionCanBeVisited(currentNode);
 			currentNode->SetTransitionCanBeVisited(previousNode);
@@ -245,6 +260,12 @@ void LevelComponent::LoadLevel()
 		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
 	}
+
+	for (auto data : json["Moneybag"])
+	{
+		const glm::vec2 pos{data.at("x"), data.at("y")};
+		CreateMoneyBagAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
+	}
 	EventManager::GetInstance().NotifyEvent("LevelLoaded");
 }
 
@@ -272,7 +293,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 {
 	const auto pos{m_pGraph->GetNode(index)->GetPosition()};
 	const std::shared_ptr moneyBag{std::make_shared<dae::GameObject>()};
-	const auto sprite{std::make_shared<SpriteComponent>("MoneyBag", "SpriteItems.png", 3, 3)};
+	const auto sprite{std::make_shared<SpriteComponent>("MoneyBag", "SpritesItems.png", 3, 3)};
 	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
 	const auto item{std::make_shared<MoneyBagComponent>()};
 	const auto animator{std::make_shared<AnimatorComponent>()};
@@ -306,7 +327,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 
 void LevelComponent::CreateBackgroundLevel(int level)
 {
-	auto windowSize{dae::Minigin::m_Window};
+	const auto windowSize{ dae::Minigin::m_Window };
 	glm::vec2 currentSize{0, 0};
 	const std::shared_ptr sprite{
 		std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png")
@@ -357,7 +378,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 		std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width - 5, spritePlayer1->GetShape().height - 5)
 	};
 	auto playerComponent{std::make_shared<PlayerComponent>()};
-	auto navMeshAgentComponent{ std::make_shared<NavMeshAgentComponent>(m_pGraph,80.f, true) };
+	auto navMeshAgentComponent{std::make_shared<NavMeshAgentComponent>(m_pGraph, 80.f, true)};
 	auto animator{std::make_shared<AnimatorComponent>()};
 	Animation idlePlayer{.name = "Idle", .frames = {0, 1, 2}, .frameTime = 0.1f, .spriteComponent = spritePlayer1};
 	if (player == 1)
@@ -428,7 +449,7 @@ void LevelComponent::UpdateGraph()
 		{
 			m_pPlayersPreviousNode[i] = m_pPlayersCurrentNode[i];
 		}
-		if(m_pPlayersPreviousNode[i] != m_pPlayersCurrentNode[i])
+		if (m_pPlayersPreviousNode[i] != m_pPlayersCurrentNode[i])
 		{
 			m_pGraph->GetNode(m_pPlayersPreviousNode[i])->SetTransitionCanBeVisited(m_pPlayersCurrentNode[i]);
 			m_pGraph->GetNode(m_pPlayersCurrentNode[i])->SetTransitionCanBeVisited(m_pPlayersPreviousNode[i]);
