@@ -1,11 +1,17 @@
 #include "DiggerStates.h"
 
+#include <iostream>
+
 #include "Blackboard.h"
 #include "DiggerUtils.h"
+#include "GameObject.h"
+#include "LevelComponent.h"
 #include "Observer.h"
+#include "SceneManager.h"
 #include "SoundSystemEngine.h"
 #include "Utils.h"
 #include "WidgetManager.h"
+#include "Graph.h"
 
 void MenuState::Enter(Blackboard* pBlackboard)
 {
@@ -133,6 +139,63 @@ void PlayState::HandlePlayerWon()
 void PlayState::SetPlayerWon()
 {
 	m_PlayerHasWon = true;
+}
+
+void IdleStateMoneyBag::Enter(Blackboard* pBlackboard)
+{
+	pBlackboard->GetValue("MoneyBagStates", m_State);
+	switch (m_State)
+	{
+		case MoneyBagComponent::StateMoneyBag::IsDestroyed:
+		case MoneyBagComponent::StateMoneyBag::IdleDestroyed:
+		case MoneyBagComponent::StateMoneyBag::Idle:
+
+			break;
+		case MoneyBagComponent::StateMoneyBag::CanFall:
+		case MoneyBagComponent::StateMoneyBag::IsFalling:
+			std::cout << "IdleStateMoneyBag::Enter: Something went wrong\n";
+			break;
+	}
+	pBlackboard->GetValue("Position", m_Position);
+}
+
+void IdleStateMoneyBag::Exit(Blackboard* pBlackboard)
+{
+	pBlackboard->ChangeValue("MoneyBagStates", m_State);
+}
+
+void IdleStateMoneyBag::Update(Blackboard* pBlackboard)
+{
+	// TODO check if the bottom node is empty
+	const auto goLevel{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
+	const auto node{ goLevel->GetComponent<LevelComponent>()->GetGraph()->GetClosestNode(m_Position) };
+	if(node->GetBottomNeighbor()->CanBeVisited() && m_State == MoneyBagComponent::StateMoneyBag::Idle)
+	{
+		m_State = MoneyBagComponent::StateMoneyBag::CanFall;
+		pBlackboard->ChangeValue("MoneyBagStates", m_State);
+		TimerManager::GetInstance().AddTimer(this, &IdleStateMoneyBag::SetFallingState, 1.5f);
+	}
+	if(m_State == MoneyBagComponent::StateMoneyBag::IsFalling)
+	{
+		pBlackboard->ChangeValue("MoneyBagStates", m_State);
+	}
+}
+
+void IdleStateMoneyBag::SetFallingState()
+{
+	m_State = MoneyBagComponent::StateMoneyBag::IsFalling;
+}
+
+void FallingStateMoneyBag::Enter(Blackboard* pBlackboard)
+{
+}
+
+void FallingStateMoneyBag::Exit(Blackboard* pBlackboard)
+{
+}
+
+void FallingStateMoneyBag::Update(Blackboard* pBlackboard)
+{
 }
 
 void PlayState::Exit(Blackboard* pBlackboard)

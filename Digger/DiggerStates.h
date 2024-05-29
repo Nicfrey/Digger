@@ -1,6 +1,11 @@
 #pragma once
-#include "FiniteStateMachine.h"
+#include <glm/vec3.hpp>
 
+#include "FiniteStateMachine.h"
+#include "MoneyBagComponent.h"
+
+#pragma region GameStates
+class MoneyBagComponent;
 enum class GameMode;
 
 class MenuState : public FSMStateNode
@@ -72,4 +77,30 @@ public:
 	void Exit(Blackboard* pBlackboard) override;
 	void Update(Blackboard* pBlackboard) override;
 };
+#pragma endregion GameStates
 
+#pragma region MoneyBagStates
+
+class IdleStateMoneyBag : public FSMStateNode
+{
+public:
+	IdleStateMoneyBag() = default;
+	void Enter(Blackboard* pBlackboard) override;
+	void Exit(Blackboard* pBlackboard) override;
+	void Update(Blackboard* pBlackboard) override;
+private:
+	MoneyBagComponent::StateMoneyBag m_State;
+	glm::vec3 m_Position;
+	void SetFallingState();
+};
+
+class FallingStateMoneyBag : public FSMStateNode
+{
+public:
+	FallingStateMoneyBag() = default;
+	void Enter(Blackboard* pBlackboard) override;
+	void Exit(Blackboard* pBlackboard) override;
+	void Update(Blackboard* pBlackboard) override;
+};
+
+#pragma endregion MoneyBagStates
