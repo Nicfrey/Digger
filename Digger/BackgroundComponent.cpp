@@ -23,10 +23,9 @@ void BackgroundComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& oth
 	if(other->HasComponent<ProjectileComponent>())
 	{
 		const auto projectile{ other->GetComponent<ProjectileComponent>() };
-		EventManager::GetInstance().NotifyEvent("ProjectileHit");
 		const auto playerComp{ projectile->GetShotBy()->GetComponent<PlayerComponent>() };
-		playerComp->ResetProjectile();
 		other->Destroy();
+		EventManager::GetInstance().NotifyEvent("ProjectileHit");
 	}
 }
 

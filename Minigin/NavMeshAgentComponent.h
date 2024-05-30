@@ -35,5 +35,6 @@ private:
 	GraphUtils::Graph* m_Graph;
 	glm::vec2 m_Direction;
 	bool m_CanAvoidObstacle;
+	bool IsNearTheTarget() const;
 };
 

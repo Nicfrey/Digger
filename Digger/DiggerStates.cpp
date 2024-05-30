@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "LevelComponent.h"
 #include "Observer.h"
+#include "Scene.h"
 #include "SceneManager.h"
 #include "SoundSystemEngine.h"
 #include "Utils.h"
@@ -188,14 +189,54 @@ void IdleStateMoneyBag::SetFallingState()
 
 void FallingStateMoneyBag::Enter(Blackboard* pBlackboard)
 {
+	m_NodeTravelled.clear();
+	EventManager::GetInstance().AddEvent("MoneyBagLanded", this, &FallingStateMoneyBag::HandleMoneyBagLanded);
+	pBlackboard->GetValue("MoneyBagStates", m_State);
+	pBlackboard->GetValue("MoneyBagObject", m_MoneyBagObject);
+	if(!m_MoneyBagObject->HasComponent<MoneyBagComponent>())
+	{
+		std::cerr << "FallingStateMoneyBag::Enter: Object does not have money bag component\n";
+	}
+
+	const auto levelObject{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
+	const auto levelComp{ levelObject->GetComponent<LevelComponent>() };
+	m_NodeTravelled.emplace_back(levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()));
 }
 
 void FallingStateMoneyBag::Exit(Blackboard* pBlackboard)
 {
+	EventManager::GetInstance().RemoveEvent("MoneyBagLanded", this, &FallingStateMoneyBag::HandleMoneyBagLanded);
+	pBlackboard->ChangeValue("MoneyBagStates", m_State);
 }
 
 void FallingStateMoneyBag::Update(Blackboard* pBlackboard)
 {
+	if(m_State != MoneyBagComponent::StateMoneyBag::IsFalling)
+	{
+		pBlackboard->ChangeValue("MoneyBagStates", m_State);
+		return;
+	}
+	// Fall to the bottom node
+	m_MoneyBagObject->Translate(TimeEngine::GetInstance().GetDeltaTime() * m_FallSpeed * m_Direction);
+
+	// Check if the object is in another node
+	const auto levelObject{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
+	const auto levelComp{ levelObject->GetComponent<LevelComponent>() };
+	const auto node{ levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()) };
+	if (std::ranges::find(m_NodeTravelled, node) == m_NodeTravelled.end())
+	{
+		m_NodeTravelled.emplace_back(node);
+	}
+}
+
+void FallingStateMoneyBag::HandleMoneyBagLanded()
+{
+	if(m_NodeTravelled.size() <= 2)
+	{
+		m_State = MoneyBagComponent::StateMoneyBag::Idle;
+		return;
+	}
+	m_State = MoneyBagComponent::StateMoneyBag::IsDestroyed;
 }
 
 void PlayState::Exit(Blackboard* pBlackboard)

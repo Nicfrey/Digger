@@ -69,10 +69,8 @@ void EnemyComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 		const auto projectile = other->GetComponent<ProjectileComponent>();
 		if(projectile->GetShotBy()->HasComponent<PlayerComponent>() && projectile->GetShotBy()->HasComponent<ScoreComponent>())
 		{
-			EventManager::GetInstance().NotifyEvent("ProjectileHit");
 			const auto scoreComp{ projectile->GetShotBy()->GetComponent<ScoreComponent>() };
 			const auto playerComp{ projectile->GetShotBy()->GetComponent<PlayerComponent>() };
-			playerComp->ResetProjectile();
 			scoreComp->AddScore(m_ScoreKilled);
 			other->Destroy();
 			if(GetGameObject()->HasComponent<HealthComponent>())
@@ -80,6 +78,7 @@ void EnemyComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 				const auto health{ GetGameObject()->GetComponent<HealthComponent>() };
 				health->LoseOneLife();
 			}
+			EventManager::GetInstance().NotifyEvent("ProjectileHit");
 		}
 	}
 }

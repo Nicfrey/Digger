@@ -14,16 +14,16 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 	void Update() override;
 	void Init() override;
-	void RenderGUI() override;
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
 	void ShootProjectile();
-	void ResetProjectile();
+	void ProjectileHasCollide();
 
 private:
 	dae::GameObject* m_pProjectile;
 	std::unique_ptr<dae::GameObject> m_pDefaultProjectile;
 	std::shared_ptr<NavMeshAgentComponent> m_NavMeshComp;
-	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other) const;
+	void ResetProjectile();
+	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other);
 	std::shared_ptr<dae::GameObject> CreateProjectile() const;
 	void SetDeadAnim();
 };

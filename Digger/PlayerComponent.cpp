@@ -89,17 +89,6 @@ void PlayerComponent::Init()
 	}
 }
 
-void PlayerComponent::RenderGUI()
-{
-	BaseComponent::RenderGUI();
-	ImGui::Begin("Player");
-	ImGui::Text("Player Projectile :");
-	ImGui::Indent();
-	if(m_pProjectile)
-		ImGui::Text("Position : %f %f", m_pProjectile->GetWorldPosition().x, m_pProjectile->GetWorldPosition().y);
-	ImGui::End();
-}
-
 void PlayerComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 {
 	HandleCollisionProjectile(other);
@@ -117,6 +106,15 @@ void PlayerComponent::ShootProjectile()
 			auto animator = GetGameObject()->GetComponent<AnimatorComponent>();
 			animator->SetParameter("HasProjectile", false);
 		}
+		EventManager::GetInstance().AddEvent("ProjectileHit", this, &PlayerComponent::ProjectileHasCollide);
+	}
+}
+
+void PlayerComponent::ProjectileHasCollide()
+{
+	if(m_pProjectile->IsDestroyed())
+	{
+		TimerManager::GetInstance().AddTimer(this, &PlayerComponent::ResetProjectile, 5.f);
 	}
 }
 
@@ -130,7 +128,7 @@ void PlayerComponent::ResetProjectile()
 	}
 }
 
-void PlayerComponent::HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other) const
+void PlayerComponent::HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other)
 {
 	if(other->IsDestroyed())
 	{
@@ -141,12 +139,10 @@ void PlayerComponent::HandleCollisionProjectile(std::shared_ptr<dae::GameObject>
 	{
 		if (GetGameObject() != projectileOther->GetShotBy())
 		{
-			EventManager::GetInstance().NotifyEvent("ProjectileHit");
 			const auto health{ GetGameObject()->GetComponent<HealthComponent>() };
 			health->LoseOneLife();
-			const auto playerComp{ projectileOther->GetShotBy()->GetComponent<PlayerComponent>() };
-			playerComp->ResetProjectile();
 			other->Destroy();
+			EventManager::GetInstance().NotifyEvent("ProjectileHit");
 		}
 	}
 }

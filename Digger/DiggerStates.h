@@ -5,6 +5,11 @@
 #include "MoneyBagComponent.h"
 
 #pragma region GameStates
+namespace GraphUtils
+{
+	class GraphNode;
+}
+
 class MoneyBagComponent;
 enum class GameMode;
 
@@ -101,6 +106,26 @@ public:
 	void Enter(Blackboard* pBlackboard) override;
 	void Exit(Blackboard* pBlackboard) override;
 	void Update(Blackboard* pBlackboard) override;
+private:
+	void HandleMoneyBagLanded();
+	MoneyBagComponent::StateMoneyBag m_State{};
+	std::vector<GraphUtils::GraphNode*> m_NodeTravelled{};
+	std::shared_ptr<dae::GameObject> m_MoneyBagObject{nullptr};
+	float m_FallSpeed{80.f};
+	glm::vec2 m_Direction{ 0,1 };
 };
 
-#pragma endregion MoneyBagStates
+#pragma endregion MoneyBagState
+
+#pragma region PlayerStates
+
+class IdleWalkStatePlayer : public FSMStateNode
+{
+public:
+	IdleWalkStatePlayer() = default;
+	void Enter(Blackboard* pBlackboard) override;
+	void Exit(Blackboard* pBlackboard) override;
+	void Update(Blackboard* pBlackboard) override;
+};
+
+#pragma endregion PlayerStates
