@@ -19,6 +19,7 @@ public:
 	void SetTexture(const std::string& filename);
 	void SetTexture(const std::shared_ptr<dae::Texture2D>& texture);
 	void SetPositionOffset(float x, float y);
+	void SetPositionOffset(const glm::vec2& pos);
 	void Render() const override;
 	glm::ivec2 GetSize() const;
 	std::shared_ptr<dae::Texture2D> GetTexture() const;

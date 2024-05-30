@@ -8,15 +8,17 @@
 #include "ProjectileComponent.h"
 #include "SceneManager.h"
 #include "BoxCollider2D.h"
+#include "DiggerUtils.h"
 #include "imgui.h"
 #include "NavMeshAgentComponent.h"
 #include "Observer.h"
 #include "SpriteComponent.h"
 #include "Scene.h"
+#include "SoundSystemEngine.h"
 
 PlayerComponent::PlayerComponent() : BaseComponent(nullptr), m_pProjectile{ nullptr }
 {
-	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayerComponent::SetDeadAnim);
+	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayerComponent::HandleDeath);
 }
 
 PlayerComponent::PlayerComponent(const PlayerComponent& other): BaseComponent(other)
@@ -171,7 +173,7 @@ std::shared_ptr<dae::GameObject> PlayerComponent::CreateProjectile() const
 	return newProjectile;
 }
 
-void PlayerComponent::SetDeadAnim()
+void PlayerComponent::HandleDeath()
 {
 	if(GetGameObject()->HasComponent<HealthComponent>())
 	{
@@ -182,4 +184,6 @@ void PlayerComponent::SetDeadAnim()
 			animator->SetParameter("PlayerDied", true);
 		}
 	}
+	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME_OVER),false);
+	EventManager::GetInstance().NotifyEvent("RestartLevel");
 }

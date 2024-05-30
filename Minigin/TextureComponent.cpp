@@ -29,6 +29,11 @@ void TextureComponent::SetPositionOffset(float x, float y)
 	m_Offset.SetPosition(x, y, 0);
 }
 
+void TextureComponent::SetPositionOffset(const glm::vec2& pos)
+{
+	m_Offset.SetPosition(pos.x, pos.y, 0);
+}
+
 void TextureComponent::Render() const
 {
 	if(m_Texture != nullptr)

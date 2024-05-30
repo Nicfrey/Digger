@@ -14,6 +14,6 @@ public:
 	void OnDestroy() override;
 private:
 	int m_LifeRemaining;
-
+	bool m_Alive{ true };
 };
 

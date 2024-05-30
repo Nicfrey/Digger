@@ -178,3 +178,13 @@ bool Utils::Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitI
 	}
 	return false;
 }
+
+glm::vec2 Utils::GetCenterOfRectangle(const Rectf& rect)
+{
+	return { rect.topLeft.x + rect.width / 2,rect.topLeft.y + rect.height / 2 };
+}
+
+glm::vec2 Utils::GetPositionForRectangleToBeCentered(const Rectf& rect, const Rectf& otherRect)
+{
+	return { otherRect.topLeft.x + otherRect.width / 2 - rect.width / 2, otherRect.topLeft.y + otherRect.height / 2 - rect.height / 2 };
+}

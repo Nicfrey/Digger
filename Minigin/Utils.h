@@ -189,5 +189,8 @@ namespace Utils
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo);
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo);
 	bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo, const std::string& tag);
+
+	glm::vec2 GetCenterOfRectangle(const Rectf& rect);
+	glm::vec2 GetPositionForRectangleToBeCentered(const Rectf& rect, const Rectf& otherRect);
 #pragma endregion Functions
 }

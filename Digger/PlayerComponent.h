@@ -25,6 +25,6 @@ private:
 	void ResetProjectile();
 	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other);
 	std::shared_ptr<dae::GameObject> CreateProjectile() const;
-	void SetDeadAnim();
+	void HandleDeath();
 };
 

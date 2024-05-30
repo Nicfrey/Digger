@@ -22,6 +22,7 @@ std::shared_ptr<BaseComponent> HealthComponent::Clone() const
 
 void HealthComponent::LoseOneLife()
 {
+	m_Alive = false;
 	--m_LifeRemaining;
 	if(IsDead())
 	{
@@ -51,7 +52,7 @@ int HealthComponent::GetLifeRemaining() const
 
 bool HealthComponent::IsDead() const
 {
-	return m_LifeRemaining <= 0;
+	return !m_Alive;
 }
 
 void HealthComponent::OnDestroy()

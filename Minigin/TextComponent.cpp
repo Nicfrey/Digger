@@ -8,7 +8,7 @@
 dae::TextComponent::TextComponent(std::string text, const std::shared_ptr<Font>& font) : TextureComponent{text},
 	m_needsUpdate{true}, m_Text{std::move(text)}, m_Font{font}
 {
-	
+	TextComponent::Update();
 }
 
 dae::TextComponent::TextComponent(TextComponent&& other) noexcept: TextureComponent(std::move(other))

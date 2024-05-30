@@ -68,3 +68,20 @@ void ButtonComponent::SetTextButton(const std::string& text)
 	m_Text->Update();
 	m_Box = Rectf{ m_Box.topLeft, static_cast<float>(m_Text->GetSize().x), static_cast<float>(m_Text->GetSize().y) };
 }
+
+void ButtonComponent::SetPositionOffset(float x, float y)
+{
+	m_Text->SetPositionOffset(x, y);
+	m_Box = Rectf{ glm::vec2{x, y}, m_Box.width, m_Box.height };
+}
+
+void ButtonComponent::SetPositionOffset(const glm::vec2& pos)
+{
+	m_Text->SetPositionOffset(pos.x, pos.y);
+	m_Box = Rectf{ pos, m_Box.width, m_Box.height };
+}
+
+Rectf ButtonComponent::GetSize() const
+{
+	return m_Box;
+}
