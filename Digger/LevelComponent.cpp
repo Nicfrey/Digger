@@ -10,6 +10,7 @@
 #include "BoxCollider2D.h"
 #include "DiggerCommands.h"
 #include "DiggerTransitionAnim.h"
+#include "DiggerUtils.h"
 #include "EmeraldComponent.h"
 #include "EnemySpawnerComponent.h"
 #include "GameInstance.h"
@@ -181,6 +182,7 @@ void LevelComponent::LoadLevel()
 {
 	int level;
 	GameInstance::GetInstance().GetValue("CurrentLevel", level);
+	GameInstance::GetInstance().GetValue("CurrentGameMode", m_GameMode);
 	constexpr int maxRow{10};
 	constexpr int maxColumn{15};
 
@@ -243,16 +245,25 @@ void LevelComponent::LoadLevel()
 	int indexPlayer{};
 	for (auto data : json["SpawnPointPlayers"])
 	{
-		// TODO Check if we are selecting 2 players coop
-		const glm::vec2 pos{data.at("x"), data.at("y")};
+		if(m_GameMode != DiggerUtils::DiggerGameMode::Coop && indexPlayer == 1)
+		{
+			break;
+		}
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
 		CreatePlayerAtIndex(GetIndexFromPosition(pos, maxColumn), indexPlayer);
 		++indexPlayer;
 	}
 
 	// Init the spawn point
-	auto spawnEnemy = json["SpawnPointEnemy"];
-	CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), maxColumn));
-	// TODO Check if we are selecting 2 players versus
+	if (m_GameMode == DiggerUtils::DiggerGameMode::Versus)
+	{
+		// TODO the spawner of enemy spawn enemy that can be controlled by the other player
+	}
+	else
+	{
+		auto spawnEnemy = json["SpawnPointEnemy"];
+		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), maxColumn));
+	}
 
 
 	for (auto data : json["Emerald"])
@@ -417,10 +428,10 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	go->AddComponent(playerComponent);
 	go->AddComponent(animator);
 	go->AddComponent(navMeshAgentComponent);
-	std::shared_ptr moveUpCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{0, -1})};
-	std::shared_ptr moveDownCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{0, 1})};
-	std::shared_ptr moveLeftCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{-1, 0})};
-	std::shared_ptr moveRightCommand{std::make_shared<MoveCommand>(go.get(), glm::vec2{1, 0})};
+	std::shared_ptr moveUpCommand{std::make_shared<MovePlayerCommand>(go.get(), glm::vec2{0, -1})};
+	std::shared_ptr moveDownCommand{std::make_shared<MovePlayerCommand>(go.get(), glm::vec2{0, 1})};
+	std::shared_ptr moveLeftCommand{std::make_shared<MovePlayerCommand>(go.get(), glm::vec2{-1, 0})};
+	std::shared_ptr moveRightCommand{std::make_shared<MovePlayerCommand>(go.get(), glm::vec2{1, 0})};
 	std::shared_ptr shootCommand{std::make_shared<ShootCommand>(go.get())};
 
 	GamepadController* gamepadController{new GamepadController{}};
@@ -469,7 +480,7 @@ void LevelComponent::UpdateGraph()
 					const auto node{background->GetWorldPosition()};
 					const auto closestNode{GetGraph()->GetClosestNode(node)};
 					if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
-					                                                 background->GetWorldPosition()) < 10.f)
+					                                                 background->GetWorldPosition()) < 7.f)
 					{
 						background->Destroy();
 					}
