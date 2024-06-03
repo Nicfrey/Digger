@@ -142,6 +142,19 @@ void PlayState::SetPlayerWon()
 	m_PlayerHasWon = true;
 }
 
+void RespawnState::Enter(Blackboard* pBlackboard)
+{
+
+}
+
+void RespawnState::Exit(Blackboard* pBlackboard)
+{
+}
+
+void RespawnState::Update(Blackboard* pBlackboard)
+{
+}
+
 void IdleStateMoneyBag::Enter(Blackboard* pBlackboard)
 {
 	pBlackboard->GetValue("MoneyBagStates", m_State);

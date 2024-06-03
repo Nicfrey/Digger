@@ -27,6 +27,7 @@ void EnemySpawnerComponent::Init()
 {
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemySpawnerComponent::DecreaseEnemyCount);
 	TimerManager::GetInstance().AddTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f,true);
+	EventManager::GetInstance().AddEvent("PlayerDied", this, &EnemySpawnerComponent::SetPlayerDead);
 }
 
 void EnemySpawnerComponent::Update()
@@ -37,6 +38,7 @@ void EnemySpawnerComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemySpawnerComponent::DecreaseEnemyCount);
 	TimerManager::GetInstance().RemoveTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f);
+	EventManager::GetInstance().RemoveEvent("PlayerDied",this,&EnemySpawnerComponent::SetPlayerDead);
 }
 
 void EnemySpawnerComponent::CreateNewEnemy()
@@ -92,4 +94,27 @@ void EnemySpawnerComponent::SpawnNewEnemy()
 void EnemySpawnerComponent::DecreaseEnemyCount()
 {
 	--m_EnemyCount;
+}
+
+void EnemySpawnerComponent::SetPlayerDead()
+{
+	// Check if all players are dead
+	const auto playersObject{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
+	size_t nbPlayers{};
+	for(const auto& player: playersObject)
+	{
+		if(!player->HasComponent<HealthComponent>())
+		{
+			throw std::runtime_error("Player should always have a health component");
+		}
+		if(player->GetComponent<HealthComponent>()->IsDead())
+		{
+			++nbPlayers;
+		}
+	}
+	if(nbPlayers == playersObject.size())
+	{
+		m_PlayerDead = true;
+		TimerManager::GetInstance().RemoveTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f);
+	}
 }

@@ -9,6 +9,7 @@
 #include "SceneManager.h"
 #include "BoxCollider2D.h"
 #include "DiggerUtils.h"
+#include "EnemyComponent.h"
 #include "imgui.h"
 #include "NavMeshAgentComponent.h"
 #include "Observer.h"
@@ -91,9 +92,23 @@ void PlayerComponent::Init()
 	}
 }
 
+void PlayerComponent::HandleCollisionEnemy(const std::shared_ptr<dae::GameObject>& other) const
+{
+	if(other->HasComponent<EnemyComponent>())
+	{
+		const auto health = GetGameObject()->GetComponent<HealthComponent>();
+		health->LoseOneLife();
+		if(health->IsDead())
+		{
+			EventManager::GetInstance().NotifyEvent("PlayerDied");
+		}
+	}
+}
+
 void PlayerComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 {
 	HandleCollisionProjectile(other);
+	HandleCollisionEnemy(other);
 }
 
 void PlayerComponent::ShootProjectile()

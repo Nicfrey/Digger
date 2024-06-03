@@ -20,6 +20,7 @@ private:
 	void DecreaseEnemyCount();
 	int m_EnemyCount;
 	int m_EnemyToSpawn{ 10 };
+	bool m_PlayerDead{ false };
 
 };
 

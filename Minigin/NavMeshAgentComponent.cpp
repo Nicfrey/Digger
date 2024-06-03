@@ -5,7 +5,6 @@
 #include "SceneManager.h"
 #include "TimeEngine.h"
 #include "Utils.h"
-#include "../Digger/PlayerComponent.h"
 
 NavMeshAgentComponent::NavMeshAgentComponent(GraphUtils::Graph* graph, float speed, bool canAvoidObstacle) : BaseComponent{ nullptr }, m_Target(),
                                                                                       m_HasReachedDestination(false), m_Direction(), m_CanAvoidObstacle{canAvoidObstacle}

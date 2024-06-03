@@ -14,6 +14,7 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 	void Update() override;
 	void Init() override;
+	void HandleCollisionEnemy(const std::shared_ptr<dae::GameObject>& other) const;
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
 	void ShootProjectile();
 	void ProjectileHasCollide();
