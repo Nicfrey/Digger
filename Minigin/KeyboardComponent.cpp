@@ -151,3 +151,11 @@ void KeyboardComponent::OnPressed() const
 {
 	m_ButtonsLetter[m_CurrentSelected]->OnPressed();
 }
+
+void KeyboardComponent::SaveEntry() const
+{
+	if(m_OnSaveEntryFunc)
+	{
+		m_OnSaveEntryFunc(m_CurrentWord);
+	}
+}

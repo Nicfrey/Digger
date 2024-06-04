@@ -4,6 +4,8 @@
 #include "UIElementComponent.h"
 #include "Utils.h"
 
+using DelegateFncString = std::function<void(const std::string&)>;
+
 class ButtonComponent;
 
 class KeyboardComponent final : public UIElementComponent
@@ -19,6 +21,9 @@ public:
 	std::string GetCurrentWord() const;
 	void MoveSelection(const glm::ivec2& vec);
 	void OnPressed() const;
+	template<typename ClassType>
+	void SetSaveEntry(ClassType* obj, void (ClassType::* funcPtr)(const std::string&));
+	void SaveEntry() const;
 
 private:
 	const std::string m_Alphabet[36] = { "A","B","C","D","E","F","G","H","I","J","K","L","M",
@@ -27,10 +32,20 @@ private:
 	int m_CurrentSelected{};
 	int m_PreviousSelected{};
 	std::string m_CurrentWord{};
+	DelegateFncString m_OnSaveEntryFunc;
 	void SelectTop();
 	void SelectDown();
 	void SelectLeft();
 	void SelectRight();
 	void SelectButton() const;
 };
+
+template <typename ClassType>
+void KeyboardComponent::SetSaveEntry(ClassType* obj, void(ClassType::* funcPtr)(const std::string&))
+{
+	m_OnSaveEntryFunc = [obj, funcPtr](const std::string& str)
+	{
+		(obj->*funcPtr)(str);
+	};
+}
 
