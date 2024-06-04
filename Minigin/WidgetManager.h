@@ -18,7 +18,9 @@ public:
 	void SetActiveWidget(const std::string& name);
 	void RemoveActiveWidget();
 	void Render() const;
+	void Update();
 	void HandleOnClickEvent(const glm::vec3& vec);
+	std::shared_ptr<Widget> GetActiveWidget();
 
 private:
 	bool HasElementWithName(const std::string& name) const;

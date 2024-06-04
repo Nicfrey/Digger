@@ -11,7 +11,7 @@
 class GamepadController::GamepadControllerImpl
 {
 	public:
-		GamepadControllerImpl();
+		GamepadControllerImpl(int index);
 		~GamepadControllerImpl();
 		struct InputActionController
 		{
@@ -45,10 +45,9 @@ private:
 
 DWORD GamepadController::GamepadControllerImpl::m_TotalController = 0;
 
-GamepadController::GamepadControllerImpl::GamepadControllerImpl()
+GamepadController::GamepadControllerImpl::GamepadControllerImpl(int index)
 {
-	m_ControllerIndex = m_TotalController;
-	++m_TotalController;
+	m_ControllerIndex = index;
 }
 
 GamepadController::GamepadControllerImpl::~GamepadControllerImpl()
@@ -132,9 +131,9 @@ bool GamepadController::GamepadControllerImpl::IsThumbsNotInDeadZone() const
 	return percentageThumbL > m_PercentageDeadZone || percentageThumbR > m_PercentageDeadZone;
 }
 
-GamepadController::GamepadController()
+GamepadController::GamepadController(int index)
 {
-	m_pImpl = new GamepadControllerImpl{};
+	m_pImpl = new GamepadControllerImpl{index};
 }
 
 GamepadController::~GamepadController()

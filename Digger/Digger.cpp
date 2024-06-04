@@ -5,9 +5,11 @@
 #endif
 #include <windows.h>
 #include <iostream>
+#include <Xinput.h>
 
 #include "ButtonComponent.h"
 #include "Controller.h"
+#include "DiggerCommands.h"
 #include "DiggerUtils.h"
 #include "GameInstance.h"
 #include "GameObject.h"
@@ -75,7 +77,7 @@ void load()
 	const auto mainMenuWidget{ std::make_shared<Widget>("MainMenu") };
 	mainMenuWidget->AddElement(titleDigger);
 
-	auto keyboard = std::make_shared<KeyboardComponent>("Keyboard", 100.f);
+	auto keyboard = std::make_shared<KeyboardComponent>("Keyboard", 200.f);
 	mainMenuWidget->AddElement(keyboard);
 	widgetManager.AddWidget(mainMenuWidget);
 	widgetManager.SetActiveWidget(mainMenuWidget);
@@ -102,6 +104,24 @@ void load()
 	const auto gameOverWidget{ std::make_shared<Widget>("GameOver") };
 	const auto titleGameOver{ std::make_shared<dae::TextComponent>("Game Over",fontBig) };
 	titleGameOver->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleGameOver->GetSize().x), static_cast<float>(titleGameOver->GetSize().y) }, placeholderTitle));
+
+	GamepadController* controller{ new GamepadController{0}};
+	const auto selectButtonCommand{ std::make_shared<SelectButtonCommand>() };
+	const auto moveUpButtonCommand{ std::make_shared<MoveButtonCommand>(true)};
+	const auto moveDownButtonCommand{ std::make_shared<MoveButtonCommand>(false) };
+	const auto moveUpKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{0,1}) };
+	const auto moveDownKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{0,-1}) };
+	const auto moveRightKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{1,0}) };
+	const auto moveLeftKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{-1,0}) };
+	controller->BindAction(selectButtonCommand, XINPUT_GAMEPAD_A, TriggerType::KeyPressed);
+	controller->BindAction(moveUpButtonCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
+	controller->BindAction(moveDownButtonCommand, XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::KeyPressed);
+	controller->BindAction(moveUpKeyboardCommand, XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::KeyPressed);
+	controller->BindAction(moveDownKeyboardCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
+	controller->BindAction(moveRightKeyboardCommand, XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::KeyPressed);
+	controller->BindAction(moveLeftKeyboardCommand, XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::KeyPressed);
+	dae::InputManager::GetInstance().AddController(controller);
+
 
 
 	auto go{ std::make_shared<dae::GameObject>() };

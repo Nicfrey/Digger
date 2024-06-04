@@ -434,7 +434,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	std::shared_ptr moveRightCommand{std::make_shared<MovePlayerCommand>(go.get(), glm::vec2{1, 0})};
 	std::shared_ptr shootCommand{std::make_shared<ShootCommand>(go.get())};
 
-	GamepadController* gamepadController{new GamepadController{}};
+	GamepadController* gamepadController{new GamepadController{player}};
 	gamepadController->BindAction(moveUpCommand, XINPUT_GAMEPAD_DPAD_UP);
 	gamepadController->BindAction(moveDownCommand, XINPUT_GAMEPAD_DPAD_DOWN);
 	gamepadController->BindAction(moveLeftCommand, XINPUT_GAMEPAD_DPAD_LEFT);

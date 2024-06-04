@@ -72,6 +72,14 @@ void Widget::Render() const
 	}
 }
 
+void Widget::Update()
+{
+	for (const auto& element : m_Elements)
+	{
+		element->UpdateElement();
+	}
+}
+
 void Widget::HandleButtons(const glm::vec2& posMouse) const
 {
 	if (!HasElement<ButtonComponent>())

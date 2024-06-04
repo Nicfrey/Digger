@@ -49,6 +49,7 @@ void dae::Renderer::Render() const
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderClear(m_renderer);
 
+	WidgetManager::GetInstance().Update();
 	WidgetManager::GetInstance().Render();
 	glPushMatrix();
 	glScalef(1.15f, 1.15f, 1.15f);

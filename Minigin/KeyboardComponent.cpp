@@ -10,7 +10,7 @@ KeyboardComponent::KeyboardComponent(const std::string& name, float startPosY): 
 {
 	const glm::vec2 window = dae::Minigin::m_Window;
 	const float width{window.x / 6.f};
-	glm::vec3 startPos{0.f, startPosY, 0.f};
+	glm::vec3 startPos{40.f, startPosY, 0.f};
 	const auto font{dae::ResourceManager::GetInstance().LoadFont("DiggerFont.ttf", 30)};
 	float height{};
 	// Create all the letters button
@@ -26,7 +26,7 @@ KeyboardComponent::KeyboardComponent(const std::string& name, float startPosY): 
 			startPos.x += width;
 		}
 		startPos.y += height;
-		startPos.x = 0.f;
+		startPos.x = 40.f;
 	}
 }
 
@@ -35,6 +35,14 @@ void KeyboardComponent::RenderElement() const
 	for (auto& button : m_ButtonsLetter)
 	{
 		button->RenderElement();
+	}
+}
+
+void KeyboardComponent::UpdateElement()
+{
+	for(const auto& button : m_ButtonsLetter)
+	{
+		button->UpdateElement();
 	}
 }
 
@@ -94,11 +102,52 @@ void KeyboardComponent::SelectRight()
 	}
 }
 
-void KeyboardComponent::OnClick(const glm::vec2 vec)
+void KeyboardComponent::SelectButton() const
+{
+	m_ButtonsLetter[m_PreviousSelected]->DeselectButton();
+	m_ButtonsLetter[m_CurrentSelected]->SelectButton();
+}
+
+void KeyboardComponent::OnClick(const glm::vec2& vec)
 {
 	for(int i{}; i < 36; ++i)
 	{
 		m_CurrentSelected = i;
 		m_ButtonsLetter[i]->OnClick(vec);
 	}
+}
+
+std::string KeyboardComponent::GetCurrentWord() const
+{
+	return m_CurrentWord;
+}
+
+void KeyboardComponent::MoveSelection(const glm::ivec2& vec)
+{
+	if(vec.x == 1)
+	{
+		SelectRight();
+		SelectButton();
+	}
+	else if(vec.x == -1)
+	{
+		SelectLeft();
+		SelectButton();
+	}
+	else if(vec.y == 1)
+	{
+		SelectDown();
+		SelectButton();
+	}
+	else if(vec.y == -1)
+	{
+		SelectTop();
+		SelectButton();
+	}
+
+}
+
+void KeyboardComponent::OnPressed() const
+{
+	m_ButtonsLetter[m_CurrentSelected]->OnPressed();
 }

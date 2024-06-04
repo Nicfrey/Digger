@@ -21,7 +21,7 @@ public:
 class GamepadController : public Controller
 {
 public:
-	GamepadController();
+	GamepadController(int index);
 	~GamepadController() override;
 	void ProcessInput() override;
 	void BindAction(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown) override;

@@ -35,6 +35,7 @@ public:
 	void HandleOnClickEvent(const glm::vec2& posMouse) const;
 	void HandleOnPressedEvent() const;
 	void Render() const;
+	void Update();
 	std::string GetName() const { return m_Name; }
 private:
 	void HandleButtons(const glm::vec2& posMouse) const;

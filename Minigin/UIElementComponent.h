@@ -11,6 +11,7 @@ public:
 	UIElementComponent& operator=(const UIElementComponent& other) = default;
 	UIElementComponent& operator=(UIElementComponent&& other) noexcept = default;
 	virtual void RenderElement() const {}
+	virtual void UpdateElement() {}
 	std::string GetName() const { return m_Name; }
 private:
 	std::string m_Name;

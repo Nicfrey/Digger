@@ -24,10 +24,15 @@ public:
 	// For controller only
 	void OnPressed() const;
 	void RenderElement() const override;
+	void UpdateElement() override;
 	void SetTextButton(const std::string& text);
 	void SetPositionOffset(float x, float y);
 	void SetPositionOffset(const glm::vec2& pos);
 	Rectf GetBox() const;
+	bool IsSelected() const;
+	void DeselectButton();
+	void SelectButton();
+
 private:
 	Rectf m_Box;
 	std::shared_ptr<dae::TextComponent> m_Text;

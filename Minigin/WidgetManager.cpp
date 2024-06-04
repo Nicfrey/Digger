@@ -70,12 +70,25 @@ void WidgetManager::Render() const
 	}
 }
 
+void WidgetManager::Update()
+{
+	if (m_ActiveWidget != nullptr)
+	{
+		m_ActiveWidget->Update();
+	}
+}
+
 void WidgetManager::HandleOnClickEvent(const glm::vec3& vec)
 {
 	if (m_ActiveWidget != nullptr)
 	{
 		m_ActiveWidget->HandleOnClickEvent(vec);
 	}
+}
+
+std::shared_ptr<Widget> WidgetManager::GetActiveWidget()
+{
+	return m_ActiveWidget;
 }
 
 bool WidgetManager::HasElementWithName(const std::string& name) const

@@ -9,6 +9,7 @@ namespace GraphUtils
 	class GraphNode;
 }
 
+#pragma region PlayerCommands
 class MovePlayerCommand : public GameObjectCommand
 {
 public:
@@ -23,6 +24,17 @@ protected:
 	GraphUtils::GraphNode* m_TargetNode;
 };
 
+class ShootCommand : public GameObjectCommand
+{
+public:
+	ShootCommand(dae::GameObject* go);
+	void Execute() override;
+};
+
+#pragma endregion PlayerCommands
+
+#pragma region PlayerCommands
+
 class MoveEnemyCommand : public MovePlayerCommand
 {
 	MoveEnemyCommand(dae::GameObject* go, glm::vec2 direction);
@@ -36,9 +48,39 @@ public:
 	void Execute() override;
 };
 
-class ShootCommand : public GameObjectCommand
+#pragma endregion PlayerCommands
+
+#pragma region UICommands
+
+class MoveButtonCommand : public Command
 {
 public:
-	ShootCommand(dae::GameObject* go);
+	MoveButtonCommand(bool isUp);
 	void Execute() override;
+private:
+	bool m_Up;
 };
+
+class SelectButtonCommand : public Command
+{
+public:
+	SelectButtonCommand() = default;
+	void Execute() override;
+private:
+	void HandleButtonWidget();
+	void HandleButtonKeyboard();
+};
+
+class MoveKeyboardCommand : public Command
+{
+public:
+	MoveKeyboardCommand(const glm::ivec2& direction);
+	void Execute() override;
+private:
+	glm::ivec2 m_Direction;
+};
+
+#pragma endregion UICommands
+
+
+

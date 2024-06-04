@@ -62,6 +62,15 @@ void ButtonComponent::RenderElement() const
 	m_Text->RenderElement();
 }
 
+void ButtonComponent::UpdateElement()
+{
+	if (m_Image)
+	{
+		m_Image->UpdateElement();
+	}
+	m_Text->UpdateElement();
+}
+
 void ButtonComponent::SetTextButton(const std::string& text)
 {
 	m_Text->SetText(text);
@@ -84,4 +93,21 @@ void ButtonComponent::SetPositionOffset(const glm::vec2& pos)
 Rectf ButtonComponent::GetBox() const
 {
 	return m_Box;
+}
+
+bool ButtonComponent::IsSelected() const
+{
+	return m_IsSelected;
+}
+
+void ButtonComponent::DeselectButton()
+{
+	m_IsSelected = false;
+	m_Text->SetColor(255, 255, 255);
+}
+
+void ButtonComponent::SelectButton()
+{
+	m_IsSelected = true;
+	m_Text->SetColor(255, 255, 0);
 }
