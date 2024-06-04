@@ -78,6 +78,10 @@ bool Widget::RemoveComponent(const std::shared_ptr<ClassType>& element)
 template <typename ClassType>
 std::shared_ptr<ClassType> Widget::GetElement() const
 {
+	if(m_Elements.data() == nullptr)
+	{
+		return std::shared_ptr<ClassType>{nullptr};
+	}
 	for (const std::shared_ptr<UIElementComponent>& elements : m_Elements)
 	{
 		std::shared_ptr<ClassType> elementGot{ std::dynamic_pointer_cast<ClassType>(elements) };

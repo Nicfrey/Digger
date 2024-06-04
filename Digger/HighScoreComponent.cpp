@@ -9,6 +9,7 @@
 #include "json.hpp"
 #include "PlayerComponent.h"
 #include "ResourceManager.h"
+#include "Scene.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
 
@@ -45,9 +46,10 @@ void HighScoreComponent::SaveToJson(const std::string& name, int score, const st
 	nlohmann::json json;
 	json["name"] = name;
 	json["score"] = score;
-	time_t now{ std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) };
+	auto now = std::chrono::system_clock::now();
 	std::stringstream ss;
-	ss << std::put_time(std::localtime(&now),"%D");
+	const auto date = std::chrono::year_month_day(std::chrono::floor<std::chrono::days>(now));
+	ss << date;
 	json["date"] = ss.str();
 	jsonFile["scores"].emplace_back(json);
 	std::ofstream file(std::string(dae::ResourceManager::GetInstance().GetDataPath() + filename));

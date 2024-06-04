@@ -103,6 +103,10 @@ MoveButtonCommand::MoveButtonCommand(bool isUp): m_Up{isUp}
 void MoveButtonCommand::Execute()
 {
 	const auto currentWidget = WidgetManager::GetInstance().GetActiveWidget();
+	if(currentWidget == nullptr)
+	{
+		return;
+	}
 	const auto buttons = currentWidget->GetAllElement<ButtonComponent>();
 	if (buttons.empty())
 	{
@@ -154,6 +158,10 @@ void SelectButtonCommand::Execute()
 void SelectButtonCommand::HandleButtonWidget()
 {
 	const auto currentWidget = WidgetManager::GetInstance().GetActiveWidget();
+	if(currentWidget == nullptr)
+	{
+		return;
+	}
 	const auto buttons = currentWidget->GetAllElement<ButtonComponent>();
 	if (buttons.empty())
 	{
@@ -172,6 +180,10 @@ void SelectButtonCommand::HandleButtonWidget()
 void SelectButtonCommand::HandleButtonKeyboard()
 {
 	const auto currentWidget = WidgetManager::GetInstance().GetActiveWidget();
+	if(currentWidget == nullptr)
+	{
+		return;
+	}
 	const auto keyboards = currentWidget->GetAllElement<KeyboardComponent>();
 	if (keyboards.empty())
 	{
@@ -190,6 +202,10 @@ MoveKeyboardCommand::MoveKeyboardCommand(const glm::ivec2& direction): m_Directi
 void MoveKeyboardCommand::Execute()
 {
 	const auto currentWidget = WidgetManager::GetInstance().GetActiveWidget();
+	if(currentWidget == nullptr)
+	{
+		return;
+	}
 	const auto keyboards = currentWidget->GetAllElement<KeyboardComponent>();
 	for(auto& keyboard: keyboards)
 	{

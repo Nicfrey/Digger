@@ -77,13 +77,8 @@ void load()
 	const auto mainMenuWidget{ std::make_shared<Widget>("MainMenu") };
 	mainMenuWidget->AddElement(titleDigger);
 
-	auto keyboard = std::make_shared<KeyboardComponent>("Keyboard", 200.f);
-	mainMenuWidget->AddElement(keyboard);
-	widgetManager.AddWidget(mainMenuWidget);
-	widgetManager.SetActiveWidget(mainMenuWidget);
-	/*
 	placeholderTitle.topLeft.y += 100;
-	auto newButton = std::make_shared<ButtonComponent>("SinglePlayerButton", glm::vec3{100,100,0}, "SinglePlayer", fontSmall);
+	newButton = std::make_shared<ButtonComponent>("SinglePlayerButton", glm::vec3{100,100,0}, "SinglePlayer", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::SelectSinglePlayer);
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	mainMenuWidget->AddElement(newButton);
@@ -99,11 +94,14 @@ void load()
 	mainMenuWidget->AddElement(newButton);
 	widgetManager.AddWidget(mainMenuWidget);
 	widgetManager.SetActiveWidget(mainMenuWidget);
-	*/
+
 	placeholderTitle.topLeft.y = 100;
 	const auto gameOverWidget{ std::make_shared<Widget>("GameOver") };
 	const auto titleGameOver{ std::make_shared<dae::TextComponent>("Game Over",fontBig) };
 	titleGameOver->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleGameOver->GetSize().x), static_cast<float>(titleGameOver->GetSize().y) }, placeholderTitle));
+	const auto keyboard = std::make_shared<KeyboardComponent>("Keyboard", 200.f);
+	gameOverWidget->AddElement(keyboard);
+	widgetManager.AddWidget(gameOverWidget);
 
 	GamepadController* controller{ new GamepadController{0}};
 	const auto selectButtonCommand{ std::make_shared<SelectButtonCommand>() };
