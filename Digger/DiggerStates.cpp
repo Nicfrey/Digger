@@ -14,6 +14,7 @@
 #include "WidgetManager.h"
 #include "Graph.h"
 #include "HealthComponent.h"
+#include "PlayerComponent.h"
 
 void MenuState::Enter(Blackboard* pBlackboard)
 {
@@ -100,10 +101,10 @@ void LoadState::HasLoadedLevel()
 
 void PlayState::Enter(Blackboard* pBlackboard)
 {
+	m_Players = dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>();
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
 	pBlackboard->ChangeValue("hasExtraLife", true);
-	pBlackboard->ChangeValue("players", m_Players);
 	EventManager::GetInstance().AddEvent("PlayerDied",this,&PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	// TODO Play music of the game
@@ -131,7 +132,7 @@ void PlayState::HandlePlayerDead()
 {
 	// Wait 5 sec before setting the player to dead
 	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerIsDead, 5.f);
-	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), true);
+	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), false);
 }
 
 void PlayState::SetPlayerIsDead()

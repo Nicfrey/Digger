@@ -49,5 +49,13 @@ public:
 	bool CalculateCondition(Blackboard* pBlackBoard) const override;
 };
 
+class WroteHighScoreTransition final : public FSMTransition
+{
+public:
+	WroteHighScoreTransition() = default;
+	~WroteHighScoreTransition() override = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+};
+
 
 
