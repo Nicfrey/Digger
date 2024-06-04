@@ -13,6 +13,7 @@
 #include "GameObject.h"
 #include "GameStateComponent.h"
 #include "InputManager.h"
+#include "KeyboardComponent.h"
 #include "Minigin.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -73,8 +74,14 @@ void load()
 	placeholderTitle.topLeft.y = 100;
 	const auto mainMenuWidget{ std::make_shared<Widget>("MainMenu") };
 	mainMenuWidget->AddElement(titleDigger);
+
+	auto keyboard = std::make_shared<KeyboardComponent>("Keyboard", 100.f);
+	mainMenuWidget->AddElement(keyboard);
+	widgetManager.AddWidget(mainMenuWidget);
+	widgetManager.SetActiveWidget(mainMenuWidget);
+	/*
 	placeholderTitle.topLeft.y += 100;
-	newButton = std::make_shared<ButtonComponent>("SinglePlayerButton", glm::vec3{100,100,0}, "SinglePlayer", fontSmall);
+	auto newButton = std::make_shared<ButtonComponent>("SinglePlayerButton", glm::vec3{100,100,0}, "SinglePlayer", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::SelectSinglePlayer);
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	mainMenuWidget->AddElement(newButton);
@@ -90,7 +97,7 @@ void load()
 	mainMenuWidget->AddElement(newButton);
 	widgetManager.AddWidget(mainMenuWidget);
 	widgetManager.SetActiveWidget(mainMenuWidget);
-
+	*/
 	placeholderTitle.topLeft.y = 100;
 	const auto gameOverWidget{ std::make_shared<Widget>("GameOver") };
 	const auto titleGameOver{ std::make_shared<dae::TextComponent>("Game Over",fontBig) };

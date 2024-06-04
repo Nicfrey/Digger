@@ -262,7 +262,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KeyboardComponent.h">
-      <Filter>Header Files</Filter>
+      <Filter>Engine\Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -426,7 +426,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KeyboardComponent.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Engine\Sources Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -37,6 +37,8 @@ public:
 	void Render() const;
 	std::string GetName() const { return m_Name; }
 private:
+	void HandleButtons(const glm::vec2& posMouse) const;
+	void HandleKeyboard(const glm::vec2& posMouse) const;
 	std::vector<std::shared_ptr<UIElementComponent>> m_Elements;
 	std::string m_Name;
 };
