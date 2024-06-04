@@ -54,6 +54,7 @@ private:
 	void SetPlayerWon();
 	bool m_PlayerIsDead{false};
 	bool m_PlayerHasWon{false};
+	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
 };
 
 class RespawnState : public FSMStateNode
@@ -63,6 +64,9 @@ public:
 	void Enter(Blackboard* pBlackboard) override;
 	void Exit(Blackboard* pBlackboard) override;
 	void Update(Blackboard* pBlackboard) override;
+private:
+	bool m_HasLoaded;
+	void HasLoadedLevel();
 };
 
 class GameOverState : public FSMStateNode
@@ -72,15 +76,9 @@ public:
 	void Enter(Blackboard* pBlackboard) override;
 	void Exit(Blackboard* pBlackboard) override;
 	void Update(Blackboard* pBlackboard) override;
-};
-
-class WinState : public FSMStateNode
-{
-public:
-	WinState() = default;
-	void Enter(Blackboard* pBlackboard) override;
-	void Exit(Blackboard* pBlackboard) override;
-	void Update(Blackboard* pBlackboard) override;
+private:
+	bool m_HasSetName;
+	void HasSetName();
 };
 #pragma endregion GameStates
 

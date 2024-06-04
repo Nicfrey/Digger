@@ -8,6 +8,14 @@
 #include "SceneManager.h"
 #include "TimeEngine.h"
 
+Rectf::Rectf(glm::vec2 topLeft, float width, float height) : topLeft{ topLeft }, width{ width }, height{ height }
+{
+}
+
+Rectf::Rectf(float width, float height) : topLeft{}, width { width }, height{ height }
+{
+}
+
 glm::vec2 Rectf::GetCenter() const
 {
 	return { topLeft.x + width / 2,topLeft.y + height / 2 };

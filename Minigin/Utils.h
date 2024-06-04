@@ -17,6 +17,9 @@ namespace dae
 
 	struct Rectf final
 	{
+		Rectf() = default;
+		Rectf(glm::vec2 topLeft, float width, float height);
+		Rectf(float width, float height);
 		glm::vec2 topLeft;
 		float width;
 		float height;

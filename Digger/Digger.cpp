@@ -43,10 +43,11 @@ void load()
 	dae::SceneManager::GetInstance().SetActiveScene("MenuDigger");
 
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("DiggerFont.ttf", 40);
+	auto fontBig = dae::ResourceManager::GetInstance().LoadFont("DiggerFont.ttf", 60);
 
 	Rectf placeholderTitle{ glm::vec2{0,100},dae::Minigin::m_Window.x, 100.f };
-	const auto titleDigger{ std::make_shared<dae::TextComponent>("DIGGER",fontSmall) };
-	titleDigger->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ glm::vec2{},static_cast<float>(titleDigger->GetSize().x),static_cast<float>(titleDigger->GetSize().y) }, placeholderTitle));
+	const auto titleDigger{ std::make_shared<dae::TextComponent>("DIGGER",fontBig) };
+	titleDigger->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleDigger->GetSize().x),static_cast<float>(titleDigger->GetSize().y) }, placeholderTitle));
 
 	auto& widgetManager{ WidgetManager::GetInstance() };
 	const auto levelSelectionWidget{std::make_shared<Widget>("LevelMenu")};
@@ -55,17 +56,17 @@ void load()
 	placeholderTitle.topLeft.y += 100;
 	auto newButton{ std::make_shared<ButtonComponent>("LoadLevel1Button",glm::vec3{100,100,0},"Level1",fontSmall) };
 	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel1);
-	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetSize(), placeholderTitle));
+	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	levelSelectionWidget->AddElement(newButton);
 	newButton = std::make_shared<ButtonComponent>("LoadLevel2Button",glm::vec3{100,120,0},"Level2",fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel2);
 	placeholderTitle.topLeft.y += 60;
-	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetSize(), placeholderTitle));
+	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	levelSelectionWidget->AddElement(newButton);
 	newButton = std::make_shared<ButtonComponent>("LoadLevel3Button",glm::vec3{100,140,0},"Level3",fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel3);
 	placeholderTitle.topLeft.y += 60;
-	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetSize(), placeholderTitle));
+	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	levelSelectionWidget->AddElement(newButton);
 	widgetManager.AddWidget(levelSelectionWidget);
 
@@ -75,20 +76,26 @@ void load()
 	placeholderTitle.topLeft.y += 100;
 	newButton = std::make_shared<ButtonComponent>("SinglePlayerButton", glm::vec3{100,100,0}, "SinglePlayer", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::SelectSinglePlayer);
-	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetSize(), placeholderTitle));
+	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	mainMenuWidget->AddElement(newButton);
 	newButton = std::make_shared<ButtonComponent>("CoopButton", glm::vec3{ 100,120,0 }, "Coop", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::SelectCoop);
 	placeholderTitle.topLeft.y += 60;
-	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetSize(), placeholderTitle));
+	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	mainMenuWidget->AddElement(newButton);
 	newButton = std::make_shared<ButtonComponent>("VersusButton",glm::vec3{100,140,0},"Versus",fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::SelectVersus);
 	placeholderTitle.topLeft.y += 60;
-	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetSize(), placeholderTitle));
+	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	mainMenuWidget->AddElement(newButton);
 	widgetManager.AddWidget(mainMenuWidget);
 	widgetManager.SetActiveWidget(mainMenuWidget);
+
+	placeholderTitle.topLeft.y = 100;
+	const auto gameOverWidget{ std::make_shared<Widget>("GameOver") };
+	const auto titleGameOver{ std::make_shared<dae::TextComponent>("Game Over",fontBig) };
+	titleGameOver->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleGameOver->GetSize().x), static_cast<float>(titleGameOver->GetSize().y) }, placeholderTitle));
+
 
 	auto go{ std::make_shared<dae::GameObject>() };
 	const auto gameStateComponent{std::make_shared<GameStateComponent>()};

@@ -35,4 +35,6 @@ namespace DiggerUtils
 	void SelectCoop();
 	void SelectVersus();
 
+	void HasSetName();
+
 }

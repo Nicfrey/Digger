@@ -27,7 +27,7 @@ public:
 	void SetTextButton(const std::string& text);
 	void SetPositionOffset(float x, float y);
 	void SetPositionOffset(const glm::vec2& pos);
-	Rectf GetSize() const;
+	Rectf GetBox() const;
 private:
 	Rectf m_Box;
 	std::shared_ptr<dae::TextComponent> m_Text;

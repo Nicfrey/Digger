@@ -10,6 +10,7 @@ public:
 	void LoseOneLife();
 	void GainOneLife();
 	int GetLifeRemaining() const;
+	bool HasNoRemainingLife() const;
 	bool IsDead() const;
 	void OnDestroy() override;
 private:

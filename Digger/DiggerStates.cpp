@@ -13,6 +13,7 @@
 #include "Utils.h"
 #include "WidgetManager.h"
 #include "Graph.h"
+#include "HealthComponent.h"
 
 void MenuState::Enter(Blackboard* pBlackboard)
 {
@@ -101,6 +102,8 @@ void PlayState::Enter(Blackboard* pBlackboard)
 {
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
+	pBlackboard->ChangeValue("hasExtraLife", true);
+	pBlackboard->ChangeValue("players", m_Players);
 	EventManager::GetInstance().AddEvent("PlayerDied",this,&PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	// TODO Play music of the game
@@ -112,6 +115,10 @@ void PlayState::Update(Blackboard* pBlackboard)
 	if(m_PlayerIsDead)
 	{
 		pBlackboard->ChangeValue("isPlayerDead", true);
+		if (m_Players[0]->GetComponent<HealthComponent>()->HasNoRemainingLife())
+		{
+			pBlackboard->ChangeValue("hasNoExtraLife", true);
+		}
 		return;
 	}
 	if(m_PlayerHasWon)
@@ -124,17 +131,30 @@ void PlayState::HandlePlayerDead()
 {
 	// Wait 5 sec before setting the player to dead
 	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerIsDead, 5.f);
+	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), true);
 }
 
 void PlayState::SetPlayerIsDead()
 {
-	m_PlayerIsDead = true;
+	size_t indexDead{};
+	for(auto &player : m_Players)
+	{
+		if (player->GetComponent<HealthComponent>()->IsDead())
+		{
+			++indexDead;
+		}
+	}
+	if (indexDead == m_Players.size())
+	{
+		m_PlayerIsDead = true;
+	}
 }
 
 void PlayState::HandlePlayerWon()
 {
 	// Wait 5 sec before setting the player to won
 	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerWon, 5.f);
+	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::WIN), true);
 }
 
 void PlayState::SetPlayerWon()
@@ -142,17 +162,67 @@ void PlayState::SetPlayerWon()
 	m_PlayerHasWon = true;
 }
 
+void PlayState::Exit(Blackboard* pBlackboard)
+{
+	pBlackboard->ChangeValue("isPlayerDead", false);
+	pBlackboard->ChangeValue("hasPlayerWon", false);
+	pBlackboard->ChangeValue("hasExtraLife", true);
+	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
+	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
+}
+
 void RespawnState::Enter(Blackboard* pBlackboard)
 {
-
+	pBlackboard->ChangeValue("hasLoadedLevel", false);
+	EventManager::GetInstance().NotifyEvent("ReloadCurrentLevel");
+	EventManager::GetInstance().AddEvent("LevelLoaded", this, &RespawnState::HasLoadedLevel);
 }
 
 void RespawnState::Exit(Blackboard* pBlackboard)
 {
+	pBlackboard->ChangeValue("hasLoadedLevel", false);
 }
 
 void RespawnState::Update(Blackboard* pBlackboard)
 {
+	if (m_HasLoaded)
+	{
+		pBlackboard->ChangeValue("hasLoadedLevel", true);
+	}
+}
+
+void RespawnState::HasLoadedLevel()
+{
+	m_HasLoaded = true;
+}
+
+void GameOverState::Enter(Blackboard* pBlackboard)
+{
+	pBlackboard->ChangeValue("hasSetName", false);
+	// Show the Widget GameOver and High-Score
+	WidgetManager::GetInstance().SetActiveWidget("GameOver");
+	EventManager::GetInstance().AddEvent("SetNameHighScore", this, &GameOverState::HasSetName);
+}
+
+void GameOverState::Exit(Blackboard* pBlackboard)
+{
+	pBlackboard->ChangeValue("hasSetName", false);
+	// Remove the widget GameOver and High-Score
+	WidgetManager::GetInstance().SetActiveWidget("MainMenu");
+	// Go back to the menu
+}
+
+void GameOverState::Update(Blackboard* pBlackboard)
+{
+	if (m_HasSetName)
+	{
+		pBlackboard->ChangeValue("hasSetName", true);
+	}
+}
+
+void GameOverState::HasSetName()
+{
+	m_HasSetName = true;
 }
 
 void IdleStateMoneyBag::Enter(Blackboard* pBlackboard)
@@ -250,12 +320,4 @@ void FallingStateMoneyBag::HandleMoneyBagLanded()
 		return;
 	}
 	m_State = MoneyBagComponent::StateMoneyBag::IsDestroyed;
-}
-
-void PlayState::Exit(Blackboard* pBlackboard)
-{
-	pBlackboard->ChangeValue("isPlayerDead", false);
-	pBlackboard->ChangeValue("hasPlayerWon", false);
-	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
-	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 }

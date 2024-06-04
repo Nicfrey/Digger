@@ -54,3 +54,8 @@ void DiggerUtils::SelectVersus()
 	EventManager::GetInstance().NotifyEvent("SelectGameMode");
 	GameInstance::GetInstance().ChangeValue("CurrentGameMode", DiggerGameMode::Versus);
 }
+
+void DiggerUtils::HasSetName()
+{
+	EventManager::GetInstance().NotifyEvent("SetNameHighScore");
+}

@@ -81,7 +81,7 @@ void ButtonComponent::SetPositionOffset(const glm::vec2& pos)
 	m_Box = Rectf{ pos, m_Box.width, m_Box.height };
 }
 
-Rectf ButtonComponent::GetSize() const
+Rectf ButtonComponent::GetBox() const
 {
 	return m_Box;
 }

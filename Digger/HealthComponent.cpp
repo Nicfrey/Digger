@@ -50,6 +50,11 @@ int HealthComponent::GetLifeRemaining() const
 	return m_LifeRemaining;
 }
 
+bool HealthComponent::HasNoRemainingLife() const
+{
+	return m_LifeRemaining <= 0;
+}
+
 bool HealthComponent::IsDead() const
 {
 	return !m_Alive;
