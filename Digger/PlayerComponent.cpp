@@ -70,7 +70,6 @@ std::shared_ptr<BaseComponent> PlayerComponent::Clone() const
 
 void PlayerComponent::Update()
 {
-	BaseComponent::Update();
 	if(!m_NavMeshComp->HasReachedDestination())
 	{
 		EventManager::GetInstance().NotifyEvent("PlayerMoving");
@@ -113,6 +112,11 @@ void PlayerComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 {
 	HandleCollisionProjectile(other);
 	HandleCollisionEnemy(other);
+}
+
+void PlayerComponent::OnDestroy()
+{
+	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayerComponent::HandleDeath);
 }
 
 void PlayerComponent::ShootProjectile()
@@ -201,6 +205,19 @@ void PlayerComponent::HandleDeath()
 		{
 			const auto animator = GetGameObject()->GetComponent<AnimatorComponent>();
 			animator->SetParameter("PlayerDied", true);
+		}
+	}
+}
+
+void PlayerComponent::HandleRespawn() const
+{
+	if(GetGameObject()->HasComponent<HealthComponent>())
+	{
+		const auto health{ GetGameObject()->GetComponent<HealthComponent>() };
+		if (GetGameObject()->HasComponent<AnimatorComponent>() && !health->IsDead())
+		{
+			const auto animator = GetGameObject()->GetComponent<AnimatorComponent>();
+			animator->SetParameter("PlayerDied", false);
 		}
 	}
 }

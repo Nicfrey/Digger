@@ -13,7 +13,8 @@ public:
 	bool HasNoRemainingLife() const;
 	bool IsDead() const;
 	void OnDestroy() override;
-private:
+	void SetAlive();
+;private:
 	int m_LifeRemaining;
 	bool m_Alive{ true };
 };

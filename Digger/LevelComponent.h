@@ -37,6 +37,7 @@ public:
 	void RenderGUI() override;
 private:
 	DiggerUtils::DiggerGameMode m_GameMode{};
+	int m_Level{};
 	GraphUtils::Graph* m_pGraph;
 	std::vector<GraphUtils::GraphNode*> m_ShortestPath;
 	glm::vec2 m_StartPos{20,20};
@@ -46,6 +47,7 @@ private:
 
 	void CreateSpawnerEnemy(int index) const;
 	void LoadLevel();
+	void RespawnPlayers();
 	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
 	void CreateEmeraldAtIndex(int index);
 	void CreateMoneyBagAtIndex(int index);

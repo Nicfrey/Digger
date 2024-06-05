@@ -24,6 +24,14 @@ public:
 	~TransitionPlayerIsDead() override = default;
 };
 
+class TransitionPlayerIsAlive : public FSMTransition
+{
+public:
+	TransitionPlayerIsAlive() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionPlayerIsAlive() override = default;
+};
+
 class TransitionMoneyBagCanFall : public FSMTransition
 {
 public:

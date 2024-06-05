@@ -16,8 +16,10 @@ public:
 	void Init() override;
 	void HandleCollisionEnemy(const std::shared_ptr<dae::GameObject>& other) const;
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
+	void OnDestroy() override;
 	void ShootProjectile();
 	void ProjectileHasCollide();
+	void HandleRespawn() const;
 
 private:
 	dae::GameObject* m_pProjectile;

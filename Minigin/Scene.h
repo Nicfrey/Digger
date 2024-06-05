@@ -72,11 +72,11 @@ namespace dae
 	std::vector<std::shared_ptr<GameObject>> Scene::GetGameObjectsWithComponent() const
 	{
 		std::vector<std::shared_ptr<GameObject>> objectsWithComponent;
-		for (const auto& object : m_objects)
+		for (auto& object : m_objects)
 		{
 			if (object->HasComponent<T>())
 			{
-				objectsWithComponent.push_back(object);
+				objectsWithComponent.emplace_back(object);
 			}
 		}
 		return objectsWithComponent;

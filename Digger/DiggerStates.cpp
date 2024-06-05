@@ -168,15 +168,17 @@ void PlayState::Exit(Blackboard* pBlackboard)
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
 	pBlackboard->ChangeValue("hasExtraLife", true);
+	m_PlayerHasWon = false;
+	m_PlayerIsDead = false;
 	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 }
 
 void RespawnState::Enter(Blackboard* pBlackboard)
 {
+	EventManager::GetInstance().AddEvent("LevelLoaded", this, &RespawnState::HasLoadedLevel);
 	pBlackboard->ChangeValue("hasLoadedLevel", false);
 	EventManager::GetInstance().NotifyEvent("ReloadCurrentLevel");
-	EventManager::GetInstance().AddEvent("LevelLoaded", this, &RespawnState::HasLoadedLevel);
 }
 
 void RespawnState::Exit(Blackboard* pBlackboard)

@@ -12,6 +12,7 @@
 #include "DiggerTransitionAnim.h"
 #include "DiggerUtils.h"
 #include "EmeraldComponent.h"
+#include "EnemyComponent.h"
 #include "EnemySpawnerComponent.h"
 #include "GameInstance.h"
 #include "GameObject.h"
@@ -38,6 +39,7 @@ LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUti
 {
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
+	EventManager::GetInstance().AddEvent("ReloadCurrentLevel", this, &LevelComponent::RespawnPlayers);
 	m_pPlayersCurrentNode.resize(2);
 	for (auto& node : m_pPlayersCurrentNode)
 	{
@@ -66,7 +68,7 @@ bool LevelComponent::IsNodeMoneyBag(const GraphUtils::GraphNode* node) const
 	const auto moneyBags{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<MoneyBagComponent>()};
 	for (auto& moneyBag : moneyBags)
 	{
-		if(moneyBag->GetComponent<MoneyBagComponent>()->GetState() == MoneyBagComponent::StateMoneyBag::Idle)
+		if (moneyBag->GetComponent<MoneyBagComponent>()->GetState() == MoneyBagComponent::StateMoneyBag::Idle)
 		{
 			if (m_pGraph->GetClosestNode(moneyBag->GetWorldPosition()) == node)
 			{
@@ -180,15 +182,14 @@ void LevelComponent::CreateSpawnerEnemy(int index) const
 
 void LevelComponent::LoadLevel()
 {
-	int level;
-	GameInstance::GetInstance().GetValue("CurrentLevel", level);
+	GameInstance::GetInstance().GetValue("CurrentLevel", m_Level);
 	GameInstance::GetInstance().GetValue("CurrentGameMode", m_GameMode);
 	constexpr int maxRow{10};
 	constexpr int maxColumn{15};
 
 	// Read from json
 	nlohmann::json json{
-		dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(level) + ".json")
+		dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(m_Level) + ".json")
 	};
 
 
@@ -245,11 +246,11 @@ void LevelComponent::LoadLevel()
 	int indexPlayer{};
 	for (auto data : json["SpawnPointPlayers"])
 	{
-		if(m_GameMode != DiggerUtils::DiggerGameMode::Coop && indexPlayer == 1)
+		if (m_GameMode != DiggerUtils::DiggerGameMode::Coop && indexPlayer == 1)
 		{
 			break;
 		}
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreatePlayerAtIndex(GetIndexFromPosition(pos, maxColumn), indexPlayer);
 		++indexPlayer;
 	}
@@ -276,6 +277,48 @@ void LevelComponent::LoadLevel()
 	{
 		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreateMoneyBagAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
+	}
+	EventManager::GetInstance().NotifyEvent("LevelLoaded");
+}
+
+void LevelComponent::RespawnPlayers()
+{
+	constexpr int maxColumn{15};
+	// Delete all the enemies and the spawner
+	const auto enemies{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>()};
+	for (const auto& enemy : enemies)
+	{
+		enemy->Destroy();
+	}
+	const auto spawner{dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>()};
+	spawner->Destroy();
+
+	auto json{dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(m_Level) + ".json")};
+
+	// Init the spawn point
+	if (m_GameMode == DiggerUtils::DiggerGameMode::Versus)
+	{
+		// TODO the spawner of enemy spawn enemy that can be controlled by the other player
+	}
+	else
+	{
+		const auto spawnEnemy = json["SpawnPointEnemy"];
+		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), maxColumn));
+	}
+
+	const auto players{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>()};
+	int indexPlayer{};
+	for (auto data : json["SpawnPointPlayers"])
+	{
+		if (m_GameMode != DiggerUtils::DiggerGameMode::Coop && indexPlayer == 1)
+		{
+			break;
+		}
+		const glm::vec2 pos{data.at("x"), data.at("y")};
+		players[indexPlayer]->SetLocalPosition(m_pGraph->GetNode(GetIndexFromPosition(pos, maxColumn))->GetPosition());
+		players[indexPlayer]->GetComponent<HealthComponent>()->SetAlive();
+		players[indexPlayer]->GetComponent<PlayerComponent>()->HandleRespawn();
+		++indexPlayer;
 	}
 	EventManager::GetInstance().NotifyEvent("LevelLoaded");
 }
@@ -338,7 +381,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 
 void LevelComponent::CreateBackgroundLevel(int level)
 {
-	const auto windowSize{ dae::Minigin::m_Window };
+	const auto windowSize{dae::Minigin::m_Window};
 	glm::vec2 currentSize{0, 0};
 	const std::shared_ptr sprite{
 		std::make_shared<SpriteComponent>("Background", "Backgrounds/back" + std::to_string(level) + ".png")
@@ -411,10 +454,12 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	TransitionPlayerNoProjectile* transitionNoProjectile{new TransitionPlayerNoProjectile()};
 	TransitionPlayerHasProjectile* transitionProjectile{new TransitionPlayerHasProjectile{}};
 	TransitionPlayerIsDead* transitionDead{new TransitionPlayerIsDead{}};
+	TransitionPlayerIsAlive* transitionPlayerAlive{ new TransitionPlayerIsAlive{} };
 	animator->AddTransition(idlePlayer, idleWithoutShoot, transitionNoProjectile);
 	animator->AddTransition(idleWithoutShoot, idlePlayer, transitionProjectile);
 	animator->AddTransition(idlePlayer, deadAnim, transitionDead);
 	animator->AddTransition(idleWithoutShoot, deadAnim, transitionDead);
+	animator->AddTransition(deadAnim, idlePlayer, transitionPlayerAlive);
 	if (!animator->SetStartAnimation(idlePlayer))
 	{
 		std::cerr << "Failed to set start animation" << '\n';

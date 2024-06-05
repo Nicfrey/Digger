@@ -65,3 +65,8 @@ void HealthComponent::OnDestroy()
 
 }
 
+void HealthComponent::SetAlive()
+{
+	m_Alive = true;
+}
+

@@ -28,6 +28,16 @@ bool TransitionPlayerIsDead::CalculateCondition(Blackboard* pBlackBoard) const
 	return false;
 }
 
+bool TransitionPlayerIsAlive::CalculateCondition(Blackboard* pBlackBoard) const
+{
+	bool isTransition;
+	if(pBlackBoard->GetValue("PlayerDied",isTransition))
+	{
+		return !isTransition;
+	}
+	return false;
+}
+
 bool TransitionMoneyBagCanFall::CalculateCondition(Blackboard* pBlackBoard) const
 {
 	MoneyBagComponent::StateMoneyBag isTransition;
