@@ -21,6 +21,7 @@ public:
 	void Update();
 	void HandleOnClickEvent(const glm::vec3& vec);
 	std::shared_ptr<Widget> GetActiveWidget();
+	void HandleOnHoverEvent(const glm::vec3& vec);
 
 private:
 	bool HasElementWithName(const std::string& name) const;

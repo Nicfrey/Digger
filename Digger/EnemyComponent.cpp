@@ -23,7 +23,7 @@ EnemyComponent::EnemyComponent(EnemyType type): EnemyComponent()
 	m_Type = type;
 }
 
-void EnemyComponent::StopMoving()
+void EnemyComponent::StopMovingPlayerDead()
 {
 	// Check if all players are dead
 	size_t playersDead{};
@@ -37,15 +37,21 @@ void EnemyComponent::StopMoving()
 	}
 	if(playersDead == players.size())
 	{
-		m_StopMoving = true;
-		m_pNavMeshAgent->StopMoving();
+		StopMoving();
 	}
+}
+
+void EnemyComponent::StopMoving()
+{
+	m_StopMoving = true;
+	m_pNavMeshAgent->StopMoving();
 }
 
 void EnemyComponent::Init()
 {
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
-	EventManager::GetInstance().AddEvent("PlayerDied", this, &EnemyComponent::StopMoving);
+	EventManager::GetInstance().AddEvent("PlayerDied", this, &EnemyComponent::StopMovingPlayerDead);
+	EventManager::GetInstance().AddEvent("PlayerWon", this, &EnemyComponent::StopMoving);
 	if(GetGameObject()->HasComponent<SpriteComponent>())
 	{
 		const auto sprite{ GetGameObject()->GetComponent<SpriteComponent>() };
@@ -99,6 +105,7 @@ void EnemyComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 				health->LoseOneLife();
 			}
 			EventManager::GetInstance().NotifyEvent("ProjectileHit");
+			EventManager::GetInstance().NotifyEvent("EnemyDied");
 		}
 	}
 }
@@ -118,7 +125,8 @@ void EnemyComponent::HandleDeadEnemy()
 void EnemyComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
-	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &EnemyComponent::StopMoving);
+	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &EnemyComponent::StopMovingPlayerDead);
+	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemyComponent::StopMoving);
 }
 
 EnemyComponent::EnemyType EnemyComponent::GetType() const

@@ -111,3 +111,13 @@ void ButtonComponent::SelectButton()
 	m_IsSelected = true;
 	m_Text->SetColor(255, 255, 0);
 }
+
+void ButtonComponent::OnHover(const glm::vec3& vec)
+{
+	if (Utils::IsPointInRectangle(glm::vec2{ vec.x, vec.y }, m_Box))
+	{
+		SelectButton();
+		return;
+	}
+	DeselectButton();
+}

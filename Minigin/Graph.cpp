@@ -294,6 +294,10 @@ std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetNodes() const
 
 std::vector<GraphUtils::GraphNode*> GraphUtils::Graph::GetShortestPath(GraphNode* pStart, GraphNode* pEnd, bool canVisit)
 {
+	if (!pEnd->CanBeVisited() && !canVisit)
+	{
+		return std::vector<GraphNode*>{};
+	}
 	std::vector<GraphNode*> path{};
 	// Create node record and add to openlist
 	NodeRecord currentNodeRecord{pStart, nullptr, 0.f, GetHeuristic(pStart, pEnd)};

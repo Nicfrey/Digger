@@ -19,6 +19,7 @@ private:
 	void SpawnNewEnemy();
 	void DecreaseEnemyCount();
 	void SetPlayerDead();
+	void StopSpawning();
 	int m_EnemyCount;
 	int m_EnemyToSpawn{ 10 };
 	bool m_PlayerDead{ false };

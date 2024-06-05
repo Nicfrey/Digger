@@ -40,6 +40,7 @@ LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUti
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
 	EventManager::GetInstance().AddEvent("ReloadCurrentLevel", this, &LevelComponent::RespawnPlayers);
+	EventManager::GetInstance().AddEvent("EmeraldCollected", this, &LevelComponent::CheckRemainingEmeralds);
 	ResetNodePlayers();
 }
 
@@ -114,14 +115,6 @@ std::shared_ptr<BaseComponent> LevelComponent::Clone() const
 	return std::make_shared<LevelComponent>(*this);
 }
 
-void LevelComponent::Update()
-{
-}
-
-
-void LevelComponent::Init()
-{
-}
 
 void LevelComponent::RenderGUI()
 {
@@ -545,5 +538,24 @@ void LevelComponent::ResetNodePlayers()
 	for (auto& node : m_pPlayersPreviousNode)
 	{
 		node = nullptr;
+	}
+}
+
+void LevelComponent::CheckRemainingEmeralds()
+{
+	const auto emeralds{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EmeraldComponent>() };
+	if (emeralds.size() == 1)
+	{
+		EventManager::GetInstance().NotifyEvent("PlayerWon");
+	}
+}
+
+void LevelComponent::CheckRemainingEnemies()
+{
+	const auto enemies{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>() };
+	const auto spawner{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>() };
+	if (enemies.empty() && spawner == nullptr)
+	{
+		EventManager::GetInstance().NotifyEvent("PlayerWon");
 	}
 }

@@ -196,7 +196,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(OutputPath)" /R /Y</C
     <ClCompile Include="HighScoreComponent.cpp" />
     <ClCompile Include="ItemComponent.cpp" />
     <ClCompile Include="LevelUtils.cpp" />
-    <ClCompile Include="MainMenuComponent.cpp" />
     <ClCompile Include="MoneyBagComponent.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
@@ -219,7 +218,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(OutputPath)" /R /Y</C
     <ClInclude Include="HighScoreComponent.h" />
     <ClInclude Include="ItemComponent.h" />
     <ClInclude Include="LevelUtils.h" />
-    <ClInclude Include="MainMenuComponent.h" />
     <ClInclude Include="MoneyBagComponent.h" />
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="ScoreComponent.h" />

@@ -24,6 +24,7 @@ public:
 	template<typename ClassType>
 	void SetSaveEntry(ClassType* obj, void (ClassType::* funcPtr)(const std::string&));
 	void SaveEntry() const;
+	void OnHover(const glm::vec3& vec);
 
 private:
 	const std::string m_Alphabet[36] = { "A","B","C","D","E","F","G","H","I","J","K","L","M",

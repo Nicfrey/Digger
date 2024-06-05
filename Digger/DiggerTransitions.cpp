@@ -56,18 +56,11 @@ bool PlayerRespawnTransition::CalculateCondition(Blackboard* pBlackBoard) const
 
 bool PlayerWinTransition::CalculateCondition(Blackboard* pBlackBoard) const
 {
-	bool allEnemyKilled;
-	bool allEmeraldCollected;
-	if(pBlackBoard->GetValue("allEnemyKilled",allEnemyKilled))
+	bool hasPlayerWon;
+	if(pBlackBoard->GetValue("hasPlayerWon",hasPlayerWon))
 	{
-		if(pBlackBoard->GetValue("allEmeraldCollected",allEmeraldCollected))
-		{
-			return allEnemyKilled || allEmeraldCollected;
-		}
-		std::cerr << "PlayerWinTransition: Could not find allEmeraldCollected in blackboard\n";
-		return false;
+		return hasPlayerWon;
 	}
-	std::cerr << "PlayerWinTransition: Could not find allEnemyKilled in blackboard\n";
 	return false;
 }
 

@@ -159,3 +159,11 @@ void KeyboardComponent::SaveEntry() const
 		m_OnSaveEntryFunc(m_CurrentWord);
 	}
 }
+
+void KeyboardComponent::OnHover(const glm::vec3& vec)
+{
+	for (auto& button : m_ButtonsLetter)
+	{
+		button->OnHover(vec);
+	}
+}

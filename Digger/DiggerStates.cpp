@@ -155,7 +155,7 @@ void PlayState::HandlePlayerWon()
 {
 	// Wait 5 sec before setting the player to won
 	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerWon, 5.f);
-	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::WIN), true);
+	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::WIN), false);
 }
 
 void PlayState::SetPlayerWon()

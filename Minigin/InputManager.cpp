@@ -33,6 +33,11 @@ bool dae::InputManager::ProcessInput()
 			const glm::vec3 posMouse{ e.button.x,e.button.y,0 };
 			WidgetManager::GetInstance().HandleOnClickEvent(posMouse);
 		}
+		if(e.type == SDL_MOUSEMOTION)
+		{
+			const glm::vec3 posMouse{ e.motion.x,e.motion.y,0 };
+			WidgetManager::GetInstance().HandleOnHoverEvent(posMouse);
+		}
 		if(e.type == SDL_KEYUP)
 		{
 			for (const auto& inputAction : m_InputsActionKeyboards)

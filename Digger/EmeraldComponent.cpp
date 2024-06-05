@@ -1,6 +1,7 @@
 #include "EmeraldComponent.h"
 
 #include "GameObject.h"
+#include "Observer.h"
 #include "PlayerComponent.h"
 #include "ScoreComponent.h"
 
@@ -28,6 +29,7 @@ void EmeraldComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 	{
 		const auto score{ other->GetComponent<ScoreComponent>() };
 		score->AddScore(m_ScoreValue);
+		EventManager::GetInstance().NotifyEvent("EmeraldCollected");
 		GetGameObject()->Destroy();
 	}
 }

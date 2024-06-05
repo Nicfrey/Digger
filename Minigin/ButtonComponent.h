@@ -32,6 +32,7 @@ public:
 	bool IsSelected() const;
 	void DeselectButton();
 	void SelectButton();
+	void OnHover(const glm::vec3& vec);
 
 private:
 	Rectf m_Box;

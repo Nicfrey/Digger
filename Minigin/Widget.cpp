@@ -51,6 +51,12 @@ void Widget::HandleOnClickEvent(const glm::vec2& posMouse) const
 	HandleKeyboard(posMouse);
 }
 
+void Widget::HandleOnHoverEvent(const glm::vec3& vec)
+{
+	HandleHoverButtons(vec);
+	HandleHoverKeyboard(vec);
+}
+
 void Widget::HandleOnPressedEvent() const
 {
 	if (!HasElement<ButtonComponent>())
@@ -103,5 +109,31 @@ void Widget::HandleKeyboard(const glm::vec2& posMouse) const
 	for (auto& keyboard : keyboards)
 	{
 		keyboard->OnClick(posMouse);
+	}
+}
+
+void Widget::HandleHoverButtons(const glm::vec3& vec)
+{
+	if (!HasElement<ButtonComponent>())
+	{
+		return;
+	}
+	const auto buttons{ GetAllElement<ButtonComponent>() };
+	for (auto& button : buttons)
+	{
+		button->OnHover(vec);
+	}
+}
+
+void Widget::HandleHoverKeyboard(const glm::vec3& vec)
+{
+	if (!HasElement<KeyboardComponent>())
+	{
+		return;
+	}
+	const auto keyboards{ GetAllElement<KeyboardComponent>() };
+	for (auto& keyboard : keyboards)
+	{
+		keyboard->OnHover(vec);
 	}
 }

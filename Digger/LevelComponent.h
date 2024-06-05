@@ -32,14 +32,12 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 	bool IsNodeMoneyBag(const GraphUtils::GraphNode* node) const;
 	GraphUtils::Graph* GetGraph() const;
-	void Update() override;
-	void Init() override;
 	void RenderGUI() override;
 	void OnDestroy() override;
 private:
 	DiggerUtils::DiggerGameMode m_GameMode{};
 	int m_Level{};
-	int m_MaxLevel{3};
+	int m_MaxLevel{ 3 };
 	int m_MaxColumn{ 15 };
 	int m_MaxRow{ 10 };
 	GraphUtils::Graph* m_pGraph;
@@ -52,7 +50,6 @@ private:
 	void CreateSpawnerEnemy(int index) const;
 	void LoadLevel();
 	void InitializeLevel(const nlohmann::json& json);
-	void SkipLevel();
 	void RespawnPlayers();
 	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
 	void CreateEmeraldAtIndex(int index);
@@ -63,5 +60,7 @@ private:
 	void UpdateGraph();
 	void InitializeGraph(const nlohmann::json& json) const;
 	void ResetNodePlayers();
+	void CheckRemainingEmeralds();
+	void CheckRemainingEnemies();
 };
 

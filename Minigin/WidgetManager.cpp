@@ -91,6 +91,14 @@ std::shared_ptr<Widget> WidgetManager::GetActiveWidget()
 	return m_ActiveWidget;
 }
 
+void WidgetManager::HandleOnHoverEvent(const glm::vec3& vec)
+{
+	if (m_ActiveWidget != nullptr)
+	{
+		m_ActiveWidget->HandleOnHoverEvent(vec);
+	}
+}
+
 bool WidgetManager::HasElementWithName(const std::string& name) const
 {
 	const auto it{ std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)

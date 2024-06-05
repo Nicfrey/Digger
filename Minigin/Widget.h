@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 #include "BaseComponent.h"
 #include "UIElementComponent.h"
@@ -33,6 +34,7 @@ public:
 	template<typename ClassType>
 	bool HasElement() const;
 	void HandleOnClickEvent(const glm::vec2& posMouse) const;
+	void HandleOnHoverEvent(const glm::vec3& vec);
 	void HandleOnPressedEvent() const;
 	void Render() const;
 	void Update();
@@ -40,6 +42,8 @@ public:
 private:
 	void HandleButtons(const glm::vec2& posMouse) const;
 	void HandleKeyboard(const glm::vec2& posMouse) const;
+	void HandleHoverButtons(const glm::vec3& vec);
+	void HandleHoverKeyboard(const glm::vec3& vec);
 	std::vector<std::shared_ptr<UIElementComponent>> m_Elements;
 	std::string m_Name;
 };
