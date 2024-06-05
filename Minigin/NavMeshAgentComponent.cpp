@@ -61,6 +61,12 @@ void NavMeshAgentComponent::SetSpeed(float speed)
 	m_Speed = speed;
 }
 
+void NavMeshAgentComponent::StopMoving()
+{
+	m_Path.clear();
+	m_HasReachedDestination = true;
+}
+
 bool NavMeshAgentComponent::IsNearTheTarget() const
 {
 	const auto pos{ GetGameObject()->GetWorldPosition() };

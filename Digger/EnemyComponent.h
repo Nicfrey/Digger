@@ -14,6 +14,7 @@ public:
 
 	EnemyComponent();
 	EnemyComponent(EnemyType type);
+	void StopMoving();
 	void Init() override;
 	void Update() override;
 	std::shared_ptr<BaseComponent> Clone() const override;
@@ -25,5 +26,6 @@ private:
 	static int m_ScoreKilled;
 	EnemyType m_Type;
 	NavMeshAgentComponent* m_pNavMeshAgent;
+	bool m_StopMoving{ false };
 };
 

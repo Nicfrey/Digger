@@ -36,6 +36,10 @@ MovePlayerCommand::MovePlayerCommand(dae::GameObject* go, glm::vec2 direction): 
 
 void MovePlayerCommand::Execute()
 {
+	if(GetGameObject()->GetComponent<HealthComponent>()->IsDead())
+	{
+		return;
+	}
 	const auto levelObject{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
 	const auto levelComponent{levelObject->GetComponent<LevelComponent>()};
 	SetCurrentAndTargetNode(levelComponent);
@@ -118,13 +122,14 @@ void MoveButtonCommand::Execute()
 		{
 			if (buttons[i]->IsSelected())
 			{
-				if (i + 1 >= buttons.size())
+				if (static_cast<int>(i) - 1 < 0)
 				{
 					buttons[i]->DeselectButton();
-					buttons[0]->SelectButton();
+					buttons[(buttons.size() - 1)]->SelectButton();
 					break;
 				}
-				buttons[i]->SelectButton();
+				buttons[i]->DeselectButton();
+				buttons[(i - 1)]->SelectButton();
 				break;
 			}
 		}
@@ -135,19 +140,33 @@ void MoveButtonCommand::Execute()
 		{
 			if (buttons[i]->IsSelected())
 			{
-				if (i == 0)
+				if (i + i >= buttons.size())
 				{
 					buttons[i]->DeselectButton();
-					buttons[buttons.size() - 1]->SelectButton();
+					buttons[0]->SelectButton();
 					break;
 				}
 				buttons[i]->DeselectButton();
-				buttons[i - 1]->SelectButton();
+				buttons[(i + 1)]->SelectButton();
 				break;
 			}
 		}
 	}
+	SelectFirstIfNoSelected(buttons);
 }
+
+void MoveButtonCommand::SelectFirstIfNoSelected(const std::vector<std::shared_ptr<ButtonComponent>>& buttons)
+{
+	const auto it = std::ranges::find_if(buttons, [](const std::shared_ptr<ButtonComponent>& button)
+	{
+		return button->IsSelected();
+	});
+	if (it == buttons.end())
+	{
+		buttons[0]->SelectButton();
+	}
+}
+
 
 void SelectButtonCommand::Execute()
 {
@@ -219,6 +238,10 @@ ShootCommand::ShootCommand(dae::GameObject* go): GameObjectCommand{go}
 
 void ShootCommand::Execute()
 {
+	if (GetGameObject()->GetComponent<HealthComponent>()->IsDead())
+	{
+		return;
+	}
 	if (const auto playerComp{GetGameObject()->GetComponent<PlayerComponent>()})
 	{
 		playerComp->ShootProjectile();

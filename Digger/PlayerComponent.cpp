@@ -203,6 +203,4 @@ void PlayerComponent::HandleDeath()
 			animator->SetParameter("PlayerDied", true);
 		}
 	}
-	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME_OVER),false);
-	EventManager::GetInstance().NotifyEvent("RestartLevel");
 }

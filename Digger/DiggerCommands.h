@@ -4,6 +4,8 @@
 #include "GameObjectCommand.h"
 #include "LevelComponent.h"
 
+class ButtonComponent;
+
 namespace GraphUtils
 {
 	class GraphNode;
@@ -59,6 +61,7 @@ public:
 	void Execute() override;
 private:
 	bool m_Up;
+	static void SelectFirstIfNoSelected(const std::vector<std::shared_ptr<ButtonComponent>>& buttons);
 };
 
 class SelectButtonCommand : public Command

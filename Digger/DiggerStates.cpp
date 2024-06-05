@@ -20,7 +20,7 @@ void MenuState::Enter(Blackboard* pBlackboard)
 {
 	// TODO Play menu music
 	// Add function to event
-	EventManager::GetInstance().AddEvent("SelectGameMode",this,&MenuState::HasSelectedGameMode);
+	EventManager::GetInstance().AddEvent("SelectGameMode", this, &MenuState::HasSelectedGameMode);
 	EventManager::GetInstance().AddEvent("CancelGameMode", this, &MenuState::CancelGameMode);
 	EventManager::GetInstance().AddEvent("SelectLevel", this, &MenuState::HasSelectedLevel);
 	// Change the state of load level
@@ -30,7 +30,7 @@ void MenuState::Enter(Blackboard* pBlackboard)
 void MenuState::Update(Blackboard* pBlackboard)
 {
 	// TODO Check if player has selected a game mode and a level
-	if(m_HasSelectedGameMode && m_HasSelectedLevel)
+	if (m_HasSelectedGameMode && m_HasSelectedLevel)
 	{
 		// Transition to LoadState
 		pBlackboard->ChangeValue("hasSelectedLevel", m_HasSelectedLevel);
@@ -79,7 +79,7 @@ void LoadState::Enter(Blackboard* pBlackboard)
 
 void LoadState::Update(Blackboard* pBlackboard)
 {
-	if(m_HasLoadedLevel)
+	if (m_HasLoadedLevel)
 	{
 		// Transition to PlayState
 		pBlackboard->ChangeValue("hasLoadedLevel", m_HasLoadedLevel);
@@ -105,7 +105,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
 	pBlackboard->ChangeValue("hasExtraLife", true);
-	EventManager::GetInstance().AddEvent("PlayerDied",this,&PlayState::HandlePlayerDead);
+	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	// TODO Play music of the game
 	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME), true);
@@ -113,7 +113,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 
 void PlayState::Update(Blackboard* pBlackboard)
 {
-	if(m_PlayerIsDead)
+	if (m_PlayerIsDead)
 	{
 		pBlackboard->ChangeValue("isPlayerDead", true);
 		if (m_Players[0]->GetComponent<HealthComponent>()->HasNoRemainingLife())
@@ -122,33 +122,33 @@ void PlayState::Update(Blackboard* pBlackboard)
 		}
 		return;
 	}
-	if(m_PlayerHasWon)
+	if (m_PlayerHasWon)
 	{
-		pBlackboard->ChangeValue("hasPlayerWon",true);
+		pBlackboard->ChangeValue("hasPlayerWon", true);
 	}
 }
 
 void PlayState::HandlePlayerDead()
 {
-	// Wait 5 sec before setting the player to dead
-	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerIsDead, 5.f);
-	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), false);
-}
-
-void PlayState::SetPlayerIsDead()
-{
+	// Check if both players are dead
 	size_t indexDead{};
-	for(auto &player : m_Players)
+	for (const auto& player : m_Players)
 	{
 		if (player->GetComponent<HealthComponent>()->IsDead())
 		{
 			++indexDead;
 		}
 	}
-	if (indexDead == m_Players.size())
+	if(indexDead == m_Players.size())
 	{
-		m_PlayerIsDead = true;
+		TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerIsDead, 5.f);
+		ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), false);
 	}
+}
+
+void PlayState::SetPlayerIsDead()
+{
+	m_PlayerIsDead = true;
 }
 
 void PlayState::HandlePlayerWon()
@@ -231,15 +231,15 @@ void IdleStateMoneyBag::Enter(Blackboard* pBlackboard)
 	pBlackboard->GetValue("MoneyBagStates", m_State);
 	switch (m_State)
 	{
-		case MoneyBagComponent::StateMoneyBag::IsDestroyed:
-		case MoneyBagComponent::StateMoneyBag::IdleDestroyed:
-		case MoneyBagComponent::StateMoneyBag::Idle:
+	case MoneyBagComponent::StateMoneyBag::IsDestroyed:
+	case MoneyBagComponent::StateMoneyBag::IdleDestroyed:
+	case MoneyBagComponent::StateMoneyBag::Idle:
 
-			break;
-		case MoneyBagComponent::StateMoneyBag::CanFall:
-		case MoneyBagComponent::StateMoneyBag::IsFalling:
-			std::cout << "IdleStateMoneyBag::Enter: Something went wrong\n";
-			break;
+		break;
+	case MoneyBagComponent::StateMoneyBag::CanFall:
+	case MoneyBagComponent::StateMoneyBag::IsFalling:
+		std::cout << "IdleStateMoneyBag::Enter: Something went wrong\n";
+		break;
 	}
 	pBlackboard->GetValue("Position", m_Position);
 }
@@ -252,15 +252,15 @@ void IdleStateMoneyBag::Exit(Blackboard* pBlackboard)
 void IdleStateMoneyBag::Update(Blackboard* pBlackboard)
 {
 	// TODO check if the bottom node is empty
-	const auto goLevel{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
-	const auto node{ goLevel->GetComponent<LevelComponent>()->GetGraph()->GetClosestNode(m_Position) };
-	if(node->GetBottomNeighbor()->CanBeVisited() && m_State == MoneyBagComponent::StateMoneyBag::Idle)
+	const auto goLevel{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
+	const auto node{goLevel->GetComponent<LevelComponent>()->GetGraph()->GetClosestNode(m_Position)};
+	if (node->GetBottomNeighbor()->CanBeVisited() && m_State == MoneyBagComponent::StateMoneyBag::Idle)
 	{
 		m_State = MoneyBagComponent::StateMoneyBag::CanFall;
 		pBlackboard->ChangeValue("MoneyBagStates", m_State);
 		TimerManager::GetInstance().AddTimer(this, &IdleStateMoneyBag::SetFallingState, 1.5f);
 	}
-	if(m_State == MoneyBagComponent::StateMoneyBag::IsFalling)
+	if (m_State == MoneyBagComponent::StateMoneyBag::IsFalling)
 	{
 		pBlackboard->ChangeValue("MoneyBagStates", m_State);
 	}
@@ -277,13 +277,13 @@ void FallingStateMoneyBag::Enter(Blackboard* pBlackboard)
 	EventManager::GetInstance().AddEvent("MoneyBagLanded", this, &FallingStateMoneyBag::HandleMoneyBagLanded);
 	pBlackboard->GetValue("MoneyBagStates", m_State);
 	pBlackboard->GetValue("MoneyBagObject", m_MoneyBagObject);
-	if(!m_MoneyBagObject->HasComponent<MoneyBagComponent>())
+	if (!m_MoneyBagObject->HasComponent<MoneyBagComponent>())
 	{
 		std::cerr << "FallingStateMoneyBag::Enter: Object does not have money bag component\n";
 	}
 
-	const auto levelObject{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
-	const auto levelComp{ levelObject->GetComponent<LevelComponent>() };
+	const auto levelObject{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
+	const auto levelComp{levelObject->GetComponent<LevelComponent>()};
 	m_NodeTravelled.emplace_back(levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()));
 }
 
@@ -295,7 +295,7 @@ void FallingStateMoneyBag::Exit(Blackboard* pBlackboard)
 
 void FallingStateMoneyBag::Update(Blackboard* pBlackboard)
 {
-	if(m_State != MoneyBagComponent::StateMoneyBag::IsFalling)
+	if (m_State != MoneyBagComponent::StateMoneyBag::IsFalling)
 	{
 		pBlackboard->ChangeValue("MoneyBagStates", m_State);
 		return;
@@ -304,9 +304,9 @@ void FallingStateMoneyBag::Update(Blackboard* pBlackboard)
 	m_MoneyBagObject->Translate(TimeEngine::GetInstance().GetDeltaTime() * m_FallSpeed * m_Direction);
 
 	// Check if the object is in another node
-	const auto levelObject{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
-	const auto levelComp{ levelObject->GetComponent<LevelComponent>() };
-	const auto node{ levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()) };
+	const auto levelObject{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
+	const auto levelComp{levelObject->GetComponent<LevelComponent>()};
+	const auto node{levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition())};
 	if (std::ranges::find(m_NodeTravelled, node) == m_NodeTravelled.end())
 	{
 		m_NodeTravelled.emplace_back(node);
@@ -315,7 +315,7 @@ void FallingStateMoneyBag::Update(Blackboard* pBlackboard)
 
 void FallingStateMoneyBag::HandleMoneyBagLanded()
 {
-	if(m_NodeTravelled.size() <= 2)
+	if (m_NodeTravelled.size() <= 2)
 	{
 		m_State = MoneyBagComponent::StateMoneyBag::Idle;
 		return;

@@ -25,6 +25,7 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 	bool HasReachedDestination() const { return m_HasReachedDestination; }
 	void SetSpeed(float speed);
+	void StopMoving();
 
 private:
 	std::vector<GraphUtils::GraphNode*> m_Path;

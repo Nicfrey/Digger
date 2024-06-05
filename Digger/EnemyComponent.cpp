@@ -23,9 +23,29 @@ EnemyComponent::EnemyComponent(EnemyType type): EnemyComponent()
 	m_Type = type;
 }
 
+void EnemyComponent::StopMoving()
+{
+	// Check if all players are dead
+	size_t playersDead{};
+	const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
+	for(const auto& player :players)
+	{
+		if(player->GetComponent<HealthComponent>()->IsDead())
+		{
+			++playersDead;
+		}
+	}
+	if(playersDead == players.size())
+	{
+		m_StopMoving = true;
+		m_pNavMeshAgent->StopMoving();
+	}
+}
+
 void EnemyComponent::Init()
 {
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
+	EventManager::GetInstance().AddEvent("PlayerDied", this, &EnemyComponent::StopMoving);
 	if(GetGameObject()->HasComponent<SpriteComponent>())
 	{
 		const auto sprite{ GetGameObject()->GetComponent<SpriteComponent>() };
@@ -44,7 +64,7 @@ void EnemyComponent::Init()
 
 void EnemyComponent::Update()
 {
-	if(m_pNavMeshAgent->HasReachedDestination())
+	if(m_pNavMeshAgent->HasReachedDestination() && !m_StopMoving)
 	{
 		const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
 		const int index{MathUtils::Rand(0,players.size() - 1)};
@@ -98,6 +118,7 @@ void EnemyComponent::HandleDeadEnemy()
 void EnemyComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
+	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &EnemyComponent::StopMoving);
 }
 
 EnemyComponent::EnemyType EnemyComponent::GetType() const

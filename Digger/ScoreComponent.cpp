@@ -11,10 +11,6 @@ void ScoreComponent::AddScore(int score)
 {
 	m_Score += score;
 	EventManager::GetInstance().NotifyEvent("ScoreAdded");
-	if(m_Score >= 500)
-	{
-		EventManager::GetInstance().NotifyEvent("WinTheGame");
-	}
 }
 
 int ScoreComponent::GetScore() const
