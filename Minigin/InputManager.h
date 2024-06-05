@@ -25,7 +25,7 @@ namespace dae
 	public:
 		bool ProcessInput();
 		void BindCommand(const std::shared_ptr<Command>& pCommand, SDL_Scancode button, const TriggerType& triggerType = KeyDown);
-
+		void UnbindCommandObjects();
 		template<typename T>
 		void AddController(T* controller);
 	private:

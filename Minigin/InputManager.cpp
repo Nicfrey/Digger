@@ -5,6 +5,7 @@
 #include <glm/vec2.hpp>
 
 #include "Command.h"
+#include "GameObjectCommand.h"
 #include "WidgetManager.h"
 
 
@@ -70,6 +71,18 @@ void dae::InputManager::BindCommand(const std::shared_ptr<Command>& pCommand, SD
 	if (pCommand != nullptr)
 	{
 		m_InputsActionKeyboards.emplace_back(pCommand, button, triggerType);
+	}
+}
+
+void dae::InputManager::UnbindCommandObjects()
+{
+	std::erase_if(m_InputsActionKeyboards, [](const InputActionKeyboard& other)
+		{
+			return std::dynamic_pointer_cast<GameObjectCommand>(other.pCommand);
+		});
+	for (auto& controller : m_Controllers)
+	{
+		controller->UnbindActionGameObject();
 	}
 }
 

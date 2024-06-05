@@ -64,6 +64,17 @@ bool PlayerWinTransition::CalculateCondition(Blackboard* pBlackBoard) const
 	return false;
 }
 
+bool SkipLevelTransition::CalculateCondition(Blackboard* pBlackBoard) const
+{
+	bool isTransition;
+	if (pBlackBoard->GetValue("hasSkippedLevel", isTransition))
+	{
+		return isTransition;
+	}
+	std::cerr << "SkipLevelTransition: Could not find hasSkippedLevel in blackboard\n";
+	return false;
+}
+
 bool GameOverTransition::CalculateCondition(Blackboard* pBlackBoard) const
 {
 	bool lifeRemaining;

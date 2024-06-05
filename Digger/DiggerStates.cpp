@@ -105,8 +105,10 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
 	pBlackboard->ChangeValue("hasExtraLife", true);
+	pBlackboard->ChangeValue("hasSkippedLevel", false);
 	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
+	EventManager::GetInstance().AddEvent("SkipLevel", this, &PlayState::SkipLevel);
 	// TODO Play music of the game
 	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME), true);
 }
@@ -125,6 +127,10 @@ void PlayState::Update(Blackboard* pBlackboard)
 	if (m_PlayerHasWon)
 	{
 		pBlackboard->ChangeValue("hasPlayerWon", true);
+	}
+	if(m_HasSkippedLevel)
+	{
+		pBlackboard->ChangeValue("hasSkippedLevel", true);
 	}
 }
 
@@ -163,15 +169,23 @@ void PlayState::SetPlayerWon()
 	m_PlayerHasWon = true;
 }
 
+void PlayState::SkipLevel()
+{
+	m_HasSkippedLevel = true;
+}
+
 void PlayState::Exit(Blackboard* pBlackboard)
 {
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
 	pBlackboard->ChangeValue("hasExtraLife", true);
+	pBlackboard->ChangeValue("hasSkippedLevel", false);
 	m_PlayerHasWon = false;
 	m_PlayerIsDead = false;
+	m_HasSkippedLevel = false;
 	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
+	EventManager::GetInstance().RemoveEvent("SkipLevel", this, &PlayState::SkipLevel);
 }
 
 void RespawnState::Enter(Blackboard* pBlackboard)

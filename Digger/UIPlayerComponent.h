@@ -16,11 +16,12 @@ public:
 	void Render() const override;
 	void FixedUpdate() override;
 	void RenderGUI() override;
+	void OnDestroy() override;
 
 	void SetPosition(float x, float y) const;
 private:
-	void UpdateTextLife() const;
-	void UpdateTextScore() const;
+	void UpdateTextLife();
+	void UpdateTextScore();
 	void SetPositionTextLife(float x, float y) const;
 	void SetPositionTextLife(const glm::vec3& pos) const;
 	void SetPositionTextScore(const glm::vec3& pos) const;

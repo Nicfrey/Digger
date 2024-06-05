@@ -48,9 +48,6 @@
     <ClCompile Include="PlayerComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
-    <ClCompile Include="LevelUtils.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="EnemySpawnerComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
@@ -120,9 +117,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="DiggerTransitionAnim.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelUtils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="DiggerUtils.h">

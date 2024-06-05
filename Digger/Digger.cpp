@@ -144,12 +144,16 @@ void load()
 	const auto respawnTransition{ new PlayerRespawnTransition{} };
 	const auto gameOverTransition{ new GameOverTransition{} };
 	const auto wroteHighScoreTransition{ new WroteHighScoreTransition{} };
+	const auto skipLevelTransition{ new SkipLevelTransition{} };
+	const auto playerWinTransition{ new PlayerWinTransition{} };
 	gameState.AddTransition(menuState, loadState, selectedLevelTrans);
 	gameState.AddTransition(loadState, playState, loadLevelTransition);
 	gameState.AddTransition(playState, respawnState, playerDeadTransition);
 	gameState.AddTransition(respawnState, playState, respawnTransition);
 	gameState.AddTransition(playState, gameOverState, gameOverTransition);
 	gameState.AddTransition(gameOverState, menuState, wroteHighScoreTransition);
+	gameState.AddTransition(playState, loadState, skipLevelTransition);
+	gameState.AddTransition(playState, loadState, playerWinTransition);
 	gameState.AddParameter("hasSelectedLevel", false);
 	gameState.AddParameter("hasSelectedGameMode", false);
 	gameState.AddParameter("hasLoadedLevel", false);
@@ -159,6 +163,7 @@ void load()
 	gameState.AddParameter("hasWrittenHighScore", false);
 	gameState.AddParameter("hasExtraLife", false);
 	gameState.AddParameter("levelRemaining", 2);
+	gameState.AddParameter("hasSkippedLevel", false);
 	// gameState.AddParameter("players", dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>());
 	gameState.SetStartState(menuState);
 

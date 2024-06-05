@@ -57,7 +57,6 @@ void DiggerUtils::SkipLevel()
 	go->AddComponent(std::make_shared<LevelComponent>());
 	dae::SceneManager::GetInstance().Instantiate(go);
 	GameInstance::GetInstance().ChangeValue("CurrentLevel", level);
-	EventManager::GetInstance().NotifyEvent("LoadLevel");
 }
 
 void DiggerUtils::SelectSinglePlayer()

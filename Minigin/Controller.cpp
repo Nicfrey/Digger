@@ -6,6 +6,7 @@
 #include <Xinput.h>
 
 #include "Command.h"
+#include "GameObjectCommand.h"
 #include "InputManager.h"
 
 class GamepadController::GamepadControllerImpl
@@ -13,6 +14,7 @@ class GamepadController::GamepadControllerImpl
 	public:
 		GamepadControllerImpl(int index);
 		~GamepadControllerImpl();
+
 		struct InputActionController
 		{
 			InputActionController(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown) : triggerType{ triggerType }, button{ button }, pCommand{ pCommand }
@@ -24,6 +26,7 @@ class GamepadController::GamepadControllerImpl
 
 		void DoProcessInput();
 		void DoBindAction(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown);
+		void DoUnbindActionGameObject();
 
 private:
 	static DWORD m_TotalController;
@@ -53,6 +56,11 @@ GamepadController::GamepadControllerImpl::GamepadControllerImpl(int index)
 GamepadController::GamepadControllerImpl::~GamepadControllerImpl()
 {
 	--m_TotalController;
+}
+
+void GamepadController::GamepadControllerImpl::DoUnbindActionGameObject()
+{
+	std::erase_if(m_InputActions, [](const InputActionController& inputAction) { return std::dynamic_pointer_cast<GameObjectCommand>(inputAction.pCommand); });
 }
 
 void GamepadController::GamepadControllerImpl::DoProcessInput()
@@ -151,4 +159,9 @@ void GamepadController::BindAction(const std::shared_ptr<Command>& pCommand, uns
 	const TriggerType& triggerType)
 {
 	m_pImpl->DoBindAction(pCommand, button, triggerType);
+}
+
+void GamepadController::UnbindActionGameObject()
+{
+	m_pImpl->DoUnbindActionGameObject();
 }

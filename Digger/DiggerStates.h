@@ -52,8 +52,10 @@ private:
 	void SetPlayerIsDead();
 	void HandlePlayerWon();
 	void SetPlayerWon();
+	void SkipLevel();
 	bool m_PlayerIsDead{false};
 	bool m_PlayerHasWon{false};
+	bool m_HasSkippedLevel{ false };
 	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
 };
 

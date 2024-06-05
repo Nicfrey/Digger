@@ -41,6 +41,14 @@ public:
 	bool CalculateCondition(Blackboard* pBlackBoard) const override;
 };
 
+class SkipLevelTransition final : public FSMTransition
+{
+public:
+	SkipLevelTransition() = default;
+	~SkipLevelTransition() override = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+};
+
 class GameOverTransition final : public FSMTransition
 {
 public:

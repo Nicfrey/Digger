@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "Collider2D.h"
+#include "InputManager.h"
 #include "Minigin.h"
 #include "Observer.h"
 #include "QuadTree.h"
@@ -143,6 +144,7 @@ void Scene::RemoveAll()
 	}
 	m_objects.clear();
 	m_SpatialGrid->Clear();
+	dae::InputManager::GetInstance().UnbindCommandObjects();
 }
 
 void Scene::Update()
