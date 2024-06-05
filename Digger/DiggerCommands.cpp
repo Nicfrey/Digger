@@ -232,6 +232,11 @@ void MoveKeyboardCommand::Execute()
 	}
 }
 
+void SkipLevelCommand::Execute()
+{
+	EventManager::GetInstance().NotifyEvent("SkipLevel");
+}
+
 ShootCommand::ShootCommand(dae::GameObject* go): GameObjectCommand{go}
 {
 }

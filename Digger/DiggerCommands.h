@@ -85,5 +85,14 @@ private:
 
 #pragma endregion UICommands
 
+#pragma region OtherCommands
+class SkipLevelCommand : public Command
+{
+public:
+	SkipLevelCommand() = default;
+	void Execute() override;
+};
+#pragma endregion OtherCommands
+
 
 

@@ -7,7 +7,7 @@
 #include "Utils.h"
 
 NavMeshAgentComponent::NavMeshAgentComponent(GraphUtils::Graph* graph, float speed, bool canAvoidObstacle) : BaseComponent{ nullptr }, m_Target(),
-                                                                                      m_HasReachedDestination(false), m_Direction(), m_CanAvoidObstacle{canAvoidObstacle}
+                                                                                      m_HasReachedDestination(true), m_Direction(), m_CanAvoidObstacle{canAvoidObstacle}
 {
 	m_Graph = graph;
 	m_Speed = speed;

@@ -29,6 +29,8 @@ namespace dae
 		bool AddComponent(std::shared_ptr<T> component);
 		template <typename T>
 		bool RemoveComponent(const std::shared_ptr<T>& component);
+		template <typename T>
+		bool RemoveComponent();
 		bool RemoveComponentAtIndex(size_t index);
 		template <typename T>
 		std::shared_ptr<T> GetComponent() const;
@@ -124,6 +126,25 @@ namespace dae
 		if (it != m_Components.end())
 		{
 			component->RemoveGameObject();
+			m_Components.erase(it);
+			return true;
+		}
+		return false;
+	}
+
+	template <typename T>
+	bool GameObject::RemoveComponent()
+	{
+		auto it{
+			std::find_if(m_Components.begin(), m_Components.end(),
+			             [](const std::shared_ptr<BaseComponent>& other)
+			             {
+				             return std::dynamic_pointer_cast<T>(other) != nullptr;
+			             })
+		};
+		if (it != m_Components.end())
+		{
+			(*it)->RemoveGameObject();
 			m_Components.erase(it);
 			return true;
 		}

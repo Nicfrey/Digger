@@ -31,6 +31,7 @@ namespace DiggerUtils
 	void OnLoadLevel1();
 	void OnLoadLevel2();
 	void OnLoadLevel3();
+	void SkipLevel();
 
 	void SelectSinglePlayer();
 	void SelectCoop();

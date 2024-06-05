@@ -40,16 +40,7 @@ LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUti
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
 	EventManager::GetInstance().AddEvent("ReloadCurrentLevel", this, &LevelComponent::RespawnPlayers);
-	m_pPlayersCurrentNode.resize(2);
-	for (auto& node : m_pPlayersCurrentNode)
-	{
-		node = nullptr;
-	}
-	m_pPlayersPreviousNode.resize(2);
-	for (auto& node : m_pPlayersPreviousNode)
-	{
-		node = nullptr;
-	}
+	ResetNodePlayers();
 }
 
 LevelComponent::~LevelComponent()
@@ -134,8 +125,6 @@ void LevelComponent::Init()
 
 void LevelComponent::RenderGUI()
 {
-	ImGui::SetNextWindowSize(ImVec2(400, 200));
-	ImGui::SetNextWindowPos(ImVec2(100, 100));
 	const std::shared_ptr player{dae::SceneManager::GetInstance().GetGameObjectByTag("Player")};
 	ImGui::Begin("LevelComponent");
 	for (size_t i{}; i < m_pGraph->GetNodes().size(); ++i)
@@ -170,6 +159,13 @@ void LevelComponent::RenderGUI()
 	ImGui::End();
 }
 
+void LevelComponent::OnDestroy()
+{
+	EventManager::GetInstance().RemoveEvent("LoadLevel", this, &LevelComponent::LoadLevel);
+	EventManager::GetInstance().RemoveEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
+	EventManager::GetInstance().RemoveEvent("ReloadCurrentLevel", this, &LevelComponent::RespawnPlayers);
+}
+
 void LevelComponent::CreateSpawnerEnemy(int index) const
 {
 	const glm::vec3 pos{m_pGraph->GetNode(index)->GetPosition()};
@@ -184,64 +180,11 @@ void LevelComponent::LoadLevel()
 {
 	GameInstance::GetInstance().GetValue("CurrentLevel", m_Level);
 	GameInstance::GetInstance().GetValue("CurrentGameMode", m_GameMode);
-	constexpr int maxRow{10};
-	constexpr int maxColumn{15};
 
-	// Read from json
 	nlohmann::json json{
 		dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(m_Level) + ".json")
 	};
-
-
-	// Init graph
-	for (int i{}; i < maxRow; ++i)
-	{
-		for (int j{}; j < maxColumn; ++j)
-		{
-			const int currentIndex{i * maxColumn + j};
-			GraphUtils::GraphNode* current{
-				m_pGraph->AddNode(glm::vec3{
-					m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0
-				})
-			};
-			current->SetCanBeVisited(false);
-			if (j != 0)
-			{
-				GraphUtils::GraphNode* left{m_pGraph->GetNode(currentIndex - 1)};
-				left->AddNeighbor(current, glm::distance(current->GetPosition(), left->GetPosition()));
-				current->AddNeighbor(left, glm::distance(current->GetPosition(), left->GetPosition()));
-			}
-			const int indexTop{currentIndex - maxColumn};
-			if (i > 0)
-			{
-				GraphUtils::GraphNode* top{m_pGraph->GetNode(indexTop)};
-				top->AddNeighbor(current, glm::distance(current->GetPosition(), top->GetPosition()));
-				current->AddNeighbor(top, glm::distance(current->GetPosition(), top->GetPosition()));
-			}
-		}
-	}
-
-	// Set the graph index to be visited
-	GraphUtils::GraphNode* currentNode{nullptr};
-	GraphUtils::GraphNode* previousNode{nullptr};
-	for (auto data : json["CanBeVisited"])
-	{
-		const glm::vec2 pos{data.at("x"), data.at("y")};
-		currentNode = m_pGraph->GetNode(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
-		currentNode->SetCanBeVisited(true);
-		if (previousNode != nullptr && currentNode->IsNodeNeighbor(previousNode))
-		{
-			previousNode->SetTransitionCanBeVisited(currentNode);
-			currentNode->SetTransitionCanBeVisited(previousNode);
-		}
-		previousNode = currentNode;
-	}
-
-	// Init background
-	int numberLevel{json["NumberLevel"].get<int>()};
-	CreateBackgroundLevel(numberLevel);
-
-
+	InitializeLevel(json);
 	// Init Players
 	int indexPlayer{};
 	for (auto data : json["SpawnPointPlayers"])
@@ -250,10 +193,20 @@ void LevelComponent::LoadLevel()
 		{
 			break;
 		}
-		const glm::vec2 pos{data.at("x"), data.at("y")};
-		CreatePlayerAtIndex(GetIndexFromPosition(pos, maxColumn), indexPlayer);
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		CreatePlayerAtIndex(GetIndexFromPosition(pos, m_MaxColumn), indexPlayer);
 		++indexPlayer;
 	}
+}
+
+void LevelComponent::InitializeLevel(const nlohmann::json& json)
+{
+	// Init graph
+	InitializeGraph(json);
+
+	// Init background
+	const int numberLevel{ json["NumberLevel"].get<int>() };
+	CreateBackgroundLevel(numberLevel);
 
 	// Init the spawn point
 	if (m_GameMode == DiggerUtils::DiggerGameMode::Versus)
@@ -262,28 +215,27 @@ void LevelComponent::LoadLevel()
 	}
 	else
 	{
-		auto spawnEnemy = json["SpawnPointEnemy"];
-		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), maxColumn));
+		const auto spawnEnemy = json["SpawnPointEnemy"];
+		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), m_MaxColumn));
 	}
 
 
 	for (auto data : json["Emerald"])
 	{
-		const glm::vec2 pos{data.at("x"), data.at("y")};
-		CreateEmeraldAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		CreateEmeraldAtIndex(static_cast<int>(pos.y) * m_MaxColumn + static_cast<int>(pos.x));
 	}
 
 	for (auto data : json["Moneybag"])
 	{
-		const glm::vec2 pos{data.at("x"), data.at("y")};
-		CreateMoneyBagAtIndex(static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x));
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		CreateMoneyBagAtIndex(static_cast<int>(pos.y) * m_MaxColumn + static_cast<int>(pos.x));
 	}
 	EventManager::GetInstance().NotifyEvent("LevelLoaded");
 }
 
 void LevelComponent::RespawnPlayers()
 {
-	constexpr int maxColumn{15};
 	// Delete all the enemies and the spawner
 	const auto enemies{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>()};
 	for (const auto& enemy : enemies)
@@ -303,7 +255,7 @@ void LevelComponent::RespawnPlayers()
 	else
 	{
 		const auto spawnEnemy = json["SpawnPointEnemy"];
-		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), maxColumn));
+		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), m_MaxColumn));
 	}
 
 	const auto players{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>()};
@@ -315,7 +267,7 @@ void LevelComponent::RespawnPlayers()
 			break;
 		}
 		const glm::vec2 pos{data.at("x"), data.at("y")};
-		players[indexPlayer]->SetLocalPosition(m_pGraph->GetNode(GetIndexFromPosition(pos, maxColumn))->GetPosition());
+		players[indexPlayer]->SetLocalPosition(m_pGraph->GetNode(GetIndexFromPosition(pos, m_MaxColumn))->GetPosition());
 		players[indexPlayer]->GetComponent<HealthComponent>()->SetAlive();
 		players[indexPlayer]->GetComponent<PlayerComponent>()->HandleRespawn();
 		++indexPlayer;
@@ -532,5 +484,66 @@ void LevelComponent::UpdateGraph()
 				}
 			});
 		}
+	}
+}
+
+void LevelComponent::InitializeGraph(const nlohmann::json& json) const
+{
+	for (int i{}; i < m_MaxRow; ++i)
+	{
+		for (int j{}; j < m_MaxColumn; ++j)
+		{
+			const int currentIndex{ i * m_MaxColumn + j };
+			GraphUtils::GraphNode* current{
+				m_pGraph->AddNode(glm::vec3{
+					m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0
+				})
+			};
+			current->SetCanBeVisited(false);
+			if (j != 0)
+			{
+				GraphUtils::GraphNode* left{ m_pGraph->GetNode(currentIndex - 1) };
+				left->AddNeighbor(current, glm::distance(current->GetPosition(), left->GetPosition()));
+				current->AddNeighbor(left, glm::distance(current->GetPosition(), left->GetPosition()));
+			}
+			const int indexTop{ currentIndex - m_MaxColumn };
+			if (i > 0)
+			{
+				GraphUtils::GraphNode* top{ m_pGraph->GetNode(indexTop) };
+				top->AddNeighbor(current, glm::distance(current->GetPosition(), top->GetPosition()));
+				current->AddNeighbor(top, glm::distance(current->GetPosition(), top->GetPosition()));
+			}
+		}
+	}
+
+	GraphUtils::GraphNode* currentNode{ nullptr };
+	GraphUtils::GraphNode* previousNode{ nullptr };
+	for (auto data : json["CanBeVisited"])
+	{
+		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		currentNode = m_pGraph->GetNode(static_cast<int>(pos.y) * m_MaxColumn + static_cast<int>(pos.x));
+		currentNode->SetCanBeVisited(true);
+		if (previousNode != nullptr && currentNode->IsNodeNeighbor(previousNode))
+		{
+			previousNode->SetTransitionCanBeVisited(currentNode);
+			currentNode->SetTransitionCanBeVisited(previousNode);
+		}
+		previousNode = currentNode;
+	}
+}
+
+void LevelComponent::ResetNodePlayers()
+{
+	m_pPlayersCurrentNode.clear();
+	m_pPlayersPreviousNode.clear();
+	m_pPlayersCurrentNode.resize(2);
+	for (auto& node : m_pPlayersCurrentNode)
+	{
+		node = nullptr;
+	}
+	m_pPlayersPreviousNode.resize(2);
+	for (auto& node : m_pPlayersPreviousNode)
+	{
+		node = nullptr;
 	}
 }

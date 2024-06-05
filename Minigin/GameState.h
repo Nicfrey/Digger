@@ -1,26 +1,36 @@
 #pragma once
 #include "BaseComponent.h"
+#include "Blackboard.h"
+#include "FiniteStateMachine.h"
+#include "Singleton.h"
 
 class FSMTransition;
 class FSMStateNode;
 class Blackboard;
 class FiniteStateMachine;
 
-class GameState : public BaseComponent
+class GameState final : public dae::Singleton<GameState>
 {
 public:
-	GameState(Blackboard* pBlackboard);
+	GameState() = default;
 	~GameState() override;
-	GameState(const GameState& other);
-	GameState(GameState&& other) noexcept;
-	GameState& operator=(const GameState& other);
-	GameState& operator=(GameState&& other) noexcept;
+	GameState(const GameState& other) = delete;
+	GameState(GameState&& other) noexcept = delete;
+	GameState& operator=(const GameState& other) = delete;
+	GameState& operator=(GameState&& other) noexcept = delete;
 
-	std::shared_ptr<BaseComponent> Clone() const override;
-	void Update() override;
+	void Update();
+	template<typename T>
+	void AddParameter(const std::string& nameParam, T value);
 	void AddState(FSMStateNode* pState) const;
 	void AddTransition(FSMStateNode* pStartState, FSMStateNode* pEndState, FSMTransition* pCondition) const;
 	void SetStartState(FSMStateNode* pStartState) const;
 private:
-	FiniteStateMachine* m_StateMachine;
+	FiniteStateMachine* m_StateMachine{new FiniteStateMachine{new Blackboard{}}};
 };
+
+template <typename T>
+void GameState::AddParameter(const std::string& nameParam, T value)
+{
+	m_StateMachine->GetBlackboard()->AddValue(nameParam, value);
+}

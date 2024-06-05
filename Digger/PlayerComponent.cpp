@@ -15,7 +15,6 @@
 #include "Observer.h"
 #include "SpriteComponent.h"
 #include "Scene.h"
-#include "SoundSystemEngine.h"
 
 PlayerComponent::PlayerComponent() : BaseComponent(nullptr), m_pProjectile{ nullptr }
 {

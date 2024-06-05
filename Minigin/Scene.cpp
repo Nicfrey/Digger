@@ -136,7 +136,13 @@ void Scene::Remove(std::shared_ptr<GameObject>& object)
 
 void Scene::RemoveAll()
 {
+	for(const auto& object : m_objects)
+	{
+		object->Destroy();
+		object->OnDestroy();
+	}
 	m_objects.clear();
+	m_SpatialGrid->Clear();
 }
 
 void Scene::Update()

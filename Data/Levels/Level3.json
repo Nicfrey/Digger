@@ -2,8 +2,8 @@
     "NumberLevel": 1,
     "SpawnPointEnemy": 
     {
-        "x":10,
-        "y":10
+        "x":9,
+        "y":0
     },
     "SpawnPointPlayers":
     [

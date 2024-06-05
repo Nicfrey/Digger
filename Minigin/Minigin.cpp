@@ -13,6 +13,7 @@
 
 #include <thread>
 
+#include "GameState.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
@@ -105,6 +106,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 	auto lastTime{ std::chrono::high_resolution_clock::now() };
 
+	auto& gameState = GameState::GetInstance();
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
@@ -129,6 +131,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			lag -= FIXED_TIME_STEP;
 		}
 		sceneManager.OnCollisionUpdate();
+		gameState.Update();
 		timerManager.Update();
 		sceneManager.Update();
 		renderer.Render();

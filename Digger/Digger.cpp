@@ -10,13 +10,17 @@
 #include "ButtonComponent.h"
 #include "Controller.h"
 #include "DiggerCommands.h"
+#include "DiggerStates.h"
+#include "DiggerTransitions.h"
 #include "DiggerUtils.h"
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "GameState.h"
 #include "GameStateComponent.h"
 #include "InputManager.h"
 #include "KeyboardComponent.h"
 #include "Minigin.h"
+#include "Observer.h"
 #include "ResourceManager.h"
 #include "Scene.h"
 #include "SceneManager.h"
@@ -42,7 +46,7 @@ void load()
 	ms.Add(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), "Sounds/GameOverMusic.mp3");
 	ms.Add(static_cast<MusicId>(DiggerUtils::MusicDiggerID::MAIN_MENU), "Sounds/MainMenuMusic.mp3");
 	ms.Add(static_cast<MusicId>(DiggerUtils::MusicDiggerID::WIN),"Sounds/LevelCompleteMusic.mp3");
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("MenuDigger");
+	dae::SceneManager::GetInstance().CreateScene("MenuDigger");
 	dae::SceneManager::GetInstance().SetActiveScene("MenuDigger");
 
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("DiggerFont.ttf", 40);
@@ -120,18 +124,50 @@ void load()
 	controller->BindAction(moveLeftKeyboardCommand, XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::KeyPressed);
 	dae::InputManager::GetInstance().AddController(controller);
 
+	const auto skipLevelCommand{ std::make_shared<SkipLevelCommand>() };
+	dae::InputManager::GetInstance().BindCommand(skipLevelCommand, SDL_SCANCODE_F1, TriggerType::KeyPressed);
 
+	auto& gameState{ GameState::GetInstance() };
+	const auto menuState{ new MenuState{} };
+	const auto loadState{ new LoadState{} };
+	const auto playState{ new PlayState{} };
+	const auto gameOverState{ new GameOverState() };
+	const auto respawnState{ new RespawnState() };
+	gameState.AddState(menuState);
+	gameState.AddState(loadState);
+	gameState.AddState(playState);
+	gameState.AddState(gameOverState);
+	gameState.AddState(respawnState);
+	const auto selectedLevelTrans{ new HasSelectedLevelTransition{} };
+	const auto loadLevelTransition{ new LoadLevelTransition{} };
+	const auto playerDeadTransition{ new PlayerDeadTransition{} };
+	const auto respawnTransition{ new PlayerRespawnTransition{} };
+	const auto gameOverTransition{ new GameOverTransition{} };
+	const auto wroteHighScoreTransition{ new WroteHighScoreTransition{} };
+	gameState.AddTransition(menuState, loadState, selectedLevelTrans);
+	gameState.AddTransition(loadState, playState, loadLevelTransition);
+	gameState.AddTransition(playState, respawnState, playerDeadTransition);
+	gameState.AddTransition(respawnState, playState, respawnTransition);
+	gameState.AddTransition(playState, gameOverState, gameOverTransition);
+	gameState.AddTransition(gameOverState, menuState, wroteHighScoreTransition);
+	gameState.AddParameter("hasSelectedLevel", false);
+	gameState.AddParameter("hasSelectedGameMode", false);
+	gameState.AddParameter("hasLoadedLevel", false);
+	gameState.AddParameter("currentLevel", 0);
+	gameState.AddParameter("hasLoadedLevel", false);
+	gameState.AddParameter("isPlayerDead", false);
+	gameState.AddParameter("hasWrittenHighScore", false);
+	gameState.AddParameter("hasExtraLife", false);
+	gameState.AddParameter("levelRemaining", 2);
+	// gameState.AddParameter("players", dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>());
+	gameState.SetStartState(menuState);
 
-	auto go{ std::make_shared<dae::GameObject>() };
-	const auto gameStateComponent{std::make_shared<GameStateComponent>()};
-	go->AddComponent(gameStateComponent);
-	GameInstance::GetInstance().AddValue("GameState", go);
 	DiggerUtils::DiggerGameMode gameMode{ DiggerUtils::DiggerGameMode::SinglePlayer };
 	GameInstance::GetInstance().AddValue("CurrentGameMode", gameMode);
 	int levelSelection{};
 	GameInstance::GetInstance().AddValue("CurrentLevel",levelSelection);
-	scene.Add(go);
 	ms.Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::MAIN_MENU), true);
+	EventManager::GetInstance().AddEvent("SkipLevel", DiggerUtils::SkipLevel);
 }
 
 int main()
