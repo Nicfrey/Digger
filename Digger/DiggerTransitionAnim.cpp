@@ -54,7 +54,17 @@ bool TransitionMoneyBagIsIdle::CalculateCondition(Blackboard* pBlackBoard) const
 	MoneyBagComponent::StateMoneyBag isTransition;
 	if (pBlackBoard->GetValue("MoneyBagState", isTransition))
 	{
-		return isTransition == MoneyBagComponent::StateMoneyBag::Idle || isTransition == MoneyBagComponent::StateMoneyBag::IsFalling;
+		return isTransition == MoneyBagComponent::StateMoneyBag::Idle;
+	}
+	return false;
+}
+
+bool TransitionMoneyBagIsFalling::CalculateCondition(Blackboard* pBlackBoard) const
+{
+	MoneyBagComponent::StateMoneyBag isTransition;
+	if (pBlackBoard->GetValue("MoneyBagState", isTransition))
+	{
+		return isTransition == MoneyBagComponent::StateMoneyBag::IsFalling;
 	}
 	return false;
 }

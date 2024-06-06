@@ -171,7 +171,6 @@ void load()
 	GameInstance::GetInstance().AddValue("CurrentGameMode", gameMode);
 	int levelSelection{};
 	GameInstance::GetInstance().AddValue("CurrentLevel",levelSelection);
-	ms.Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::MAIN_MENU), true);
 	EventManager::GetInstance().AddEvent("SkipLevel", DiggerUtils::SkipLevel);
 }
 

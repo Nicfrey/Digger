@@ -48,6 +48,15 @@ public:
 	~TransitionMoneyBagIsIdle() override = default;
 };
 
+class TransitionMoneyBagIsFalling : public FSMTransition
+{
+public:
+	TransitionMoneyBagIsFalling() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionMoneyBagIsFalling() override = default;
+
+};
+
 class TransitionMoneyBagIsDestroyed : public FSMTransition
 {
 public:

@@ -17,23 +17,3 @@ int ScoreComponent::GetScore() const
 {
 	return m_Score;
 }
-
-void ScoreComponent::Update()
-{
-}
-
-void ScoreComponent::FixedUpdate()
-{
-}
-
-void ScoreComponent::Init()
-{
-}
-
-void ScoreComponent::Render() const
-{
-}
-
-void ScoreComponent::RenderGUI()
-{
-}

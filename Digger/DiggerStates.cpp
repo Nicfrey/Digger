@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Blackboard.h"
+#include "BoxCollider2D.h"
 #include "DiggerUtils.h"
 #include "GameObject.h"
 #include "LevelComponent.h"
@@ -14,11 +15,12 @@
 #include "WidgetManager.h"
 #include "Graph.h"
 #include "HealthComponent.h"
+#include "imgui.h"
 #include "PlayerComponent.h"
 
 void MenuState::Enter(Blackboard* pBlackboard)
 {
-	// TODO Play menu music
+	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::MAIN_MENU), true);
 	// Add function to event
 	EventManager::GetInstance().AddEvent("SelectGameMode", this, &MenuState::HasSelectedGameMode);
 	EventManager::GetInstance().AddEvent("CancelGameMode", this, &MenuState::CancelGameMode);
@@ -29,7 +31,6 @@ void MenuState::Enter(Blackboard* pBlackboard)
 
 void MenuState::Update(Blackboard* pBlackboard)
 {
-	// TODO Check if player has selected a game mode and a level
 	if (m_HasSelectedGameMode && m_HasSelectedLevel)
 	{
 		// Transition to LoadState
@@ -244,41 +245,40 @@ void GameOverState::HasSetName()
 
 void IdleStateMoneyBag::Enter(Blackboard* pBlackboard)
 {
-	pBlackboard->GetValue("MoneyBagStates", m_State);
+	pBlackboard->GetValue("MoneyBagObject", m_MoneyBagObject);
+	pBlackboard->GetValue("MoneyBagState", m_State);
 	switch (m_State)
 	{
 	case MoneyBagComponent::StateMoneyBag::IsDestroyed:
+		TimerManager::GetInstance().AddTimer(this, &IdleStateMoneyBag::SetIdleDestroyed, 0.5f);
+		break;
 	case MoneyBagComponent::StateMoneyBag::IdleDestroyed:
 	case MoneyBagComponent::StateMoneyBag::Idle:
-
 		break;
 	case MoneyBagComponent::StateMoneyBag::CanFall:
 	case MoneyBagComponent::StateMoneyBag::IsFalling:
 		std::cout << "IdleStateMoneyBag::Enter: Something went wrong\n";
 		break;
 	}
-	pBlackboard->GetValue("Position", m_Position);
 }
 
 void IdleStateMoneyBag::Exit(Blackboard* pBlackboard)
 {
-	pBlackboard->ChangeValue("MoneyBagStates", m_State);
+	pBlackboard->ChangeValue("MoneyBagState", m_State);
+	TimerManager::GetInstance().RemoveTimer(this, &IdleStateMoneyBag::SetIdleDestroyed, 0.5f);
 }
 
 void IdleStateMoneyBag::Update(Blackboard* pBlackboard)
 {
-	// TODO check if the bottom node is empty
-	const auto goLevel{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
-	const auto node{goLevel->GetComponent<LevelComponent>()->GetGraph()->GetClosestNode(m_Position)};
-	if (node->GetBottomNeighbor()->CanBeVisited() && m_State == MoneyBagComponent::StateMoneyBag::Idle)
-	{
-		m_State = MoneyBagComponent::StateMoneyBag::CanFall;
-		pBlackboard->ChangeValue("MoneyBagStates", m_State);
-		TimerManager::GetInstance().AddTimer(this, &IdleStateMoneyBag::SetFallingState, 1.5f);
-	}
+	ChangeSizeCollider();
+	CheckBottomNode(pBlackboard);
 	if (m_State == MoneyBagComponent::StateMoneyBag::IsFalling)
 	{
-		pBlackboard->ChangeValue("MoneyBagStates", m_State);
+		pBlackboard->ChangeValue("MoneyBagState", m_State);
+	}
+	if (m_State == MoneyBagComponent::StateMoneyBag::IdleDestroyed)
+	{
+		pBlackboard->ChangeValue("MoneyBagState", m_State);
 	}
 }
 
@@ -287,11 +287,37 @@ void IdleStateMoneyBag::SetFallingState()
 	m_State = MoneyBagComponent::StateMoneyBag::IsFalling;
 }
 
+void IdleStateMoneyBag::SetIdleDestroyed()
+{
+	m_State = MoneyBagComponent::StateMoneyBag::IdleDestroyed;
+}
+
+void IdleStateMoneyBag::CheckBottomNode(Blackboard* pBlackboard)
+{
+	const auto goLevel{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
+	const auto node{ goLevel->GetComponent<LevelComponent>()->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()) };
+	const auto bottomNode{ node->GetBottomNeighbor() };
+	if (bottomNode != nullptr && (bottomNode->CanBeVisited() && m_State == MoneyBagComponent::StateMoneyBag::Idle))
+	{
+		m_State = MoneyBagComponent::StateMoneyBag::CanFall;
+		pBlackboard->ChangeValue("MoneyBagState", m_State);
+		TimerManager::GetInstance().AddTimer(this, &IdleStateMoneyBag::SetFallingState, 1.5f);
+	}
+}
+
+void IdleStateMoneyBag::ChangeSizeCollider() const
+{
+	if (m_State == MoneyBagComponent::StateMoneyBag::IsDestroyed || m_State == MoneyBagComponent::StateMoneyBag::IdleDestroyed)
+	{
+		m_MoneyBagObject->GetComponent<BoxCollider2D>()->SetSize({ glm::vec2{m_MoneyBagObject->GetWorldPosition().x,m_MoneyBagObject->GetWorldPosition().y - 30},15,30 });
+	}
+}
+
 void FallingStateMoneyBag::Enter(Blackboard* pBlackboard)
 {
 	m_NodeTravelled.clear();
 	EventManager::GetInstance().AddEvent("MoneyBagLanded", this, &FallingStateMoneyBag::HandleMoneyBagLanded);
-	pBlackboard->GetValue("MoneyBagStates", m_State);
+	pBlackboard->GetValue("MoneyBagState", m_State);
 	pBlackboard->GetValue("MoneyBagObject", m_MoneyBagObject);
 	if (!m_MoneyBagObject->HasComponent<MoneyBagComponent>())
 	{
@@ -300,7 +326,9 @@ void FallingStateMoneyBag::Enter(Blackboard* pBlackboard)
 
 	const auto levelObject{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
 	const auto levelComp{levelObject->GetComponent<LevelComponent>()};
-	m_NodeTravelled.emplace_back(levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()));
+	const auto currentNode{ levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()) };
+	levelComp->FreeSpaceMoneyBag(currentNode);
+	m_NodeTravelled.emplace_back(currentNode);
 }
 
 void FallingStateMoneyBag::Exit(Blackboard* pBlackboard)
@@ -311,22 +339,11 @@ void FallingStateMoneyBag::Exit(Blackboard* pBlackboard)
 
 void FallingStateMoneyBag::Update(Blackboard* pBlackboard)
 {
-	if (m_State != MoneyBagComponent::StateMoneyBag::IsFalling)
-	{
-		pBlackboard->ChangeValue("MoneyBagStates", m_State);
-		return;
-	}
+	pBlackboard->ChangeValue("MoneyBagState", m_State);
 	// Fall to the bottom node
 	m_MoneyBagObject->Translate(TimeEngine::GetInstance().GetDeltaTime() * m_FallSpeed * m_Direction);
 
-	// Check if the object is in another node
-	const auto levelObject{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
-	const auto levelComp{levelObject->GetComponent<LevelComponent>()};
-	const auto node{levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition())};
-	if (std::ranges::find(m_NodeTravelled, node) == m_NodeTravelled.end())
-	{
-		m_NodeTravelled.emplace_back(node);
-	}
+	CheckBottomNode();
 }
 
 void FallingStateMoneyBag::HandleMoneyBagLanded()
@@ -337,4 +354,17 @@ void FallingStateMoneyBag::HandleMoneyBagLanded()
 		return;
 	}
 	m_State = MoneyBagComponent::StateMoneyBag::IsDestroyed;
+}
+
+void FallingStateMoneyBag::CheckBottomNode()
+{
+	// Check if the object is in another node
+	const auto levelObject{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
+	const auto levelComp{ levelObject->GetComponent<LevelComponent>() };
+	const auto node{ levelComp->GetGraph()->GetClosestNode(m_MoneyBagObject->GetWorldPosition()) };
+	if (std::ranges::find(m_NodeTravelled, node) == m_NodeTravelled.end())
+	{
+		m_NodeTravelled.emplace_back(node);
+		// Check if the bottom node can be visited
+	}
 }
