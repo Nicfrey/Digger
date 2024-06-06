@@ -95,8 +95,11 @@ public:
 	void Update(Blackboard* pBlackboard) override;
 private:
 	MoneyBagComponent::StateMoneyBag m_State;
-	glm::vec3 m_Position;
+	std::shared_ptr<dae::GameObject> m_MoneyBagObject{nullptr};
 	void SetFallingState();
+	void SetIdleDestroyed();
+	void CheckBottomNode(Blackboard* pBlackboard);
+	void ChangeSizeCollider() const;
 };
 
 class FallingStateMoneyBag : public FSMStateNode
@@ -108,6 +111,7 @@ public:
 	void Update(Blackboard* pBlackboard) override;
 private:
 	void HandleMoneyBagLanded();
+	void CheckBottomNode();
 	MoneyBagComponent::StateMoneyBag m_State{};
 	std::vector<GraphUtils::GraphNode*> m_NodeTravelled{};
 	std::shared_ptr<dae::GameObject> m_MoneyBagObject{nullptr};

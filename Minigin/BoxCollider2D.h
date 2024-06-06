@@ -24,6 +24,8 @@ public:
 	bool IsColliding(std::shared_ptr<dae::GameObject>& other) override;
 	Rectf GetBoxCollider() const;
 	void SetSize(const Rectf& size);
+	void SetWidth(float width);
+	void SetHeight(float height);
 
 private:
 	// Overlap and raycast

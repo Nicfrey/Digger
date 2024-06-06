@@ -225,3 +225,13 @@ void BoxCollider2D::SetSize(const Rectf& size)
 {
 	m_BoxCollider = size;
 }
+
+void BoxCollider2D::SetWidth(float width)
+{
+	m_BoxCollider.width = width;
+}
+
+void BoxCollider2D::SetHeight(float height)
+{
+	m_BoxCollider.height = height;
+}

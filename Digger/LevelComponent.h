@@ -34,6 +34,7 @@ public:
 	GraphUtils::Graph* GetGraph() const;
 	void RenderGUI() override;
 	void OnDestroy() override;
+	void FreeSpaceMoneyBag(GraphUtils::GraphNode* node) const;
 private:
 	DiggerUtils::DiggerGameMode m_GameMode{};
 	int m_Level{};

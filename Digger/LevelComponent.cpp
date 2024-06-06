@@ -60,7 +60,8 @@ bool LevelComponent::IsNodeMoneyBag(const GraphUtils::GraphNode* node) const
 	const auto moneyBags{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<MoneyBagComponent>()};
 	for (auto& moneyBag : moneyBags)
 	{
-		if (moneyBag->GetComponent<MoneyBagComponent>()->GetState() == MoneyBagComponent::StateMoneyBag::Idle)
+		auto state = moneyBag->GetComponent<MoneyBagComponent>()->GetState();
+		if (state == MoneyBagComponent::StateMoneyBag::CanFall || state == MoneyBagComponent::StateMoneyBag::Idle)
 		{
 			if (m_pGraph->GetClosestNode(moneyBag->GetWorldPosition()) == node)
 			{
@@ -157,6 +158,29 @@ void LevelComponent::OnDestroy()
 	EventManager::GetInstance().RemoveEvent("LoadLevel", this, &LevelComponent::LoadLevel);
 	EventManager::GetInstance().RemoveEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
 	EventManager::GetInstance().RemoveEvent("ReloadCurrentLevel", this, &LevelComponent::RespawnPlayers);
+}
+
+void LevelComponent::FreeSpaceMoneyBag(GraphUtils::GraphNode* node) const
+{
+	node->SetCanBeVisited(true);
+	node->SetTransitionCanBeVisited(node->GetBottomNeighbor());
+	node->GetBottomNeighbor()->SetTransitionCanBeVisited(node);
+	// Apply thread here
+	m_pThreadPool->EnqueueTask([this, node]
+		{
+			const auto backgrounds{
+							dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
+			};
+			for (const auto background : backgrounds)
+			{
+				const auto currentNode{ background->GetWorldPosition() };
+				const auto closestNode{ GetGraph()->GetClosestNode(currentNode) };
+				if ((closestNode == node || closestNode == node->GetBottomNeighbor()) && glm::distance(currentNode,background->GetWorldPosition()) < 15.f)
+				{
+					background->Destroy();
+				}
+			}
+		});
 }
 
 void LevelComponent::CreateSpawnerEnemy(int index) const
@@ -283,7 +307,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 	const auto pos{m_pGraph->GetNode(index)->GetPosition()};
 	const std::shared_ptr moneyBag{std::make_shared<dae::GameObject>()};
 	const auto sprite{std::make_shared<SpriteComponent>("MoneyBag", "SpritesItems.png", 3, 3)};
-	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width, sprite->GetShape().height));
+	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width - 4, sprite->GetShape().height));
 	const auto item{std::make_shared<MoneyBagComponent>()};
 	const auto animator{std::make_shared<AnimatorComponent>()};
 	Animation idle{.name = "Idle", .frames = {1}, .loop = true, .spriteComponent = sprite};
@@ -299,14 +323,18 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 	{
 		.name = "IsDestroyedIdle", . frames = {5}, .frameTime = 0.4f, .loop = true, .spriteComponent = sprite
 	};
-	TransitionMoneyBagIsIdle* transitionIdle{new TransitionMoneyBagIsIdle{}};
 	TransitionMoneyBagCanFall* transitionCanFall{new TransitionMoneyBagCanFall{}};
 	TransitionMoneyBagIsDestroyed* transitionDestroyed{new TransitionMoneyBagIsDestroyed{}};
 	TransitionMoneyBagIsDestroyedIdle* transitionDestroyedIdle{new TransitionMoneyBagIsDestroyedIdle{}};
+	TransitionMoneyBagIsFalling* transitionIsFalling{ new TransitionMoneyBagIsFalling{} };
 	animator->AddTransition(idle, isFalling, transitionCanFall);
-	animator->AddTransition(isFalling, idle, transitionIdle);
+	animator->AddTransition(isFalling, idle, transitionIsFalling);
 	animator->AddTransition(idle, isDestroyed, transitionDestroyed);
 	animator->AddTransition(isDestroyed, isDestroyedIdle, transitionDestroyedIdle);
+	if(!animator->SetStartAnimation(idle))
+	{
+		std::cerr << "Failed to set start animation MoneyBag" << '\n';
+	}
 	moneyBag->AddComponent(item);
 	moneyBag->AddComponent(animator);
 	moneyBag->AddComponent(sprite);
