@@ -52,7 +52,7 @@ void EnemySpawnerComponent::OnDestroy()
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemySpawnerComponent::DecreaseEnemyCount);
 	TimerManager::GetInstance().RemoveTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f);
 	EventManager::GetInstance().RemoveEvent("PlayerDied",this,&EnemySpawnerComponent::SetPlayerDead);
-	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemySpawnerComponent::SetPlayerDead);
+	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemySpawnerComponent::StopSpawning);
 }
 
 void EnemySpawnerComponent::CanSpawnPlayer()
@@ -162,10 +162,12 @@ void EnemySpawnerComponent::SetPlayerDead()
 	{
 		m_PlayerDead = true;
 		TimerManager::GetInstance().RemoveTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f);
+		EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemySpawnerComponent::SetPlayerDead);
 	}
 }
 
 void EnemySpawnerComponent::StopSpawning()
 {
 	TimerManager::GetInstance().RemoveTimer(this, &EnemySpawnerComponent::SpawnNewEnemy, 5.f);
+	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemySpawnerComponent::SetPlayerDead);
 }

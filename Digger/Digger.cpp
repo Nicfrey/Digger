@@ -171,7 +171,7 @@ void load()
 	GameInstance::GetInstance().AddValue("CurrentGameMode", gameMode);
 	int levelSelection{};
 	GameInstance::GetInstance().AddValue("CurrentLevel",levelSelection);
-	EventManager::GetInstance().AddEvent("SkipLevel", DiggerUtils::SkipLevel);
+	EventManager::GetInstance().AddEvent("NextLevel", DiggerUtils::NextLevel);
 }
 
 int main()

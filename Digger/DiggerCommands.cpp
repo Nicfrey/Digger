@@ -248,7 +248,7 @@ void MoveKeyboardCommand::Execute()
 
 void SkipLevelCommand::Execute()
 {
-	EventManager::GetInstance().NotifyEvent("SkipLevel");
+	EventManager::GetInstance().NotifyEvent("NextLevel");
 }
 
 void MuteCommand::Execute()

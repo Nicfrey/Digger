@@ -5,6 +5,7 @@
 #include "Blackboard.h"
 #include "BoxCollider2D.h"
 #include "DiggerUtils.h"
+#include "GameInstance.h"
 #include "GameObject.h"
 #include "LevelComponent.h"
 #include "Observer.h"
@@ -109,7 +110,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	pBlackboard->ChangeValue("hasSkippedLevel", false);
 	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
-	EventManager::GetInstance().AddEvent("SkipLevel", this, &PlayState::SkipLevel);
+	EventManager::GetInstance().AddEvent("NextLevel", this, &PlayState::SkipLevel);
 	// TODO Play music of the game
 	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME), true);
 }
@@ -128,6 +129,7 @@ void PlayState::Update(Blackboard* pBlackboard)
 	if (m_PlayerHasWon)
 	{
 		pBlackboard->ChangeValue("hasPlayerWon", true);
+		DiggerUtils::NextLevel();
 	}
 	if(m_HasSkippedLevel)
 	{
@@ -161,7 +163,7 @@ void PlayState::SetPlayerIsDead()
 void PlayState::HandlePlayerWon()
 {
 	// Wait 5 sec before setting the player to won
-	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerWon, 5.f);
+	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerWon, 2.f);
 	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::WIN), false);
 }
 
@@ -186,7 +188,7 @@ void PlayState::Exit(Blackboard* pBlackboard)
 	m_HasSkippedLevel = false;
 	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
-	EventManager::GetInstance().RemoveEvent("SkipLevel", this, &PlayState::SkipLevel);
+	EventManager::GetInstance().RemoveEvent("NextLevel", this, &PlayState::SkipLevel);
 }
 
 void RespawnState::Enter(Blackboard* pBlackboard)

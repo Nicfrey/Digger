@@ -40,7 +40,7 @@ void DiggerUtils::OnLoadLevel3()
 	EventManager::GetInstance().NotifyEvent("SelectLevel");
 }
 
-void DiggerUtils::SkipLevel()
+void DiggerUtils::NextLevel()
 {
 	int level;
 	GameInstance::GetInstance().GetValue("CurrentLevel", level);
