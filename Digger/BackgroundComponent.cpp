@@ -1,5 +1,6 @@
 #include "BackgroundComponent.h"
 
+#include "EnemyComponent.h"
 #include "GameObject.h"
 #include "Graph.h"
  #include "LevelComponent.h"
@@ -16,11 +17,22 @@ std::shared_ptr<BaseComponent> BackgroundComponent::Clone() const
 
 void BackgroundComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 {
-	if(other->HasComponent<PlayerComponent>())
+	HandlePlayerCollision(other);
+	HandleProjectileCollision(other);
+	HandleEnemyCollision(other);
+}
+
+void BackgroundComponent::HandlePlayerCollision(std::shared_ptr<dae::GameObject>& other) const
+{
+	if (other->HasComponent<PlayerComponent>())
 	{
 		GetGameObject()->Destroy();
 	}
-	if(other->HasComponent<ProjectileComponent>())
+}
+
+void BackgroundComponent::HandleProjectileCollision(std::shared_ptr<dae::GameObject>& other)
+{
+	if (other->HasComponent<ProjectileComponent>())
 	{
 		const auto projectile{ other->GetComponent<ProjectileComponent>() };
 		const auto playerComp{ projectile->GetShotBy()->GetComponent<PlayerComponent>() };
@@ -29,35 +41,13 @@ void BackgroundComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& oth
 	}
 }
 
-void BackgroundComponent::Init()
+void BackgroundComponent::HandleEnemyCollision(std::shared_ptr<dae::GameObject>& other) const
 {
-}
-
-void BackgroundComponent::Update()
-{
-	// TODO Not doing that every frame but at some moment of time and with a thread
-	/*
-	const auto goLevelComponent{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() };
-	const auto levelComp{ goLevelComponent->GetComponent<LevelComponent>() };
-	const auto closestNode = levelComp->GetGraph()->GetClosestNode(GetGameObject()->GetWorldPosition());
+	if (other->HasComponent<EnemyComponent>())
 	{
-		if(closestNode->CanBeVisited())
+		if (other->GetComponent<EnemyComponent>()->GetType() == EnemyComponent::EnemyType::Nobbins)
 		{
 			GetGameObject()->Destroy();
 		}
-	}
-	*/
-}
-
-void BackgroundComponent::HandleDestruction(const GraphUtils::Graph* pLevel)
-{
-	if(!GetGameObject())
-	{
-		return;
-	}
-	const auto closestNode{ pLevel->GetClosestNode(GetGameObject()->GetWorldPosition()) };
-	if (closestNode->CanBeVisited())
-	{
-		GetGameObject()->Destroy();
 	}
 }

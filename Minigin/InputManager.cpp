@@ -86,3 +86,19 @@ void dae::InputManager::UnbindCommandObjects()
 	}
 }
 
+void dae::InputManager::UnbindCommandObjectsDestroyed()
+{
+	std::erase_if(m_InputsActionKeyboards, [](const InputActionKeyboard& other)
+		{
+			if (auto gameObjectCommand = std::dynamic_pointer_cast<GameObjectCommand>(other.pCommand))
+			{
+				return gameObjectCommand->IsDestroyed();
+			}
+			return false;
+		});
+	for (auto& controller : m_Controllers)
+	{
+		controller->UnbindActionGameObjectDestroyed();
+	}
+}
+

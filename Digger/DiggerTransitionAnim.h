@@ -72,3 +72,19 @@ public:
 	~TransitionEnemyIsDead() override = default;
 };
 
+class TransitionEnemyNobbinsTransformed : public FSMTransition
+{
+public:
+	TransitionEnemyNobbinsTransformed() = default;
+	~TransitionEnemyNobbinsTransformed() override = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+};
+
+class TransitionEnemyHobbinsTransformed : public FSMTransition
+{
+public:
+	TransitionEnemyHobbinsTransformed() = default;
+	~TransitionEnemyHobbinsTransformed() override = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+};
+

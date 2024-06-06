@@ -114,15 +114,14 @@ void Scene::Instantiate(std::shared_ptr<GameObject> object)
 void Scene::Remove()
 {
 	m_SpatialGrid->Clear();
-	std::vector<size_t> objectsToBeDestroyed;
 	for(size_t i{}; i < m_objects.size(); ++i)
 	{
 		if(m_objects[i]->IsDestroyed())
 		{
-			objectsToBeDestroyed.push_back(i);
 			m_objects[i]->OnDestroy();
 		}
 	}
+	InputManager::GetInstance().UnbindCommandObjectsDestroyed();
 	std::erase_if(m_objects, [this](const std::shared_ptr<GameObject>& object)
 	{
 		return object->IsDestroyed();

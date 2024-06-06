@@ -17,6 +17,7 @@ public:
 	virtual void ProcessInput() = 0;
 	virtual void BindAction(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown) = 0;
 	virtual void UnbindActionGameObject() = 0;
+	virtual void UnbindActionGameObjectDestroyed() = 0;
 };
 
 class GamepadController : public Controller
@@ -27,6 +28,7 @@ public:
 	void ProcessInput() override;
 	void BindAction(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown) override;
 	void UnbindActionGameObject() override;
+	void UnbindActionGameObjectDestroyed() override;
 private:
 	class GamepadControllerImpl;
 	GamepadControllerImpl* m_pImpl;

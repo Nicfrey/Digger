@@ -20,6 +20,8 @@ public:
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
 	void OnDestroy() override;
 	EnemyType GetType() const;
+	void IsPossessed();
+	void Transform();
 private:
 	void HandleDeadEnemy();
 	void StopMovingPlayerDead();
@@ -28,5 +30,7 @@ private:
 	EnemyType m_Type;
 	NavMeshAgentComponent* m_pNavMeshAgent;
 	bool m_StopMoving{ false };
+	bool m_IsPossessed{ false };
+	bool m_CanTransform{ true };
 };
 

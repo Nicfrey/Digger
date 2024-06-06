@@ -1,5 +1,6 @@
 #include "EnemyComponent.h"
 
+#include "AnimatorComponent.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
 #include "MathUtils.h"
@@ -52,24 +53,19 @@ void EnemyComponent::Init()
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
 	EventManager::GetInstance().AddEvent("PlayerDied", this, &EnemyComponent::StopMovingPlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &EnemyComponent::StopMoving);
-	if(GetGameObject()->HasComponent<SpriteComponent>())
-	{
-		const auto sprite{ GetGameObject()->GetComponent<SpriteComponent>() };
-		switch (m_Type)
-		{
-		case EnemyType::Nobbins:
-			sprite->SetCurrentRow(0);
-			break;
-		case EnemyType::Hobbins:
-			sprite->SetCurrentRow(1);
-			break;
-		}
-	}
 	m_pNavMeshAgent = GetGameObject()->GetComponent<NavMeshAgentComponent>().get();
 }
 
 void EnemyComponent::Update()
 {
+	if(m_IsPossessed)
+	{
+		if (!m_pNavMeshAgent->HasReachedDestination())
+		{
+			EventManager::GetInstance().NotifyEvent("PlayerMoving");
+		}
+		return;
+	}
 	if(m_pNavMeshAgent->HasReachedDestination() && !m_StopMoving)
 	{
 		const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
@@ -127,9 +123,37 @@ void EnemyComponent::OnDestroy()
 	EventManager::GetInstance().RemoveEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
 	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &EnemyComponent::StopMovingPlayerDead);
 	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemyComponent::StopMoving);
+	TimerManager::GetInstance().RemoveTimer(this, &EnemyComponent::Transform,5.f);
 }
 
 EnemyComponent::EnemyType EnemyComponent::GetType() const
 {
 	return m_Type;
+}
+
+void EnemyComponent::IsPossessed()
+{
+	m_IsPossessed = true;
+}
+
+void EnemyComponent::Transform()
+{
+	if (m_Type == EnemyType::Nobbins)
+	{
+		m_Type = EnemyType::Hobbins;
+		GetGameObject()->GetComponent<AnimatorComponent>()->SetParameter("EnemyType",m_Type);
+		m_pNavMeshAgent->SetCanAvoidObstacle(false);
+	}
+	else
+	{
+		if(!m_CanTransform)
+		{
+			return;
+		}
+		m_Type = EnemyType::Nobbins;
+		TimerManager::GetInstance().AddTimer(this, &EnemyComponent::Transform, 5.f);
+		m_CanTransform = false;
+		GetGameObject()->GetComponent<AnimatorComponent>()->SetParameter("EnemyType", m_Type);
+		m_pNavMeshAgent->SetCanAvoidObstacle(true);
+	}
 }

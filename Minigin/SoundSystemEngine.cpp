@@ -25,7 +25,7 @@ public:
 	void DoPlaySound(const Sound& sound);
 	void DoPauseAll();
 	void DoResumeAll();
-
+	void DoMute();
 private:
 	struct SoundSDL
 	{
@@ -131,6 +131,11 @@ void SoundSystemEngine::SoundSystemImpl::DoResumeAll()
 	Mix_Resume(-1);
 }
 
+void SoundSystemEngine::SoundSystemImpl::DoMute()
+{
+	Mix_Volume(-1, 0);
+}
+
 void SoundSystemEngine::SoundSystemImpl::PlaySoundThread(Mix_Chunk* sound, const float& volume)
 {
 	std::lock_guard loadLock{m_MutexSound};
@@ -185,6 +190,12 @@ void LoggingSoundSystem::Add(const SoundId& id, const std::string& filepath)
 {
 	m_RealSoundSystem->Add(id, filepath);
 	std::cout << "Added " << id << " at path " << filepath << "\n";
+}
+
+void LoggingSoundSystem::Mute()
+{
+	m_RealSoundSystem->Mute();
+	std::cout << "Mute the sound\n";
 }
 
 MusicSystem& ServiceMusicLocator::GetMusicSystem()
@@ -243,6 +254,12 @@ void LoggingMusicSystem::Add(MusicId id, const std::string& filePath)
 	m_RealMusicSystem->Add(id, filePath);
 }
 
+void LoggingMusicSystem::Mute()
+{
+	std::cout << "Mute the music\n";
+	m_RealMusicSystem->Mute();
+}
+
 SoundSystemEngine::SoundSystemEngine()
 {
 	m_pImpl = new SoundSystemImpl{};
@@ -279,6 +296,11 @@ void SoundSystemEngine::Add(const SoundId& id, const std::string& filepath)
 	m_pImpl->DoAddSound(id, filepath);
 }
 
+void SoundSystemEngine::Mute()
+{
+	m_pImpl->DoMute();
+}
+
 class MusicSystemEngine::MusicSystemImpl
 {
 public:
@@ -295,6 +317,7 @@ public:
 	void DoResume();
 	void DoStop();
 	bool DoIsPlaying() const;
+	void DoMute();
 
 private:
 	struct MusicSDL
@@ -340,6 +363,11 @@ void MusicSystemEngine::MusicSystemImpl::DoAdd(MusicId id, const std::string& fi
 bool MusicSystemEngine::MusicSystemImpl::DoIsPlaying() const
 {
 	return Mix_PlayingMusic();
+}
+
+void MusicSystemEngine::MusicSystemImpl::DoMute()
+{
+	Mix_VolumeMusic(0);
 }
 
 void MusicSystemEngine::MusicSystemImpl::DoPlayMusic(MusicId id, bool loop)
@@ -423,4 +451,9 @@ bool MusicSystemEngine::IsPlaying() const
 void MusicSystemEngine::Add(MusicId id, const std::string& filePath)
 {
 	m_pImpl->DoAdd(id, filePath);
+}
+
+void MusicSystemEngine::Mute()
+{
+	m_pImpl->DoMute();
 }

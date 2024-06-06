@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "ButtonComponent.h"
+#include "EnemyComponent.h"
 #include "GameObject.h"
 #include "Graph.h"
 #include "HealthComponent.h"
@@ -14,6 +15,7 @@
 #include "PlayerComponent.h"
 #include "Scene.h"
 #include "SceneManager.h"
+#include "SoundSystemEngine.h"
 #include "TimeEngine.h"
 #include "Utils.h"
 #include "Widget.h"
@@ -75,7 +77,17 @@ MoveEnemyCommand::MoveEnemyCommand(dae::GameObject* go, glm::vec2 direction) : M
 
 void MoveEnemyCommand::Execute()
 {
-	// TODO: Check if the enemy is transformed, if so, have the same behavior as the player (call MovePlayerCommand::Execute)
+	if (GetGameObject()->GetComponent<HealthComponent>()->IsDead())
+	{
+		return;
+	}
+
+	if (GetGameObject()->GetComponent<EnemyComponent>()->GetType() == EnemyComponent::EnemyType::Nobbins)
+	{
+		MovePlayerCommand::Execute();
+		return;
+	}
+
 	const auto levelObject{dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>()};
 	const auto levelComponent{levelObject->GetComponent<LevelComponent>()};
 	SetCurrentAndTargetNode(levelComponent);
@@ -85,7 +97,6 @@ void MoveEnemyCommand::Execute()
 		if (m_TargetNode->CanBeVisited())
 		{
 			navMeshAgent->SetPath(m_TargetNode->GetPosition());
-			GetGameObject()->SetLocalRotation(0, 0, MathUtils::Rad2Deg(MathUtils::Atan2(m_Direction.y, m_Direction.x)));
 		}
 	}
 }
@@ -96,8 +107,11 @@ TransformEnemyCommand::TransformEnemyCommand(dae::GameObject* go): GameObjectCom
 
 void TransformEnemyCommand::Execute()
 {
-	// TODO Check if the enemy component can transform
-	// If so, transform the enemy (that calls a timer of how long he can transform)
+	if (GetGameObject()->GetComponent<HealthComponent>()->IsDead())
+	{
+		return;
+	}
+	GetGameObject()->GetComponent<EnemyComponent>()->Transform();
 }
 
 MoveButtonCommand::MoveButtonCommand(bool isUp): m_Up{isUp}
@@ -235,6 +249,12 @@ void MoveKeyboardCommand::Execute()
 void SkipLevelCommand::Execute()
 {
 	EventManager::GetInstance().NotifyEvent("SkipLevel");
+}
+
+void MuteCommand::Execute()
+{
+	ServiceMusicLocator::GetMusicSystem().Mute();
+	ServiceSoundLocator::GetSoundSystem().Mute();
 }
 
 ShootCommand::ShootCommand(dae::GameObject* go): GameObjectCommand{go}

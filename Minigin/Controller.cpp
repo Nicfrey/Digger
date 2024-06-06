@@ -27,6 +27,7 @@ class GamepadController::GamepadControllerImpl
 		void DoProcessInput();
 		void DoBindAction(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown);
 		void DoUnbindActionGameObject();
+		void DoUnbindActionGameObjectDestroyed();
 
 private:
 	static DWORD m_TotalController;
@@ -61,6 +62,18 @@ GamepadController::GamepadControllerImpl::~GamepadControllerImpl()
 void GamepadController::GamepadControllerImpl::DoUnbindActionGameObject()
 {
 	std::erase_if(m_InputActions, [](const InputActionController& inputAction) { return std::dynamic_pointer_cast<GameObjectCommand>(inputAction.pCommand); });
+}
+
+void GamepadController::GamepadControllerImpl::DoUnbindActionGameObjectDestroyed()
+{
+	std::erase_if(m_InputActions, [](const InputActionController& inputAction)
+	{
+		if(auto gameObjectCommand =  std::dynamic_pointer_cast<GameObjectCommand>(inputAction.pCommand))
+		{
+			return gameObjectCommand->IsDestroyed();
+		}
+		return false;
+	});
 }
 
 void GamepadController::GamepadControllerImpl::DoProcessInput()
@@ -164,4 +177,9 @@ void GamepadController::BindAction(const std::shared_ptr<Command>& pCommand, uns
 void GamepadController::UnbindActionGameObject()
 {
 	m_pImpl->DoUnbindActionGameObject();
+}
+
+void GamepadController::UnbindActionGameObjectDestroyed()
+{
+	m_pImpl->DoUnbindActionGameObjectDestroyed();
 }

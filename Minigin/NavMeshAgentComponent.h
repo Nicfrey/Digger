@@ -26,6 +26,7 @@ public:
 	bool HasReachedDestination() const { return m_HasReachedDestination; }
 	void SetSpeed(float speed);
 	void StopMoving();
+	void SetCanAvoidObstacle(bool canAvoidObstacle);
 
 private:
 	std::vector<GraphUtils::GraphNode*> m_Path;

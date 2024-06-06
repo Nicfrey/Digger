@@ -14,6 +14,7 @@ public:
 	void Init() override;
 	void Update() override;
 	void OnDestroy() override;
+	void CanSpawnPlayer();
 private:
 	void CreateNewEnemy();
 	void SpawnNewEnemy();
@@ -23,6 +24,7 @@ private:
 	int m_EnemyCount;
 	int m_EnemyToSpawn{ 10 };
 	bool m_PlayerDead{ false };
-
+	bool m_CanSpawnPlayer{ false };
+	std::shared_ptr<dae::GameObject> m_Player{ nullptr };
 };
 

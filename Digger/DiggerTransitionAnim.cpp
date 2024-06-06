@@ -1,6 +1,7 @@
 #include "DiggerTransitionAnim.h"
 
 #include "Blackboard.h"
+#include "EnemyComponent.h"
 #include "MoneyBagComponent.h"
 
 bool TransitionPlayerNoProjectile::CalculateCondition(Blackboard* pBlackBoard) const
@@ -84,6 +85,26 @@ bool TransitionEnemyIsDead::CalculateCondition(Blackboard* pBlackBoard) const
 	if(pBlackBoard->GetValue("EnemyIsDead",isDead))
 	{
 		return isDead;
+	}
+	return false;
+}
+
+bool TransitionEnemyNobbinsTransformed::CalculateCondition(Blackboard* pBlackBoard) const
+{
+	EnemyComponent::EnemyType isTransformed;
+	if (pBlackBoard->GetValue("EnemyType", isTransformed))
+	{
+		return isTransformed == EnemyComponent::EnemyType::Nobbins;
+	}
+	return false;
+}
+
+bool TransitionEnemyHobbinsTransformed::CalculateCondition(Blackboard* pBlackBoard) const
+{
+	EnemyComponent::EnemyType isTransformed;
+	if (pBlackBoard->GetValue("EnemyType", isTransformed))
+	{
+		return isTransformed == EnemyComponent::EnemyType::Hobbins;
 	}
 	return false;
 }

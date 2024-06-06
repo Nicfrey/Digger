@@ -88,14 +88,6 @@ void UIPlayerComponent::Render() const
 	m_pScoreText->Render();
 }
 
-void UIPlayerComponent::FixedUpdate()
-{
-}
-
-void UIPlayerComponent::RenderGUI()
-{
-}
-
 void UIPlayerComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("LifeGained", this, &UIPlayerComponent::UpdateTextLife);

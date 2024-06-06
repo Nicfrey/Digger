@@ -23,6 +23,7 @@ public:
 	virtual ~SoundSystem() = default;
 	virtual void Play(const SoundId& id, const float& volume) = 0;
 	virtual void Add(const SoundId& id, const std::string& filepath) = 0;
+	virtual void Mute() = 0;
 };
 
 class SoundSystemEngine : public SoundSystem
@@ -35,6 +36,7 @@ public:
 	void ResumeAll();
 	void Play(const SoundId& id, const float& volume) override;
 	void Add(const SoundId& id, const std::string& filepath) override;
+	void Mute() override;
 
 private:
 	class SoundSystemImpl;
@@ -51,6 +53,7 @@ public:
 	virtual void Resume() = 0;
 	virtual void Stop() = 0;
 	virtual bool IsPlaying() const = 0;
+	virtual void Mute() = 0;
 };
 
 class MusicSystemEngine : public MusicSystem
@@ -64,6 +67,7 @@ public:
 	void Stop() override;
 	bool IsPlaying() const override;
 	void Add(MusicId id, const std::string& filePath) override;
+	void Mute() override;
 
 private:
 	class MusicSystemImpl;
@@ -89,6 +93,7 @@ public:
 	~LoggingSoundSystem() override = default;
 	void Play(const SoundId& id, const float& volume) override;
 	void Add(const SoundId& id, const std::string& filepath) override;
+	void Mute() override;
 private:
 	std::unique_ptr<SoundSystem> m_RealSoundSystem;
 };
@@ -115,6 +120,7 @@ public:
 	void Stop() override;
 	bool IsPlaying() const override;
 	void Add(MusicId id, const std::string& filePath) override;
+	void Mute() override;
 
 private:
 	std::unique_ptr<MusicSystem> m_RealMusicSystem;

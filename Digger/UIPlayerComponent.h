@@ -14,8 +14,6 @@ public:
 	void Init() override;
 	void Update() override;
 	void Render() const override;
-	void FixedUpdate() override;
-	void RenderGUI() override;
 	void OnDestroy() override;
 
 	void SetPosition(float x, float y) const;

@@ -39,6 +39,7 @@ public:
 
 class MoveEnemyCommand : public MovePlayerCommand
 {
+public:
 	MoveEnemyCommand(dae::GameObject* go, glm::vec2 direction);
 	void Execute() override;
 };
@@ -90,6 +91,13 @@ class SkipLevelCommand : public Command
 {
 public:
 	SkipLevelCommand() = default;
+	void Execute() override;
+};
+
+class MuteCommand : public Command
+{
+public:
+	MuteCommand() = default;
 	void Execute() override;
 };
 #pragma endregion OtherCommands

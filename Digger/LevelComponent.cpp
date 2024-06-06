@@ -165,6 +165,10 @@ void LevelComponent::CreateSpawnerEnemy(int index) const
 	const auto go{std::make_shared<dae::GameObject>()};
 	go->SetLocalPosition(pos);
 	const auto spawnerEnemy{std::make_shared<EnemySpawnerComponent>()};
+	if(m_GameMode == DiggerUtils::DiggerGameMode::Versus)
+	{
+		spawnerEnemy->CanSpawnPlayer();
+	}
 	go->AddComponent(spawnerEnemy);
 	dae::SceneManager::GetInstance().Instantiate(go);
 }
@@ -202,15 +206,8 @@ void LevelComponent::InitializeLevel(const nlohmann::json& json)
 	CreateBackgroundLevel(numberLevel);
 
 	// Init the spawn point
-	if (m_GameMode == DiggerUtils::DiggerGameMode::Versus)
-	{
-		// TODO the spawner of enemy spawn enemy that can be controlled by the other player
-	}
-	else
-	{
-		const auto spawnEnemy = json["SpawnPointEnemy"];
-		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), m_MaxColumn));
-	}
+	const auto spawnEnemy = json["SpawnPointEnemy"];
+	CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), m_MaxColumn));
 
 
 	for (auto data : json["Emerald"])
@@ -241,15 +238,8 @@ void LevelComponent::RespawnPlayers()
 	auto json{dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(m_Level) + ".json")};
 
 	// Init the spawn point
-	if (m_GameMode == DiggerUtils::DiggerGameMode::Versus)
-	{
-		// TODO the spawner of enemy spawn enemy that can be controlled by the other player
-	}
-	else
-	{
-		const auto spawnEnemy = json["SpawnPointEnemy"];
-		CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), m_MaxColumn));
-	}
+	const auto spawnEnemy = json["SpawnPointEnemy"];
+	CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), m_MaxColumn));
 
 	const auto players{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>()};
 	int indexPlayer{};
@@ -443,40 +433,17 @@ int LevelComponent::GetIndexFromPosition(const glm::vec2& pos, int maxColumn)
 void LevelComponent::UpdateGraph()
 {
 	const auto players{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>()};
+	const auto enemies{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>() };
+	for(size_t i{}; i < enemies.size(); ++i)
+	{
+		if(enemies[i]->GetComponent<EnemyComponent>()->GetType() == EnemyComponent::EnemyType::Nobbins)
+		{
+			HandleUpdateGraph(1, enemies[i]); // Always the second player that plays the Nobbins
+		}
+	}
 	for (size_t i{}; i < players.size(); ++i)
 	{
-		m_pPlayersCurrentNode[i] = m_pGraph->GetClosestNode(players[i]->GetWorldPosition());
-		if (m_pPlayersPreviousNode[i] == nullptr)
-		{
-			m_pPlayersPreviousNode[i] = m_pPlayersCurrentNode[i];
-		}
-		if (m_pPlayersPreviousNode[i] != m_pPlayersCurrentNode[i])
-		{
-			m_pGraph->GetNode(m_pPlayersPreviousNode[i])->SetTransitionCanBeVisited(m_pPlayersCurrentNode[i]);
-			m_pGraph->GetNode(m_pPlayersCurrentNode[i])->SetTransitionCanBeVisited(m_pPlayersPreviousNode[i]);
-			m_pPlayersPreviousNode[i] = m_pPlayersCurrentNode[i];
-		}
-		if (!m_pPlayersCurrentNode[i]->CanBeVisited())
-		{
-			m_pPlayersCurrentNode[i]->SetCanBeVisited(true);
-			// Apply thread here
-			m_pThreadPool->EnqueueTask([this]
-			{
-				const auto backgrounds{
-					dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
-				};
-				for (const auto background : backgrounds)
-				{
-					const auto node{background->GetWorldPosition()};
-					const auto closestNode{GetGraph()->GetClosestNode(node)};
-					if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
-					                                                 background->GetWorldPosition()) < 7.f)
-					{
-						background->Destroy();
-					}
-				}
-			});
-		}
+		HandleUpdateGraph(i, players[i]);
 	}
 }
 
@@ -557,5 +524,41 @@ void LevelComponent::CheckRemainingEnemies()
 	if (enemies.empty() && spawner == nullptr)
 	{
 		EventManager::GetInstance().NotifyEvent("PlayerWon");
+	}
+}
+
+void LevelComponent::HandleUpdateGraph(size_t index, const std::shared_ptr<dae::GameObject>& object)
+{
+	m_pPlayersCurrentNode[index] = m_pGraph->GetClosestNode(object->GetWorldPosition());
+	if (m_pPlayersPreviousNode[index] == nullptr)
+	{
+		m_pPlayersPreviousNode[index] = m_pPlayersCurrentNode[index];
+	}
+	if (m_pPlayersPreviousNode[index] != m_pPlayersCurrentNode[index])
+	{
+		m_pGraph->GetNode(m_pPlayersPreviousNode[index])->SetTransitionCanBeVisited(m_pPlayersCurrentNode[index]);
+		m_pGraph->GetNode(m_pPlayersCurrentNode[index])->SetTransitionCanBeVisited(m_pPlayersPreviousNode[index]);
+		m_pPlayersPreviousNode[index] = m_pPlayersCurrentNode[index];
+	}
+	if (!m_pPlayersCurrentNode[index]->CanBeVisited())
+	{
+		m_pPlayersCurrentNode[index]->SetCanBeVisited(true);
+		// Apply thread here
+		m_pThreadPool->EnqueueTask([this]
+			{
+				const auto backgrounds{
+					dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
+				};
+				for (const auto background : backgrounds)
+				{
+					const auto node{ background->GetWorldPosition() };
+					const auto closestNode{ GetGraph()->GetClosestNode(node) };
+					if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
+						background->GetWorldPosition()) < 7.f)
+					{
+						background->Destroy();
+					}
+				}
+			});
 	}
 }

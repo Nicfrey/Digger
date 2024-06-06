@@ -67,6 +67,11 @@ void NavMeshAgentComponent::StopMoving()
 	m_HasReachedDestination = true;
 }
 
+void NavMeshAgentComponent::SetCanAvoidObstacle(bool canAvoidObstacle)
+{
+	m_CanAvoidObstacle = canAvoidObstacle;
+}
+
 bool NavMeshAgentComponent::IsNearTheTarget() const
 {
 	const auto pos{ GetGameObject()->GetWorldPosition() };

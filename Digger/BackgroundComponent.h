@@ -10,10 +10,9 @@ public:
 	~BackgroundComponent() override = default;
 	std::shared_ptr<BaseComponent> Clone() const override;
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
-	void Init() override;
-	void Update() override;
-	void HandleDestruction(const GraphUtils::Graph* pLevel);
 private:
-
+	void HandlePlayerCollision(std::shared_ptr<dae::GameObject>& other) const;
+	void HandleProjectileCollision(std::shared_ptr<dae::GameObject>& other);
+	void HandleEnemyCollision(std::shared_ptr<dae::GameObject>& other) const;
 };
 
