@@ -65,5 +65,13 @@ public:
 	bool CalculateCondition(Blackboard* pBlackBoard) const override;
 };
 
+class ReturnToMainMenuTransition final : public FSMTransition
+{
+public:
+	ReturnToMainMenuTransition() = default;
+	~ReturnToMainMenuTransition() override = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+};
+
 
 

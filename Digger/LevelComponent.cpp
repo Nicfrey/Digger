@@ -256,8 +256,10 @@ void LevelComponent::RespawnPlayers()
 	{
 		enemy->Destroy();
 	}
-	const auto spawner{dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>()};
-	spawner->Destroy();
+	if(const auto spawner{dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>()})
+	{
+		spawner->Destroy();
+	}
 
 	auto json{dae::ResourceManager::GetInstance().GetJsonFile("Levels/Level" + std::to_string(m_Level) + ".json")};
 

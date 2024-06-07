@@ -102,3 +102,8 @@ void DiggerUtils::HasSetName()
 {
 	EventManager::GetInstance().NotifyEvent("SetNameHighScore");
 }
+
+void DiggerUtils::ReturnToMenu()
+{
+	EventManager::GetInstance().NotifyEvent("ReturnToMenu");
+}

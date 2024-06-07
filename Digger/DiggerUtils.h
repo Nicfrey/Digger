@@ -1,5 +1,6 @@
 #pragma once
 #include "SoundSystemEngine.h"
+#include "Utils.h"
 
 namespace DiggerUtils
 {
@@ -41,4 +42,5 @@ namespace DiggerUtils
 
 	void HasSetName();
 
+	void ReturnToMenu();
 }

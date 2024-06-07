@@ -16,6 +16,7 @@
 #include "WidgetManager.h"
 #include "Graph.h"
 #include "HealthComponent.h"
+#include "HighScoreComponent.h"
 #include "imgui.h"
 #include "PlayerComponent.h"
 
@@ -252,7 +253,6 @@ void GameOverState::Exit(Blackboard* pBlackboard)
 {
 	pBlackboard->ChangeValue("hasWrittenHighScore", false);
 	// Remove the widget GameOver and High-Score
-	WidgetManager::GetInstance().SetActiveWidget("MainMenu");
 	m_HasSetName = false;
 	pBlackboard->ChangeValue("hasWrittenHighScore", m_HasSetName);
 }
@@ -268,6 +268,37 @@ void GameOverState::Update(Blackboard* pBlackboard)
 void GameOverState::HasSetName()
 {
 	m_HasSetName = true;
+}
+
+void ScoreState::Enter(Blackboard* pBlackboard)
+{
+	std::cout << "ScoreState Enter\n";
+	m_ReturnToMainMenu = false;
+	EventManager::GetInstance().AddEvent("ReturnToMenu",this,&ScoreState::ReturnToMainMenu);
+	pBlackboard->ChangeValue("ReturnToMainMenu", m_ReturnToMainMenu);
+	WidgetManager::GetInstance().SetActiveWidget("DisplayScore");
+	auto highScoreComp = dae::SceneManager::GetInstance().GetGameObjectWithComponent<HighScoreComponent>()->GetComponent<HighScoreComponent>();
+	highScoreComp->DisplayTheScore(true);
+	highScoreComp->Init();
+}
+
+void ScoreState::Exit(Blackboard* pBlackboard)
+{
+	m_ReturnToMainMenu = false;
+	pBlackboard->ChangeValue("ReturnToMainMenu", m_ReturnToMainMenu);
+	dae::SceneManager::GetInstance().SetActiveScene("MainMenu");
+	WidgetManager::GetInstance().SetActiveWidget("MainMenu");
+	EventManager::GetInstance().RemoveEvent("ReturnToMenu", this, &ScoreState::ReturnToMainMenu);
+}
+
+void ScoreState::Update(Blackboard* pBlackboard)
+{
+	pBlackboard->ChangeValue("ReturnToMainMenu", m_ReturnToMainMenu);
+}
+
+void ScoreState::ReturnToMainMenu()
+{
+	m_ReturnToMainMenu = true;
 }
 
 void IdleStateMoneyBag::Enter(Blackboard* pBlackboard)

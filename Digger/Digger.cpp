@@ -28,6 +28,83 @@
 #include "Widget.h"
 #include "WidgetManager.h"
 
+void InitGameStates()
+{
+	auto& gameState{ GameState::GetInstance() };
+	const auto menuState{ new MenuState{} };
+	const auto loadState{ new LoadState{} };
+	const auto playState{ new PlayState{} };
+	const auto gameOverState{ new GameOverState() };
+	const auto respawnState{ new RespawnState() };
+	const auto scoreState{ new ScoreState() };
+	gameState.AddState(menuState);
+	gameState.AddState(loadState);
+	gameState.AddState(playState);
+	gameState.AddState(gameOverState);
+	gameState.AddState(respawnState);
+	gameState.AddState(scoreState);
+	const auto selectedLevelTrans{ new HasSelectedLevelTransition{} };
+	const auto loadLevelTransition{ new LoadLevelTransition{} };
+	const auto playerDeadTransition{ new PlayerDeadTransition{} };
+	const auto respawnTransition{ new PlayerRespawnTransition{} };
+	const auto gameOverTransition{ new GameOverTransition{} };
+	const auto wroteHighScoreTransition{ new WroteHighScoreTransition{} };
+	const auto skipLevelTransition{ new SkipLevelTransition{} };
+	const auto playerWinTransition{ new PlayerWinTransition{} };
+	const auto returnToMainMenuTransition{ new ReturnToMainMenuTransition{} };
+	gameState.AddTransition(menuState, loadState, selectedLevelTrans);
+	gameState.AddTransition(loadState, playState, loadLevelTransition);
+	gameState.AddTransition(playState, respawnState, playerDeadTransition);
+	gameState.AddTransition(respawnState, playState, respawnTransition);
+	gameState.AddTransition(playState, gameOverState, gameOverTransition);
+	gameState.AddTransition(gameOverState, scoreState, wroteHighScoreTransition);
+	gameState.AddTransition(scoreState, menuState, returnToMainMenuTransition);
+	gameState.AddTransition(playState, loadState, skipLevelTransition);
+	gameState.AddTransition(playState, loadState, playerWinTransition);
+	gameState.AddParameter("hasSelectedLevel", false);
+	gameState.AddParameter("hasSelectedGameMode", false);
+	gameState.AddParameter("hasLoadedLevel", false);
+	gameState.AddParameter("currentLevel", 0);
+	gameState.AddParameter("hasLoadedLevel", false);
+	gameState.AddParameter("isPlayerDead", false);
+	gameState.AddParameter("hasWrittenHighScore", false);
+	gameState.AddParameter("hasNoExtraLife", false);
+	gameState.AddParameter("levelRemaining", 2);
+	gameState.AddParameter("hasSkippedLevel", false);
+	gameState.AddParameter("hasPlayerWon", false);
+	gameState.AddParameter("ReturnToMainMenu", false);
+	// gameState.AddParameter("players", dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>());
+	gameState.SetStartState(menuState);
+}
+
+void InitCommandUI()
+{
+
+	GamepadController* controller{ new GamepadController{0} };
+	const auto selectButtonCommand{ std::make_shared<SelectButtonCommand>() };
+	const auto moveUpButtonCommand{ std::make_shared<MoveButtonCommand>(true) };
+	const auto moveDownButtonCommand{ std::make_shared<MoveButtonCommand>(false) };
+	const auto moveUpKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{0,1}) };
+	const auto moveDownKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{0,-1}) };
+	const auto moveRightKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{1,0}) };
+	const auto moveLeftKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{-1,0}) };
+	const auto saveKeyboardCommand{ std::make_shared<SaveKeyboardCommand>() };
+	controller->BindAction(selectButtonCommand, XINPUT_GAMEPAD_A, TriggerType::KeyPressed);
+	controller->BindAction(moveUpButtonCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
+	controller->BindAction(moveDownButtonCommand, XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::KeyPressed);
+	controller->BindAction(moveUpKeyboardCommand, XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::KeyPressed);
+	controller->BindAction(moveDownKeyboardCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
+	controller->BindAction(moveRightKeyboardCommand, XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::KeyPressed);
+	controller->BindAction(moveLeftKeyboardCommand, XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::KeyPressed);
+	controller->BindAction(saveKeyboardCommand, XINPUT_GAMEPAD_START, TriggerType::KeyPressed);
+	dae::InputManager::GetInstance().AddController(controller);
+	dae::InputManager::GetInstance().BindCommand(std::make_shared<SaveKeyboardCommand>(), SDL_SCANCODE_SPACE, TriggerType::KeyPressed);
+
+	const auto skipLevelCommand{ std::make_shared<SkipLevelCommand>() };
+	dae::InputManager::GetInstance().BindCommand(skipLevelCommand, SDL_SCANCODE_F1, TriggerType::KeyPressed);
+}
+
+
 void load()
 {
 	dae::ResourceManager::GetInstance().Init("../Data/");
@@ -104,77 +181,43 @@ void load()
 	titleGameOver->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleGameOver->GetSize().x), static_cast<float>(titleGameOver->GetSize().y) }, placeholderTitle));
 	const auto keyboard = std::make_shared<KeyboardComponent>("Keyboard", 200.f);
 	placeholderTitle.topLeft.y += 60;
+	const auto totalScore = std::make_shared<dae::TextComponent>("TotalScore", fontSmall);
+	totalScore->SetColor(255, 0, 0);
+	totalScore->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(totalScore->GetSize().x), static_cast<float>(totalScore->GetSize().y) }, placeholderTitle));
+	placeholderTitle.topLeft.y += 60;
 	const auto name = std::make_shared<dae::TextComponent>("Enter Name",fontSmall);
 	name->SetColor(255, 255, 0);
 	name->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(name->GetSize().x), static_cast<float>(name->GetSize().y) }, placeholderTitle));
 	gameOverWidget->AddElement(keyboard);
 	gameOverWidget->AddElement(titleGameOver);
 	gameOverWidget->AddElement(name);
+	gameOverWidget->AddElement(totalScore);
 	widgetManager.AddWidget(gameOverWidget);
 
-	GamepadController* controller{ new GamepadController{0}};
-	const auto selectButtonCommand{ std::make_shared<SelectButtonCommand>() };
-	const auto moveUpButtonCommand{ std::make_shared<MoveButtonCommand>(true)};
-	const auto moveDownButtonCommand{ std::make_shared<MoveButtonCommand>(false) };
-	const auto moveUpKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{0,1}) };
-	const auto moveDownKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{0,-1}) };
-	const auto moveRightKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{1,0}) };
-	const auto moveLeftKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{-1,0}) };
-	const auto saveKeyboardCommand{ std::make_shared<SaveKeyboardCommand>() };
-	controller->BindAction(selectButtonCommand, XINPUT_GAMEPAD_A, TriggerType::KeyPressed);
-	controller->BindAction(moveUpButtonCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
-	controller->BindAction(moveDownButtonCommand, XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::KeyPressed);
-	controller->BindAction(moveUpKeyboardCommand, XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::KeyPressed);
-	controller->BindAction(moveDownKeyboardCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
-	controller->BindAction(moveRightKeyboardCommand, XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::KeyPressed);
-	controller->BindAction(moveLeftKeyboardCommand, XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::KeyPressed);
-	controller->BindAction(saveKeyboardCommand, XINPUT_GAMEPAD_START, TriggerType::KeyPressed);
-	dae::InputManager::GetInstance().AddController(controller);
-	dae::InputManager::GetInstance().BindCommand(std::make_shared<SaveKeyboardCommand>(), SDL_SCANCODE_SPACE, TriggerType::KeyPressed);
+	placeholderTitle.topLeft.y = 10;
+	const auto scoreWidget{ std::make_shared<Widget>("DisplayScore") };
+	const auto titleScore{ std::make_shared<dae::TextComponent>("Score",fontBig) };
+	titleScore->SetColor(255, 0, 0);
+	titleScore->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleScore->GetSize().x), static_cast<float>(titleScore->GetSize().y) }, placeholderTitle));
+	placeholderTitle.topLeft.y += 80;
+	for(int i{1}; i <= 5; ++i)
+	{
+		const auto score = std::make_shared<dae::TextComponent>("HighScore" + std::to_string(i), fontSmall);
+		score->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(score->GetSize().x), static_cast<float>(score->GetSize().y) }, placeholderTitle));
+		score->SetColor(255, 0, 0);
+		scoreWidget->AddElement(score);
+		placeholderTitle.topLeft.y += 50;
+	}
+	const auto mainMenuButton{ std::make_shared<ButtonComponent>("MainMenuButton",glm::vec3{100.f,300.f,0.f },"Return to menu",fontSmall) };
+	mainMenuButton->SetOnButtonClick(DiggerUtils::ReturnToMenu);
+	mainMenuButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(mainMenuButton->GetBox(), placeholderTitle));
+	scoreWidget->AddElement(titleScore);
+	scoreWidget->AddElement(mainMenuButton);
+	widgetManager.AddWidget(scoreWidget);
 
-	const auto skipLevelCommand{ std::make_shared<SkipLevelCommand>() };
-	dae::InputManager::GetInstance().BindCommand(skipLevelCommand, SDL_SCANCODE_F1, TriggerType::KeyPressed);
 
-	auto& gameState{ GameState::GetInstance() };
-	const auto menuState{ new MenuState{} };
-	const auto loadState{ new LoadState{} };
-	const auto playState{ new PlayState{} };
-	const auto gameOverState{ new GameOverState() };
-	const auto respawnState{ new RespawnState() };
-	gameState.AddState(menuState);
-	gameState.AddState(loadState);
-	gameState.AddState(playState);
-	gameState.AddState(gameOverState);
-	gameState.AddState(respawnState);
-	const auto selectedLevelTrans{ new HasSelectedLevelTransition{} };
-	const auto loadLevelTransition{ new LoadLevelTransition{} };
-	const auto playerDeadTransition{ new PlayerDeadTransition{} };
-	const auto respawnTransition{ new PlayerRespawnTransition{} };
-	const auto gameOverTransition{ new GameOverTransition{} };
-	const auto wroteHighScoreTransition{ new WroteHighScoreTransition{} };
-	const auto skipLevelTransition{ new SkipLevelTransition{} };
-	const auto playerWinTransition{ new PlayerWinTransition{} };
-	gameState.AddTransition(menuState, loadState, selectedLevelTrans);
-	gameState.AddTransition(loadState, playState, loadLevelTransition);
-	gameState.AddTransition(playState, respawnState, playerDeadTransition);
-	gameState.AddTransition(respawnState, playState, respawnTransition);
-	gameState.AddTransition(playState, gameOverState, gameOverTransition);
-	gameState.AddTransition(gameOverState, menuState, wroteHighScoreTransition);
-	gameState.AddTransition(playState, loadState, skipLevelTransition);
-	gameState.AddTransition(playState, loadState, playerWinTransition);
-	gameState.AddParameter("hasSelectedLevel", false);
-	gameState.AddParameter("hasSelectedGameMode", false);
-	gameState.AddParameter("hasLoadedLevel", false);
-	gameState.AddParameter("currentLevel", 0);
-	gameState.AddParameter("hasLoadedLevel", false);
-	gameState.AddParameter("isPlayerDead", false);
-	gameState.AddParameter("hasWrittenHighScore", false);
-	gameState.AddParameter("hasNoExtraLife", false);
-	gameState.AddParameter("levelRemaining", 2);
-	gameState.AddParameter("hasSkippedLevel", false);
-	gameState.AddParameter("hasPlayerWon", false);
-	// gameState.AddParameter("players", dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>());
-	gameState.SetStartState(menuState);
+	InitCommandUI();
+	InitGameStates();
 
 	GameInstance::GetInstance().AddValue("CurrentGameMode", DiggerUtils::DiggerGameMode::SinglePlayer);
 	GameInstance::GetInstance().AddValue("CurrentLevel",0);

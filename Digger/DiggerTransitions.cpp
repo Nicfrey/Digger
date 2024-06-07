@@ -102,3 +102,14 @@ bool WroteHighScoreTransition::CalculateCondition(Blackboard* pBlackBoard) const
 	std::cerr << "WroteHighScoreTransition: Could not find wroteHighScore in blackboard\n";
 	return false;
 }
+
+bool ReturnToMainMenuTransition::CalculateCondition(Blackboard* pBlackBoard) const
+{
+	bool isTransition;
+	if (pBlackBoard->GetValue("ReturnToMainMenu", isTransition))
+	{
+		return isTransition;
+	}
+	std::cerr << "ReturnToMainMenuTransition: Could not find ReturnToMainMenu in blackboard\n";
+	return false;
+}

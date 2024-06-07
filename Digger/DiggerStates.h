@@ -83,6 +83,18 @@ private:
 	bool m_HasSetName;
 	void HasSetName();
 };
+
+class ScoreState : public FSMStateNode
+{
+public:
+	ScoreState() = default;
+	void Enter(Blackboard* pBlackboard) override;
+	void Exit(Blackboard* pBlackboard) override;
+	void Update(Blackboard* pBlackboard) override;
+private:
+	bool m_ReturnToMainMenu;
+	void ReturnToMainMenu();
+};
 #pragma endregion GameStates
 
 #pragma region MoneyBagStates
