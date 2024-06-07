@@ -8,57 +8,102 @@
 #include "SceneManager.h"
 #include "TimeEngine.h"
 
+Rectf::Rectf(glm::vec2 topLeft, float width, float height) : topLeft{ topLeft }, width{ width }, height{ height }
+{
+}
+
+Rectf::Rectf(float width, float height) : topLeft{}, width { width }, height{ height }
+{
+}
+
 glm::vec2 Rectf::GetCenter() const
 {
-	return { bottomLeft.x + width / 2,bottomLeft.y + height / 2 };
+	return { topLeft.x + width / 2,topLeft.y + height / 2 };
 }
 
-void TimerManager::AddTimer(const DelegateFnc& function, float timer)
+TimerHandlerFunction::TimerHandlerFunction(const DelegateFnc& func, float timer, bool repeat): m_Handler{func}, m_Timer{.timer = timer, .repeat = repeat}
 {
-	Timer newTimer{ .timer = timer };
-	TimerHandler newTimerHandler{ newTimer, function };
-	m_TimerHandlers.emplace_back(newTimerHandler);
 }
 
+void TimerHandlerFunction::HandleTimer()
+{
+	m_Timer.currentTimer += TimeEngine::GetInstance().GetDeltaTime();
+	if(m_Timer.currentTimer >= m_Timer.timer)
+	{
+		m_Handler();
+		if(m_Timer.repeat)
+		{
+			m_Timer.currentTimer = 0.f;
+		}
+	}
+}
+
+bool TimerHandlerFunction::Equals(ITimerHandler* timer)
+{
+	if (auto* p = dynamic_cast<TimerHandlerFunction*>(timer))
+	{
+		return m_Handler.target<void()>() == p->m_Handler.target<void()>();
+	}
+	return false;
+}
+
+bool TimerHandlerFunction::IsDone() const
+{
+	return m_Timer.currentTimer >= m_Timer.timer;
+}
+
+void TimerManager::AddTimer(const DelegateFnc& function, float timer, bool repeat)
+{
+	m_TimerHandlers.emplace_back(std::make_unique<TimerHandlerFunction>(function, timer, repeat));
+}
 
 void TimerManager::Update()
 {
-	for (auto& handler : m_TimerHandlers)
+	for(const auto& timer: m_TimerHandlers)
 	{
-		handler.timer.currentTimer += TimeEngine::GetInstance().GetDeltaTime();
-		if(handler.timer.currentTimer >= handler.timer.timer)
-		{
-			handler.func();
-		}
+		timer->HandleTimer();
 	}
-	std::erase_if(m_TimerHandlers, [&](const TimerHandler& other)
+	RemoveTimerDone();
+}
+
+void TimerManager::RemoveTimer(const DelegateFnc& function, float timer)
+{
+	std::erase_if(m_TimerHandlers, [function, timer](const std::unique_ptr<ITimerHandler>& other)
 	{
-		return other.timer.currentTimer >= other.timer.timer;
+		return other->Equals(new TimerHandlerFunction(function, timer));
 	});
 }
 
-bool IsPointInRectangle(const glm::vec2& point, const Rectf& rect)
+void TimerManager::RemoveTimerDone()
 {
-	return point.x >= rect.bottomLeft.x && point.x <= rect.bottomLeft.x + rect.width &&
-		point.y >= rect.bottomLeft.y && point.y <= rect.bottomLeft.y + rect.height;
+	std::erase_if(m_TimerHandlers, [](const std::unique_ptr<ITimerHandler>& other)
+		{
+			return other->IsDone();
+		});
 }
 
-bool IsPointInRectangle(float x, float y, const Rectf& rect)
+bool Utils::IsPointInRectangle(const glm::vec2& point, const Rectf& rect)
+{
+	return point.x >= rect.topLeft.x && point.x <= rect.topLeft.x + rect.width &&
+		point.y >= rect.topLeft.y && point.y <= rect.topLeft.y + rect.height;
+}
+
+bool Utils::IsPointInRectangle(float x, float y, const Rectf& rect)
 {
 	return IsPointInRectangle(glm::vec2(x, y),rect);
 }
 
-bool IsPointInCircle(const glm::vec2& point, const Circlef& circle)
+bool Utils::IsPointInCircle(const glm::vec2& point, const Circlef& circle)
 {
 	return glm::distance(point, circle.center) <= circle.radius;
 }
 
-bool IsPointInCircle(float x, float y, const Circlef& circle)
+bool Utils::IsPointInCircle(float x, float y, const Circlef& circle)
 {
 	return IsPointInCircle(glm::vec2(x, y), circle);
 }
 
-bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1,
+bool Utils::LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& q0, const glm::vec2& q1,
                      glm::vec2& intersectPoint)
 {
 	const glm::vec2 u1{ p1 - p0 };
@@ -77,18 +122,26 @@ bool LineIntersect2D(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& 
 	return false;
 }
 
-bool LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersectPoint)
+bool Utils::LineIntersect2D(const Linef& line1, const Linef& line2, glm::vec2& intersectPoint)
 {
 	return LineIntersect2D(line1.p0, line1.p1, line2.p0, line2.p1, intersectPoint);
 }
 
-bool Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo)
+bool Utils::IsOverlapping(const Rectf& rect1, const Rectf& rect2)
 {
-	const glm::vec2 end = origin + direction * maxDistance;
-	return Raycast2D(origin, end, hitInfo);
+	return rect1.topLeft.x < rect2.topLeft.x + rect2.width &&
+		rect1.topLeft.x + rect1.width > rect2.topLeft.x &&
+		rect1.topLeft.y < rect2.topLeft.y + rect2.height &&
+		rect1.topLeft.y + rect1.height > rect2.topLeft.y;
 }
 
-bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo)
+bool Utils::Raycast2D(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, RaycastHitInfo2D& hitInfo)
+{
+	const glm::vec2 end = origin + direction * maxDistance;
+	return Utils::Raycast2D(origin, end, hitInfo);
+}
+
+bool Utils::Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo)
 {
 	const auto gameObjects{ dae::SceneManager::GetInstance().GetAllGameObject() };
 	for (const auto& gameObject : gameObjects)
@@ -111,7 +164,7 @@ bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& 
 	return false;
 }
 
-bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo, const std::string& tag)
+bool Utils::Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& hitInfo, const std::string& tag)
 {
 	const auto gameObjects{ dae::SceneManager::GetInstance().GetGameObjectsByTag(tag) };
 	for (const auto& gameObject : gameObjects)
@@ -132,4 +185,14 @@ bool Raycast2D(const glm::vec2& origin, const glm::vec2& end, RaycastHitInfo2D& 
 		}
 	}
 	return false;
+}
+
+glm::vec2 Utils::GetCenterOfRectangle(const Rectf& rect)
+{
+	return { rect.topLeft.x + rect.width / 2,rect.topLeft.y + rect.height / 2 };
+}
+
+glm::vec2 Utils::GetPositionForRectangleToBeCentered(const Rectf& rect, const Rectf& otherRect)
+{
+	return { otherRect.topLeft.x + otherRect.width / 2 - rect.width / 2, otherRect.topLeft.y + otherRect.height / 2 - rect.height / 2 };
 }

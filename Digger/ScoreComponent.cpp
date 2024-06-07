@@ -1,5 +1,6 @@
 #include "ScoreComponent.h"
 
+#include "GameInstance.h"
 #include "Observer.h"
 
 std::shared_ptr<BaseComponent> ScoreComponent::Clone() const
@@ -10,34 +11,18 @@ std::shared_ptr<BaseComponent> ScoreComponent::Clone() const
 void ScoreComponent::AddScore(int score)
 {
 	m_Score += score;
-	EventManager::GetInstance().NotifyEvent("ScoreAdded");
-	if(m_Score >= 500)
+	int totalScore;
+	GameInstance::GetInstance().GetValue("Score", totalScore);
+	totalScore += score;
+	if(totalScore / m_ScoreLifeUp != m_CanGainLife)
 	{
-		EventManager::GetInstance().NotifyEvent("WinTheGame");
+		m_CanGainLife = totalScore / m_ScoreLifeUp;
+		EventManager::GetInstance().NotifyEvent("GainLife");
 	}
+	GameInstance::GetInstance().ChangeValue("Score", totalScore);
 }
 
 int ScoreComponent::GetScore() const
 {
 	return m_Score;
-}
-
-void ScoreComponent::Update()
-{
-}
-
-void ScoreComponent::FixedUpdate()
-{
-}
-
-void ScoreComponent::Init()
-{
-}
-
-void ScoreComponent::Render() const
-{
-}
-
-void ScoreComponent::RenderGUI()
-{
 }

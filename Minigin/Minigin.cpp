@@ -13,6 +13,7 @@
 
 #include <thread>
 
+#include "GameState.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
@@ -22,6 +23,7 @@
 #include "WidgetManager.h"
 
 SDL_Window* g_window{};
+const glm::vec2 dae::Minigin::m_Window{ 640, 480 };
 
 void PrintSDLVersion()
 {
@@ -53,6 +55,7 @@ void PrintSDLVersion()
 
 dae::Minigin::Minigin(const std::string &dataPath)
 {
+	srand(static_cast<unsigned int>(time(nullptr)));
 	PrintSDLVersion();
 	
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) 
@@ -74,8 +77,8 @@ dae::Minigin::Minigin(const std::string &dataPath)
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		640,
-		480,
+		static_cast<int>(m_Window.x),
+		static_cast<int>(m_Window.y),
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 
@@ -103,6 +106,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 	auto lastTime{ std::chrono::high_resolution_clock::now() };
 
+	auto& gameState = GameState::GetInstance();
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
@@ -127,11 +131,12 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			lag -= FIXED_TIME_STEP;
 		}
 		sceneManager.OnCollisionUpdate();
+		gameState.Update();
 		timerManager.Update();
 		sceneManager.Update();
 		renderer.Render();
 
-		sceneManager.Destroy();
+		sceneManager.OnDestroy();
 		const auto sleepTime{ currentTime + std::chrono::milliseconds(MS_PER_FRAME) - std::chrono::high_resolution_clock::now() };
 		std::this_thread::sleep_for(sleepTime);
 	}

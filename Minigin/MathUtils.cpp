@@ -69,3 +69,13 @@ float MathUtils::Sqrt(float x)
 	return std::sqrtf(x);
 }
 
+int MathUtils::Rand(int min, int max)
+{
+	return min + rand() % (max - min + 1);
+}
+
+float MathUtils::Floor(float value)
+{
+	return std::floorf(value);
+}
+

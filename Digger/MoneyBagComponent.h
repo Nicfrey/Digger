@@ -2,6 +2,9 @@
 #include <glm/vec2.hpp>
 
 #include "BaseComponent.h"
+#include "FiniteStateMachine.h"
+
+using MoneyBagStateMachine = FiniteStateMachine;
 
 class MoneyBagComponent : public BaseComponent
 {
@@ -16,6 +19,7 @@ public:
 	};
 	MoneyBagComponent() = default;
 	~MoneyBagComponent() override = default;
+	StateMoneyBag GetState() const;
 	MoneyBagComponent(const MoneyBagComponent& other);
 	MoneyBagComponent(MoneyBagComponent&& other) noexcept;
 	MoneyBagComponent& operator=(const MoneyBagComponent& other);
@@ -29,5 +33,7 @@ private:
 	StateMoneyBag m_State;
 	int m_Score{ 500 };
 	glm::vec2 m_Velocity{ 0.f,10.f };
+	std::unique_ptr<MoneyBagStateMachine> m_MoneyBagStates;
+	void ConfigureStateMachine();
 };
 

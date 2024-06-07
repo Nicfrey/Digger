@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 #include "BaseComponent.h"
 #include "UIElementComponent.h"
@@ -33,10 +34,16 @@ public:
 	template<typename ClassType>
 	bool HasElement() const;
 	void HandleOnClickEvent(const glm::vec2& posMouse) const;
+	void HandleOnHoverEvent(const glm::vec3& vec);
 	void HandleOnPressedEvent() const;
 	void Render() const;
+	void Update();
 	std::string GetName() const { return m_Name; }
 private:
+	void HandleButtons(const glm::vec2& posMouse) const;
+	void HandleKeyboard(const glm::vec2& posMouse) const;
+	void HandleHoverButtons(const glm::vec3& vec);
+	void HandleHoverKeyboard(const glm::vec3& vec);
 	std::vector<std::shared_ptr<UIElementComponent>> m_Elements;
 	std::string m_Name;
 };
@@ -75,6 +82,10 @@ bool Widget::RemoveComponent(const std::shared_ptr<ClassType>& element)
 template <typename ClassType>
 std::shared_ptr<ClassType> Widget::GetElement() const
 {
+	if(m_Elements.data() == nullptr)
+	{
+		return std::shared_ptr<ClassType>{nullptr};
+	}
 	for (const std::shared_ptr<UIElementComponent>& elements : m_Elements)
 	{
 		std::shared_ptr<ClassType> elementGot{ std::dynamic_pointer_cast<ClassType>(elements) };

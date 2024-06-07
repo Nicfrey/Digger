@@ -1,14 +1,24 @@
 #include "MoneyBagComponent.h"
 
 #include "AnimatorComponent.h"
+#include "BackgroundComponent.h"
+#include "DiggerStates.h"
+#include "DiggerTransitionAnim.h"
 #include "EnemyComponent.h"
 #include "GameObject.h"
+#include "HealthComponent.h"
 #include "PlayerComponent.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
 #include "TimeEngine.h"
 #include "LevelComponent.h"
+#include "Observer.h"
 #include "Scene.h"
+
+MoneyBagComponent::StateMoneyBag MoneyBagComponent::GetState() const
+{
+	return m_State;
+}
 
 MoneyBagComponent::MoneyBagComponent(const MoneyBagComponent& other): BaseComponent{other}, m_State{other.m_State}
 {
@@ -53,24 +63,14 @@ void MoneyBagComponent::Init()
 		const auto animator{ GetGameObject()->GetComponent<AnimatorComponent>() };
 		animator->AddParameter("MoneyBagState",m_State);
 	}
-	if (const auto level{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>() })
-	{
-		const auto levelComp{ level->GetComponent<LevelComponent>() };
-	}
-
+	ConfigureStateMachine();
 }
 
 void MoneyBagComponent::Update()
 {
-	if(m_State == StateMoneyBag::IsFalling)
-	{
-		// Add velocity to money bag
-		GetGameObject()->Translate(m_Velocity * TimeEngine::GetInstance().GetDeltaTime());
-	}
-	if(m_State == StateMoneyBag::CanFall)
-	{
-		// Increment timer about to fall
-	}
+	m_MoneyBagStates->Update();
+	m_MoneyBagStates->GetBlackboard()->GetValue<StateMoneyBag>("MoneyBagState",m_State);
+	GetGameObject()->GetComponent<AnimatorComponent>()->SetParameter("MoneyBagState", m_State);
 }
 
 void MoneyBagComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
@@ -85,11 +85,22 @@ void MoneyBagComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other
 		{
 			// TODO Set the animation of enemy to dead
 			// TODO Add sound for killing enemy
-			auto goPlayer{ dae::SceneManager::GetInstance().GetGameObjectByTag("Player") };
+			auto goPlayer{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<PlayerComponent>() };
 			if(goPlayer->HasComponent<ScoreComponent>())
 			{
-				// TODO Add score of enemy to player
+				goPlayer->GetComponent<ScoreComponent>()->AddScore(250);
 			}
+			other->GetComponent<HealthComponent>()->LoseOneLife();
+		}
+		if(other->HasComponent<BackgroundComponent>())
+		{
+			EventManager::GetInstance().NotifyEvent("MoneyBagLanded");
+		}
+		if (other->HasComponent<PlayerComponent>())
+		{
+			const auto health{ other->GetComponent<HealthComponent>() };
+			health->LoseOneLife();
+			EventManager::GetInstance().NotifyEvent("PlayerDied");
 		}
 		break;
 	case StateMoneyBag::IsDestroyed:
@@ -99,9 +110,26 @@ void MoneyBagComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other
 			const auto scorePlayer{ other->GetComponent<ScoreComponent>() };
 			scorePlayer->AddScore(m_Score);
 			// TODO Add sound for getting bag
-			// TODO Update UI
 			GetGameObject()->Destroy();
 		}
 		break;
 	}
+}
+
+void MoneyBagComponent::ConfigureStateMachine()
+{
+	Blackboard* pBlackboard{ new Blackboard{} };
+	pBlackboard->AddValue("MoneyBagState", m_State);
+	pBlackboard->AddValue("Position", GetGameObject()->GetWorldPosition());
+	pBlackboard->AddValue("MoneyBagObject", GetGameObject()->GetThis());
+	m_MoneyBagStates = std::make_unique<MoneyBagStateMachine>(pBlackboard);
+	FallingStateMoneyBag* pFallingState{ new FallingStateMoneyBag{} };
+	IdleStateMoneyBag* pIdleState{ new IdleStateMoneyBag{} };
+	TransitionMoneyBagIsDestroyed* pTransitionIsDestroyed{ new TransitionMoneyBagIsDestroyed{} };
+	TransitionMoneyBagIsFalling* pTransitionIsFalling{ new TransitionMoneyBagIsFalling{} };
+	TransitionMoneyBagIsIdle* pTransitionIsIdle{ new TransitionMoneyBagIsIdle{} };
+	m_MoneyBagStates->AddTransition(pIdleState,pFallingState,pTransitionIsFalling);
+	m_MoneyBagStates->AddTransition(pFallingState, pIdleState, pTransitionIsDestroyed);
+	m_MoneyBagStates->AddTransition(pFallingState, pIdleState, pTransitionIsIdle);
+	m_MoneyBagStates->SetStartNode(pIdleState);
 }

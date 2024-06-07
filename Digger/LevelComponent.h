@@ -6,12 +6,13 @@
 
 #include "json.hpp"
 
-enum class GameMode
+
+class ThreadPool;
+
+namespace DiggerUtils
 {
-	SinglePlayer,
-	Coop,
-	Versus
-};
+	enum class DiggerGameMode;
+}
 
 namespace GraphUtils
 {
@@ -29,29 +30,39 @@ public:
 	LevelComponent& operator=(const LevelComponent& other);
 	LevelComponent& operator=(LevelComponent&& other) noexcept;
 	std::shared_ptr<BaseComponent> Clone() const override;
-	void Update() override;
-	void Init() override;
+	bool IsNodeMoneyBag(const GraphUtils::GraphNode* node) const;
+	GraphUtils::Graph* GetGraph() const;
 	void RenderGUI() override;
+	void OnDestroy() override;
+	void FreeSpaceMoneyBag(GraphUtils::GraphNode* node) const;
 private:
-	GameMode m_GameMode{};
+	DiggerUtils::DiggerGameMode m_GameMode{};
+	int m_Level{};
+	int m_MaxLevel{ 3 };
+	int m_MaxColumn{ 15 };
+	int m_MaxRow{ 10 };
 	GraphUtils::Graph* m_pGraph;
 	std::vector<GraphUtils::GraphNode*> m_ShortestPath;
 	glm::vec2 m_StartPos{20,20};
-	glm::vec2 m_SpawnPointEnemy;
-	std::vector<std::shared_ptr<dae::GameObject>> m_Players;
+	std::unique_ptr<ThreadPool> m_pThreadPool;
+	std::vector<GraphUtils::GraphNode*> m_pPlayersPreviousNode;
+	std::vector<GraphUtils::GraphNode*> m_pPlayersCurrentNode;
 
-	void FirstLevel();
-	void SecondLevel();
-	void ThirdLevel();
-	void LoadLevel(int level);
-	void SetToCoop();
-	void SetToSinglePlayer();
-	void SetToVersus();
+	void CreateSpawnerEnemy(int index) const;
+	void LoadLevel();
+	void InitializeLevel(const nlohmann::json& json);
+	void RespawnPlayers();
 	glm::vec2 GetVectorFromJson(const nlohmann::json& json);
 	void CreateEmeraldAtIndex(int index);
 	void CreateMoneyBagAtIndex(int index);
 	void CreateBackgroundLevel(int level);
 	void CreatePlayerAtIndex(int index, int player);
 	int GetIndexFromPosition(const glm::vec2& pos, int maxColumn);
+	void UpdateGraph();
+	void InitializeGraph(const nlohmann::json& json) const;
+	void ResetNodePlayers();
+	void CheckRemainingEmeralds();
+	void CheckRemainingEnemies();
+	void HandleUpdateGraph(size_t index, const std::shared_ptr<dae::GameObject>& object);
 };
 

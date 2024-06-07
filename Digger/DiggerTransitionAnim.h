@@ -24,6 +24,14 @@ public:
 	~TransitionPlayerIsDead() override = default;
 };
 
+class TransitionPlayerIsAlive : public FSMTransition
+{
+public:
+	TransitionPlayerIsAlive() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionPlayerIsAlive() override = default;
+};
+
 class TransitionMoneyBagCanFall : public FSMTransition
 {
 public:
@@ -40,6 +48,15 @@ public:
 	~TransitionMoneyBagIsIdle() override = default;
 };
 
+class TransitionMoneyBagIsFalling : public FSMTransition
+{
+public:
+	TransitionMoneyBagIsFalling() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionMoneyBagIsFalling() override = default;
+
+};
+
 class TransitionMoneyBagIsDestroyed : public FSMTransition
 {
 public:
@@ -54,5 +71,29 @@ public:
 	TransitionMoneyBagIsDestroyedIdle() = default;
 	bool CalculateCondition(Blackboard* pBlackBoard) const override;
 	~TransitionMoneyBagIsDestroyedIdle() override = default;
+};
+
+class TransitionEnemyIsDead : public FSMTransition
+{
+public:
+	TransitionEnemyIsDead() = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+	~TransitionEnemyIsDead() override = default;
+};
+
+class TransitionEnemyNobbinsTransformed : public FSMTransition
+{
+public:
+	TransitionEnemyNobbinsTransformed() = default;
+	~TransitionEnemyNobbinsTransformed() override = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
+};
+
+class TransitionEnemyHobbinsTransformed : public FSMTransition
+{
+public:
+	TransitionEnemyHobbinsTransformed() = default;
+	~TransitionEnemyHobbinsTransformed() override = default;
+	bool CalculateCondition(Blackboard* pBlackBoard) const override;
 };
 

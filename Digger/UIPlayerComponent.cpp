@@ -68,9 +68,9 @@ std::shared_ptr<BaseComponent> UIPlayerComponent::Clone() const
 
 void UIPlayerComponent::Init()
 {
-	EventManager::GetInstance().AddEvent("LifeGained", [this]() { UpdateTextLife(); });
-	EventManager::GetInstance().AddEvent("LifeLost", [this]() { UpdateTextLife(); });
-	EventManager::GetInstance().AddEvent("ScoreAdded", [this]() {UpdateTextScore(); });
+	EventManager::GetInstance().AddEvent("LifeGained", this , &UIPlayerComponent::UpdateTextLife);
+	EventManager::GetInstance().AddEvent("LifeLost",this, &UIPlayerComponent::UpdateTextLife );
+	EventManager::GetInstance().AddEvent("ScoreAdded", this,&UIPlayerComponent::UpdateTextScore);
 
 	UpdateTextLife();
 	UpdateTextScore();
@@ -88,12 +88,11 @@ void UIPlayerComponent::Render() const
 	m_pScoreText->Render();
 }
 
-void UIPlayerComponent::FixedUpdate()
+void UIPlayerComponent::OnDestroy()
 {
-}
-
-void UIPlayerComponent::RenderGUI()
-{
+	EventManager::GetInstance().RemoveEvent("LifeGained", this, &UIPlayerComponent::UpdateTextLife);
+	EventManager::GetInstance().RemoveEvent("LifeLost", this, &UIPlayerComponent::UpdateTextLife);
+	EventManager::GetInstance().RemoveEvent("ScoreAdded", this, &UIPlayerComponent::UpdateTextScore);
 }
 
 void UIPlayerComponent::SetPosition(float x, float y) const
@@ -122,7 +121,7 @@ void UIPlayerComponent::SetPositionTextScore(float x, float y) const
 	m_pScoreText->SetPositionOffset(x, y);
 }
 
-void UIPlayerComponent::UpdateTextLife() const
+void UIPlayerComponent::UpdateTextLife()
 {
 	if(const auto healthComponent{ GetGameObject()->GetComponent<HealthComponent>() })
 	{
@@ -139,7 +138,7 @@ void UIPlayerComponent::UpdateTextLife() const
 	}
 }
 
-void UIPlayerComponent::UpdateTextScore() const
+void UIPlayerComponent::UpdateTextScore()
 {
 	if (const auto scoreComponent{ GetGameObject()->GetComponent<ScoreComponent>() })
 	{

@@ -5,6 +5,7 @@
 #include <glm/vec2.hpp>
 
 #include "Command.h"
+#include "GameObjectCommand.h"
 #include "WidgetManager.h"
 
 
@@ -32,6 +33,11 @@ bool dae::InputManager::ProcessInput()
 		if (e.type == SDL_MOUSEBUTTONDOWN) {
 			const glm::vec3 posMouse{ e.button.x,e.button.y,0 };
 			WidgetManager::GetInstance().HandleOnClickEvent(posMouse);
+		}
+		if(e.type == SDL_MOUSEMOTION)
+		{
+			const glm::vec3 posMouse{ e.motion.x,e.motion.y,0 };
+			WidgetManager::GetInstance().HandleOnHoverEvent(posMouse);
 		}
 		if(e.type == SDL_KEYUP)
 		{
@@ -65,6 +71,34 @@ void dae::InputManager::BindCommand(const std::shared_ptr<Command>& pCommand, SD
 	if (pCommand != nullptr)
 	{
 		m_InputsActionKeyboards.emplace_back(pCommand, button, triggerType);
+	}
+}
+
+void dae::InputManager::UnbindCommandObjects()
+{
+	std::erase_if(m_InputsActionKeyboards, [](const InputActionKeyboard& other)
+		{
+			return std::dynamic_pointer_cast<GameObjectCommand>(other.pCommand);
+		});
+	for (auto& controller : m_Controllers)
+	{
+		controller->UnbindActionGameObject();
+	}
+}
+
+void dae::InputManager::UnbindCommandObjectsDestroyed()
+{
+	std::erase_if(m_InputsActionKeyboards, [](const InputActionKeyboard& other)
+		{
+			if (auto gameObjectCommand = std::dynamic_pointer_cast<GameObjectCommand>(other.pCommand))
+			{
+				return gameObjectCommand->IsDestroyed();
+			}
+			return false;
+		});
+	for (auto& controller : m_Controllers)
+	{
+		controller->UnbindActionGameObjectDestroyed();
 	}
 }
 

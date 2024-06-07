@@ -66,6 +66,7 @@ public:
 	void Update() override;
 
 	bool CurrentAnimationIsFinished() const;
+	void AddAnimation(const Animation& anim) const;
 	bool SetStartAnimation(const Animation& anim) const;
 	void AddTransition(const Animation& startAnim, const Animation& endAnim, FSMTransition* pTransition) const;
 	template<typename T>

@@ -19,6 +19,9 @@
     <Filter Include="Fichiers sources\Components">
       <UniqueIdentifier>{f4b2340b-dd22-4068-aacd-111282d00030}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\DiggerCommon">
+      <UniqueIdentifier>{692941d0-c755-491b-84ee-5ca8f7f86095}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Digger.cpp">
@@ -45,29 +48,38 @@
     <ClCompile Include="PlayerComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
-    <ClCompile Include="DiggerCommands.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemComponent.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="EnemySpawnerComponent.cpp">
+      <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
     <ClCompile Include="EmeraldComponent.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
-    <ClCompile Include="DiggerTransitionAnim.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelUtils.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="DiggerUtils.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="HighScoreComponent.cpp">
+      <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
     <ClCompile Include="MoneyBagComponent.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenuComponent.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="ItemComponent.cpp">
+      <Filter>Fichiers sources\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundComponent.cpp">
+      <Filter>Fichiers sources\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="DiggerCommands.cpp">
+      <Filter>Fichiers sources\DiggerCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="DiggerStates.cpp">
+      <Filter>Fichiers sources\DiggerCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="DiggerTransitionAnim.cpp">
+      <Filter>Fichiers sources\DiggerCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="DiggerTransitions.cpp">
+      <Filter>Fichiers sources\DiggerCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="DiggerUtils.cpp">
+      <Filter>Fichiers sources\DiggerCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,16 +116,25 @@
     <ClInclude Include="DiggerTransitionAnim.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="LevelUtils.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="DiggerUtils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="MoneyBagComponent.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenuComponent.h">
+    <ClInclude Include="DiggerStates.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="DiggerTransitions.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundComponent.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySpawnerComponent.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="HighScoreComponent.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

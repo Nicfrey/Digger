@@ -5,9 +5,8 @@
 class SpriteComponent final : public TextureComponent
 {
 public:
-	SpriteComponent() = default;
-	SpriteComponent(const std::string& filename);
-	SpriteComponent(const std::string& filename, unsigned nrCols, unsigned nrRows);
+	SpriteComponent(const std::string& name, const std::string& filename);
+	SpriteComponent(const std::string& name, const std::string& filename, unsigned nrCols, unsigned nrRows);
 	std::shared_ptr<BaseComponent> Clone() const override;
 	void Render() const override;
 	Rectf GetShape() const;

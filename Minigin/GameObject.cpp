@@ -5,6 +5,7 @@
 #include "Collider2D.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include "SceneManager.h"
 #include "TextureComponent.h"
 
 dae::GameObject::~GameObject() = default;
@@ -358,6 +359,29 @@ void dae::GameObject::SetPositionIsDirty()
 	for(const auto& child: m_ChildrenObject)
 	{
 		child->SetPositionIsDirty();
+	}
+}
+
+void dae::GameObject::SetIsMoving()
+{
+	m_IsMoving = true;
+	for (const auto& child : m_ChildrenObject)
+	{
+		child->SetIsMoving();
+	}
+}
+
+bool dae::GameObject::GetIsMoving() const
+{
+	return m_IsMoving;
+}
+
+void dae::GameObject::SetIsNotMoving()
+{
+	m_IsMoving = false;
+	for(const auto& child: m_ChildrenObject)
+	{
+		child->SetIsNotMoving();
 	}
 }
 

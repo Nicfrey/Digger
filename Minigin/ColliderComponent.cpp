@@ -46,7 +46,17 @@ bool ColliderComponent::IsOverlapping(std::shared_ptr<dae::GameObject>& other)
 		SetOther(nullptr);
 		return false;
 	}
-	return other->GetComponent<ColliderComponent>() != nullptr;
+	return other->HasComponent<ColliderComponent>();
+}
+
+bool ColliderComponent::IsColliding(std::shared_ptr<dae::GameObject>& other)
+{
+	if(!other)
+	{
+		SetOther(nullptr);
+		return false;
+	}
+	return other->HasComponent<ColliderComponent>();
 }
 
 
@@ -60,9 +70,28 @@ bool ColliderComponent::IsRaycasting(std::shared_ptr<dae::GameObject>& other)
 	return other->GetComponent<ColliderComponent>() != nullptr;
 }
 
+bool ColliderComponent::HandleCollision(std::shared_ptr<dae::GameObject>& other)
+{
+	if(m_IsTrigger)
+	{
+		return IsOverlapping(other);
+	}
+	return IsColliding(other);
+}
+
 dae::GameObject* ColliderComponent::GetOther() const
 {
 	return m_Other;
+}
+
+bool ColliderComponent::GetIsStatic() const
+{
+	return m_IsStatic;
+}
+
+void ColliderComponent::SetIsStatic(bool isStatic)
+{
+	m_IsStatic = isStatic;
 }
 
 void ColliderComponent::SetOther(dae::GameObject* other)

@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseComponent.h"
+#include "NavMeshAgentComponent.h"
 
 class PlayerComponent : public BaseComponent
 {
@@ -13,16 +14,20 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 	void Update() override;
 	void Init() override;
-	void RenderGUI() override;
+	void HandleCollisionEnemy(const std::shared_ptr<dae::GameObject>& other) const;
 	void OnCollisionEnter(std::shared_ptr<dae::GameObject>& other) override;
+	void OnDestroy() override;
 	void ShootProjectile();
-	void ResetProjectile();
+	void ProjectileHasCollide();
+	void HandleRespawn() const;
 
 private:
 	dae::GameObject* m_pProjectile;
 	std::unique_ptr<dae::GameObject> m_pDefaultProjectile;
-	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other) const;
+	std::shared_ptr<NavMeshAgentComponent> m_NavMeshComp;
+	void ResetProjectile();
+	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other);
 	std::shared_ptr<dae::GameObject> CreateProjectile() const;
-	void SetDeadAnim();
+	void HandleDeath();
 };
 

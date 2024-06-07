@@ -67,7 +67,7 @@ void ProjectileComponent::Update()
 {
 	if(m_IsActive)
 	{
-		m_Velocity = 20.f * TimeEngine::GetInstance().GetDeltaTime() * m_Direction;
+		m_Velocity = 100.f * TimeEngine::GetInstance().GetDeltaTime() * m_Direction;
 		GetGameObject()->Translate(m_Velocity);
 	}
 }

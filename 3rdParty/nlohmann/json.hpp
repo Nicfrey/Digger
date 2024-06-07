@@ -19172,7 +19172,7 @@ template <class Key, class T, class IgnoredLess = std::less<Key>,
                 // Since we cannot move const Keys, re-construct them in place
                 for (auto next = it; ++next != this->end(); ++it)
                 {
-                    it->~value_type(); // Destroy but keep allocation
+                    it->~value_type(); // OnDestroy but keep allocation
                     new (&*it) value_type{std::move(*next)};
                 }
                 Container::pop_back();
@@ -19193,7 +19193,7 @@ template <class Key, class T, class IgnoredLess = std::less<Key>,
                 // Since we cannot move const Keys, re-construct them in place
                 for (auto next = it; ++next != this->end(); ++it)
                 {
-                    it->~value_type(); // Destroy but keep allocation
+                    it->~value_type(); // OnDestroy but keep allocation
                     new (&*it) value_type{std::move(*next)};
                 }
                 Container::pop_back();

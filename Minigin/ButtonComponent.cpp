@@ -30,7 +30,7 @@ void ButtonComponent::SetOnButtonClick(const std::function<void()>& func)
 
 void ButtonComponent::OnClick(const glm::vec2& posMouse) const
 {
-	if(!IsPointInRectangle(posMouse,m_Box))
+	if(!Utils::IsPointInRectangle(posMouse,m_Box))
 	{
 		return;
 	}
@@ -62,9 +62,62 @@ void ButtonComponent::RenderElement() const
 	m_Text->RenderElement();
 }
 
+void ButtonComponent::UpdateElement()
+{
+	if (m_Image)
+	{
+		m_Image->UpdateElement();
+	}
+	m_Text->UpdateElement();
+}
+
 void ButtonComponent::SetTextButton(const std::string& text)
 {
 	m_Text->SetText(text);
 	m_Text->Update();
-	m_Box = Rectf{ m_Box.bottomLeft, static_cast<float>(m_Text->GetSize().x), static_cast<float>(m_Text->GetSize().y) };
+	m_Box = Rectf{ m_Box.topLeft, static_cast<float>(m_Text->GetSize().x), static_cast<float>(m_Text->GetSize().y) };
+}
+
+void ButtonComponent::SetPositionOffset(float x, float y)
+{
+	m_Text->SetPositionOffset(x, y);
+	m_Box = Rectf{ glm::vec2{x, y}, m_Box.width, m_Box.height };
+}
+
+void ButtonComponent::SetPositionOffset(const glm::vec2& pos)
+{
+	m_Text->SetPositionOffset(pos.x, pos.y);
+	m_Box = Rectf{ pos, m_Box.width, m_Box.height };
+}
+
+Rectf ButtonComponent::GetBox() const
+{
+	return m_Box;
+}
+
+bool ButtonComponent::IsSelected() const
+{
+	return m_IsSelected;
+}
+
+void ButtonComponent::DeselectButton()
+{
+	m_IsSelected = false;
+	m_Text->SetColor(255, 255, 255);
+}
+
+void ButtonComponent::SelectButton()
+{
+	m_IsSelected = true;
+	m_Text->SetColor(255, 255, 0);
+}
+
+void ButtonComponent::OnHover(const glm::vec3& vec)
+{
+	if (Utils::IsPointInRectangle(glm::vec2{ vec.x, vec.y }, m_Box))
+	{
+		SelectButton();
+		return;
+	}
+	DeselectButton();
 }

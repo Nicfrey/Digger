@@ -15,12 +15,18 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 
 	virtual bool IsOverlapping(std::shared_ptr<dae::GameObject>& other);
+	virtual bool IsColliding(std::shared_ptr<dae::GameObject>& other);
 	virtual bool Intersect(const glm::vec3& p0, const glm::vec3& p1, glm::vec3& intersection, dae::GameObject* go) const = 0;
 	virtual bool IsRaycasting(std::shared_ptr<dae::GameObject>& other);
+	bool HandleCollision(std::shared_ptr<dae::GameObject>& other);
 	dae::GameObject* GetOther() const;
+	bool GetIsStatic() const;
+	void SetIsStatic(bool isStatic);
 protected:
 	void SetOther(dae::GameObject* other);
 private:
 	dae::GameObject* m_Other;
+	bool m_IsStatic{false};
+	bool m_IsTrigger{ true };
 };
 

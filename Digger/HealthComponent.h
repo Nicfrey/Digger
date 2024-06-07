@@ -7,12 +7,16 @@ public:
 	HealthComponent();
 	HealthComponent(int lifeRemaining);
 	std::shared_ptr<BaseComponent> Clone() const override;
+	void Init() override;
 	void LoseOneLife();
-	void GainOneLife();
 	int GetLifeRemaining() const;
+	bool HasNoRemainingLife() const;
 	bool IsDead() const;
-private:
+	void OnDestroy() override;
+	void SetAlive();
+;private:
+	void GainOneLife();
 	int m_LifeRemaining;
-
+	bool m_Alive{ true };
 };
 

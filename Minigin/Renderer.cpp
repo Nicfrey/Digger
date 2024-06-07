@@ -49,9 +49,12 @@ void dae::Renderer::Render() const
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderClear(m_renderer);
 
+	WidgetManager::GetInstance().Update();
 	WidgetManager::GetInstance().Render();
+	glPushMatrix();
+	glScalef(1.15f, 1.15f, 1.15f);
 	SceneManager::GetInstance().Render();
-
+	glPopMatrix();
 
 	// Display Demo ImGui
 	ImGui_ImplOpenGL3_NewFrame();
@@ -101,8 +104,8 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 
 void dae::Renderer::RenderTexture(const Texture2D& texture, const Rectf& dstRect, const Rectf& srcRect) const
 {
-	const SDL_Rect srcRectSDL{ static_cast<int>(srcRect.bottomLeft.x), static_cast<int>(srcRect.bottomLeft.y),static_cast<int>(srcRect.width),static_cast<int>(srcRect.height)};
-	const SDL_Rect destRectSDL{ static_cast<int>(dstRect.bottomLeft.x), static_cast<int>(dstRect.bottomLeft.y),static_cast<int>(dstRect.width),static_cast<int>(dstRect.height) };
+	const SDL_Rect srcRectSDL{ static_cast<int>(srcRect.topLeft.x), static_cast<int>(srcRect.topLeft.y),static_cast<int>(srcRect.width),static_cast<int>(srcRect.height)};
+	const SDL_Rect destRectSDL{ static_cast<int>(dstRect.topLeft.x), static_cast<int>(dstRect.topLeft.y),static_cast<int>(dstRect.width),static_cast<int>(dstRect.height) };
 	if(SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &srcRectSDL, &destRectSDL) != 0)
 	{
 		const auto error = SDL_GetError();

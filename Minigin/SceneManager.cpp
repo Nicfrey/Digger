@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 #include <iostream>
+#include <thread>
 #include <utility>
 
 #include "Scene.h"
@@ -28,6 +29,7 @@ void dae::SceneManager::FixedUpdate()
 void dae::SceneManager::OnCollisionUpdate()
 {
 	m_ActiveScene->OnCollisionUpdate();
+	// m_ActiveScene->OnCollisionUpdate();
 }
 
 void dae::SceneManager::SetActiveScene(const std::string& name)
@@ -64,7 +66,7 @@ void dae::SceneManager::Instantiate(std::shared_ptr<GameObject> object)
 	m_ActiveScene->Instantiate(std::move(object));
 }
 
-dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) const
+std::shared_ptr<dae::GameObject> dae::SceneManager::GetGameObjectByTag(const std::string& tag) const
 {
 	const auto go = m_ActiveScene->GetGameObjectByTag(tag);
 	if (go != nullptr)
@@ -74,9 +76,9 @@ dae::GameObject* dae::SceneManager::GetGameObjectByTag(const std::string& tag) c
 	return nullptr;
 }
 
-std::vector<dae::GameObject*> dae::SceneManager::GetGameObjectsByTag(const std::string& tag) const
+std::vector<std::shared_ptr<dae::GameObject>> dae::SceneManager::GetGameObjectsByTag(const std::string& tag) const
 {
-	std::vector<GameObject*> gameObjects;
+	std::vector<std::shared_ptr<GameObject>> gameObjects;
 
 	const auto go = m_ActiveScene->GetGameObjectsByTag(tag);
 	if (!go.empty())
@@ -91,7 +93,7 @@ std::vector<std::shared_ptr<dae::GameObject>> dae::SceneManager::GetAllGameObjec
 	return m_ActiveScene->GetAllGameObject();
 }
 
-void dae::SceneManager::Destroy()
+void dae::SceneManager::OnDestroy()
 {
 	m_ActiveScene->Remove();
 }
@@ -112,9 +114,18 @@ std::shared_ptr<dae::Scene> dae::SceneManager::GetScene(const std::string& name)
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 {
-	const auto& scene = std::shared_ptr<Scene>(new Scene(name));
-	m_scenes.push_back(scene);
-	return *scene;
+	// Check if this scene already exists
+	const auto it = std::ranges::find_if(m_scenes, [name](const auto& scene)
+	{
+		return name == scene->GetName();
+	});
+	if(it == m_scenes.end())
+	{
+		const auto& scene = std::shared_ptr<Scene>(new Scene(name));
+		m_scenes.push_back(scene);
+		return *scene;
+	}
+	return *it->get();
 }
 
 void dae::SceneManager::Init()

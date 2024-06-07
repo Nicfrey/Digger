@@ -6,13 +6,15 @@
 #include <Xinput.h>
 
 #include "Command.h"
+#include "GameObjectCommand.h"
 #include "InputManager.h"
 
 class GamepadController::GamepadControllerImpl
 {
 	public:
-		GamepadControllerImpl();
+		GamepadControllerImpl(int index);
 		~GamepadControllerImpl();
+
 		struct InputActionController
 		{
 			InputActionController(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown) : triggerType{ triggerType }, button{ button }, pCommand{ pCommand }
@@ -24,6 +26,8 @@ class GamepadController::GamepadControllerImpl
 
 		void DoProcessInput();
 		void DoBindAction(const std::shared_ptr<Command>& pCommand, unsigned int button, const TriggerType& triggerType = KeyDown);
+		void DoUnbindActionGameObject();
+		void DoUnbindActionGameObjectDestroyed();
 
 private:
 	static DWORD m_TotalController;
@@ -45,15 +49,31 @@ private:
 
 DWORD GamepadController::GamepadControllerImpl::m_TotalController = 0;
 
-GamepadController::GamepadControllerImpl::GamepadControllerImpl()
+GamepadController::GamepadControllerImpl::GamepadControllerImpl(int index)
 {
-	m_ControllerIndex = m_TotalController;
-	++m_TotalController;
+	m_ControllerIndex = index;
 }
 
 GamepadController::GamepadControllerImpl::~GamepadControllerImpl()
 {
 	--m_TotalController;
+}
+
+void GamepadController::GamepadControllerImpl::DoUnbindActionGameObject()
+{
+	std::erase_if(m_InputActions, [](const InputActionController& inputAction) { return std::dynamic_pointer_cast<GameObjectCommand>(inputAction.pCommand); });
+}
+
+void GamepadController::GamepadControllerImpl::DoUnbindActionGameObjectDestroyed()
+{
+	std::erase_if(m_InputActions, [](const InputActionController& inputAction)
+	{
+		if(auto gameObjectCommand =  std::dynamic_pointer_cast<GameObjectCommand>(inputAction.pCommand))
+		{
+			return gameObjectCommand->IsDestroyed();
+		}
+		return false;
+	});
 }
 
 void GamepadController::GamepadControllerImpl::DoProcessInput()
@@ -132,9 +152,9 @@ bool GamepadController::GamepadControllerImpl::IsThumbsNotInDeadZone() const
 	return percentageThumbL > m_PercentageDeadZone || percentageThumbR > m_PercentageDeadZone;
 }
 
-GamepadController::GamepadController()
+GamepadController::GamepadController(int index)
 {
-	m_pImpl = new GamepadControllerImpl{};
+	m_pImpl = new GamepadControllerImpl{index};
 }
 
 GamepadController::~GamepadController()
@@ -152,4 +172,14 @@ void GamepadController::BindAction(const std::shared_ptr<Command>& pCommand, uns
 	const TriggerType& triggerType)
 {
 	m_pImpl->DoBindAction(pCommand, button, triggerType);
+}
+
+void GamepadController::UnbindActionGameObject()
+{
+	m_pImpl->DoUnbindActionGameObject();
+}
+
+void GamepadController::UnbindActionGameObjectDestroyed()
+{
+	m_pImpl->DoUnbindActionGameObjectDestroyed();
 }

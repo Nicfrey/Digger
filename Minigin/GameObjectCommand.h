@@ -17,6 +17,8 @@ public:
 	GameObjectCommand(GameObjectCommand&& other) noexcept = delete;
 	GameObjectCommand& operator=(const GameObjectCommand& other) = delete;
 	GameObjectCommand& operator=(GameObjectCommand&& other) noexcept = delete;
+
+	bool IsDestroyed() const;
 protected:
 	dae::GameObject* GetGameObject() const;
 private:
