@@ -21,6 +21,7 @@
 
 void MenuState::Enter(Blackboard* pBlackboard)
 {
+	std::cout << "MenuState Enter\n";
 	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::MAIN_MENU), true);
 	// Add function to event
 	EventManager::GetInstance().AddEvent("SelectGameMode", this, &MenuState::HasSelectedGameMode);
@@ -72,6 +73,7 @@ void MenuState::HasSelectedLevel()
 
 void LoadState::Enter(Blackboard* pBlackboard)
 {
+	std::cout << "LoadState Enter\n";
 	// Add function to event
 	EventManager::GetInstance().AddEvent("LevelLoaded", this, &LoadState::HasLoadedLevel);
 	// Change the state of load level
@@ -85,6 +87,9 @@ void LoadState::Update(Blackboard* pBlackboard)
 	{
 		// Transition to PlayState
 		pBlackboard->ChangeValue("hasLoadedLevel", m_HasLoadedLevel);
+		int level;
+		GameInstance::GetInstance().GetValue("CurrentLevel", level);
+		pBlackboard->ChangeValue("levelRemaining", NUMBER_LEVEL_AVAILABLE - level);
 	}
 }
 
@@ -103,6 +108,7 @@ void LoadState::HasLoadedLevel()
 
 void PlayState::Enter(Blackboard* pBlackboard)
 {
+	std::cout << "PlayState Enter\n";
 	m_Players = dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>();
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
@@ -111,7 +117,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	EventManager::GetInstance().AddEvent("NextLevel", this, &PlayState::SkipLevel);
-	// TODO Play music of the game
+
 	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME), true);
 }
 
@@ -119,21 +125,27 @@ void PlayState::Update(Blackboard* pBlackboard)
 {
 	if (m_PlayerIsDead)
 	{
-		pBlackboard->ChangeValue("isPlayerDead", true);
 		if (m_Players[0]->GetComponent<HealthComponent>()->HasNoRemainingLife())
 		{
 			pBlackboard->ChangeValue("hasNoExtraLife", true);
+			return;
 		}
+		pBlackboard->ChangeValue("isPlayerDead", true);
 		return;
 	}
 	if (m_PlayerHasWon)
 	{
-		pBlackboard->ChangeValue("hasPlayerWon", true);
 		DiggerUtils::NextLevel();
+		if(HasRemainingLevel(pBlackboard))
+		{
+			pBlackboard->ChangeValue("hasPlayerWon", true);
+		}
 	}
 	if(m_HasSkippedLevel)
 	{
-		pBlackboard->ChangeValue("hasSkippedLevel", true);
+		if(HasRemainingLevel(pBlackboard))
+			pBlackboard->ChangeValue("hasSkippedLevel", true);
+
 	}
 }
 
@@ -177,6 +189,15 @@ void PlayState::SkipLevel()
 	m_HasSkippedLevel = true;
 }
 
+bool PlayState::HasRemainingLevel(Blackboard* pBlackboard) const
+{
+	int level;
+	GameInstance::GetInstance().GetValue("CurrentLevel", level);
+	pBlackboard->ChangeValue("levelRemaining", NUMBER_LEVEL_AVAILABLE - level);
+	return NUMBER_LEVEL_AVAILABLE - level >= 0;
+}
+
+
 void PlayState::Exit(Blackboard* pBlackboard)
 {
 	pBlackboard->ChangeValue("isPlayerDead", false);
@@ -193,6 +214,7 @@ void PlayState::Exit(Blackboard* pBlackboard)
 
 void RespawnState::Enter(Blackboard* pBlackboard)
 {
+	std::cout << "RespawnState Enter\n";
 	EventManager::GetInstance().AddEvent("LevelLoaded", this, &RespawnState::HasLoadedLevel);
 	pBlackboard->ChangeValue("hasLoadedLevel", false);
 	EventManager::GetInstance().NotifyEvent("ReloadCurrentLevel");
@@ -218,15 +240,17 @@ void RespawnState::HasLoadedLevel()
 
 void GameOverState::Enter(Blackboard* pBlackboard)
 {
+	std::cout << "GameOverState Enter\n";
 	pBlackboard->ChangeValue("hasSetName", false);
 	// Show the Widget GameOver and High-Score
 	WidgetManager::GetInstance().SetActiveWidget("GameOver");
 	EventManager::GetInstance().AddEvent("SetNameHighScore", this, &GameOverState::HasSetName);
+	EventManager::GetInstance().NotifyEvent("GameOver");
 }
 
 void GameOverState::Exit(Blackboard* pBlackboard)
 {
-	pBlackboard->ChangeValue("hasSetName", false);
+	pBlackboard->ChangeValue("hasWrittenHighScore", false);
 	// Remove the widget GameOver and High-Score
 	WidgetManager::GetInstance().SetActiveWidget("MainMenu");
 	// Go back to the menu
@@ -236,7 +260,7 @@ void GameOverState::Update(Blackboard* pBlackboard)
 {
 	if (m_HasSetName)
 	{
-		pBlackboard->ChangeValue("hasSetName", true);
+		pBlackboard->ChangeValue("hasWrittenHighScore", true);
 	}
 }
 

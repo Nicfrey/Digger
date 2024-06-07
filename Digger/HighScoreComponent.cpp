@@ -7,22 +7,33 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "json.hpp"
+#include "KeyboardComponent.h"
+#include "Observer.h"
 #include "PlayerComponent.h"
 #include "ResourceManager.h"
 #include "Scene.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
+#include "Widget.h"
+#include "WidgetManager.h"
+
+std::shared_ptr<BaseComponent> HighScoreComponent::Clone() const
+{
+	return std::make_shared<HighScoreComponent>(*this);
+}
+
+void HighScoreComponent::Init()
+{
+	WidgetManager::GetInstance().GetActiveWidget()->GetElement<KeyboardComponent>()->SetSaveEntry(this, &HighScoreComponent::SaveHighScore);
+	WidgetManager::GetInstance().GetActiveWidget()->GetElement<KeyboardComponent>()->BindText(&m_Text);
+}
+
 
 void HighScoreComponent::SaveHighScore(const std::string& name)
 {
-	// Get all player object
+	std::cout << name << "\n";
 	int score{};
-	const auto& players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
-	for(auto& player : players)
-	{
-		// Get the score of the player
-		score += player->GetComponent<ScoreComponent>()->GetScore();
-	}
+	GameInstance::GetInstance().GetValue("Score",score);
 	// Get the current game mode
 	DiggerUtils::DiggerGameMode gameMode;
 	GameInstance::GetInstance().GetValue("CurrentGameMode", gameMode);
@@ -38,6 +49,8 @@ void HighScoreComponent::SaveHighScore(const std::string& name)
 		SaveToJson(name, score, "Scores/HighScoreVersus.json");
 		break;
 	}
+	GameInstance::GetInstance().ChangeValue("Score", 0);
+	EventManager::GetInstance().NotifyEvent("SetNameHighScore");
 }
 
 void HighScoreComponent::SaveToJson(const std::string& name, int score, const std::string& filename)

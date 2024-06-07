@@ -1,6 +1,49 @@
 {
-    "scores":
-    [
-        
+    "scores": [
+        {
+            "date": "2024-06-07",
+            "name": "CDJOV0",
+            "score": 0
+        },
+        {
+            "date": "2024-06-07",
+            "name": "BIOPV",
+            "score": -858993460
+        },
+        {
+            "date": "2024-06-07",
+            "name": "NICOLAS",
+            "score": -858991785
+        },
+        {
+            "date": "2024-06-07",
+            "name": "NICO",
+            "score": 3700
+        },
+        {
+            "date": "2024-06-07",
+            "name": "NICO",
+            "score": 5075
+        },
+        {
+            "date": "2024-06-07",
+            "name": "NICO",
+            "score": 4475
+        },
+        {
+            "date": "2024-06-07",
+            "name": "IJPO",
+            "score": 0
+        },
+        {
+            "date": "2024-06-07",
+            "name": "VPJDC",
+            "score": 150
+        },
+        {
+            "date": "2024-06-07",
+            "name": "TNHICD",
+            "score": 3975
+        }
     ]
 }

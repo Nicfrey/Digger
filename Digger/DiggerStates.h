@@ -53,6 +53,7 @@ private:
 	void HandlePlayerWon();
 	void SetPlayerWon();
 	void SkipLevel();
+	bool HasRemainingLevel(Blackboard* pBlackboard) const;
 	bool m_PlayerIsDead{false};
 	bool m_PlayerHasWon{false};
 	bool m_HasSkippedLevel{ false };

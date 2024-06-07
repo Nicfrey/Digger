@@ -8,12 +8,12 @@
 
 namespace dae
 {
+	class Scene;
 	class GameObject;
 }
 
 namespace dae
 {
-	class Scene;
 	class SceneManager final : public Singleton<SceneManager>
 	{
 	public:
@@ -45,8 +45,6 @@ namespace dae
 		std::vector<std::shared_ptr<Scene>> m_scenes;
 		std::shared_ptr<Scene> m_ActiveScene;
 
-		std::mutex m_MutexCollision;
-		std::jthread m_CollisionThread;
 	};
 
 	template <typename T>
@@ -54,9 +52,12 @@ namespace dae
 	{
 		for (const auto& scene : m_scenes)
 		{
-			auto gameObject = scene->GetGameObjectWithComponent<T>();
-			if (gameObject != nullptr)
-				return gameObject;
+			if (m_ActiveScene == scene)
+			{
+				auto gameObject = scene->GetGameObjectWithComponent<T>();
+				if (gameObject != nullptr)
+					return gameObject;
+			}
 		}
 		return nullptr;
 	}
@@ -67,10 +68,13 @@ namespace dae
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
 		for (const auto& scene : m_scenes)
 		{
-			const auto go = scene->GetGameObjectsWithComponent<T>();
-			if(!go.empty())
+			if(m_ActiveScene == scene)
 			{
-				gameObjects.insert(gameObjects.end(), go.begin(), go.end());
+				const auto go = scene->GetGameObjectsWithComponent<T>();
+				if (!go.empty())
+				{
+					gameObjects.insert(gameObjects.end(), go.begin(), go.end());
+				}
 			}
 		}
 		return gameObjects;

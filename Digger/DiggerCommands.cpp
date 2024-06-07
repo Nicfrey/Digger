@@ -220,11 +220,25 @@ void SelectButtonCommand::HandleButtonKeyboard()
 	const auto keyboards = currentWidget->GetAllElement<KeyboardComponent>();
 	if (keyboards.empty())
 	{
-				return;
+		return;
 	}
 	for (const auto& keyboard : keyboards)
 	{
 		keyboard->OnPressed();
+	}
+}
+
+void SaveKeyboardCommand::Execute()
+{
+	const auto currentWidget{ WidgetManager::GetInstance().GetActiveWidget() };
+	if(currentWidget == nullptr)
+	{
+		return;
+	}
+	const auto keyboards = currentWidget->GetAllElement<KeyboardComponent>();
+	for(auto& keyboard: keyboards)
+	{
+		keyboard->SaveEntry();
 	}
 }
 

@@ -75,6 +75,13 @@ private:
 	void HandleButtonKeyboard();
 };
 
+class SaveKeyboardCommand : public Command
+{
+public:
+	SaveKeyboardCommand() = default;
+	void Execute() override;
+};
+
 class MoveKeyboardCommand : public Command
 {
 public:

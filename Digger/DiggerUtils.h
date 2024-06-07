@@ -1,9 +1,10 @@
 #pragma once
-#include "json.hpp"
 #include "SoundSystemEngine.h"
 
 namespace DiggerUtils
 {
+#define NUMBER_LEVEL_AVAILABLE 3
+
 	enum class SoundDiggerID : SoundId
 	{
 		PROJECTILE_SHOOT,
@@ -31,6 +32,7 @@ namespace DiggerUtils
 	void OnLoadLevel1();
 	void OnLoadLevel2();
 	void OnLoadLevel3();
+	void LoadGameOver();
 	void NextLevel();
 
 	void SelectSinglePlayer();

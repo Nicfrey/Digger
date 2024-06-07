@@ -77,13 +77,13 @@ bool SkipLevelTransition::CalculateCondition(Blackboard* pBlackBoard) const
 
 bool GameOverTransition::CalculateCondition(Blackboard* pBlackBoard) const
 {
-	bool lifeRemaining;
+	bool hasNoExtraLife;
 	int levelRemaining;
-	if(pBlackBoard->GetValue("hasExtraLife",lifeRemaining))
+	if(pBlackBoard->GetValue("hasNoExtraLife",hasNoExtraLife))
 	{
 		if(pBlackBoard->GetValue("levelRemaining",levelRemaining))
 		{
-			return !lifeRemaining || levelRemaining <= 0;
+			return hasNoExtraLife || levelRemaining < 0;
 		}
 		std::cerr << "GameOverTransition: Could not find levelRemaining in blackboard\n";
 		return false;
@@ -95,7 +95,7 @@ bool GameOverTransition::CalculateCondition(Blackboard* pBlackBoard) const
 bool WroteHighScoreTransition::CalculateCondition(Blackboard* pBlackBoard) const
 {
 	bool isTransition;
-	if(pBlackBoard->GetValue("wroteHighScore",isTransition))
+	if(pBlackBoard->GetValue("hasWrittenHighScore",isTransition))
 	{
 		return isTransition;
 	}

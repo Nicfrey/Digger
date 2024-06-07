@@ -114,9 +114,18 @@ std::shared_ptr<dae::Scene> dae::SceneManager::GetScene(const std::string& name)
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 {
-	const auto& scene = std::shared_ptr<Scene>(new Scene(name));
-	m_scenes.push_back(scene);
-	return *scene;
+	// Check if this scene already exists
+	const auto it = std::ranges::find_if(m_scenes, [name](const auto& scene)
+	{
+		return name == scene->GetName();
+	});
+	if(it == m_scenes.end())
+	{
+		const auto& scene = std::shared_ptr<Scene>(new Scene(name));
+		m_scenes.push_back(scene);
+		return *scene;
+	}
+	return *it->get();
 }
 
 void dae::SceneManager::Init()

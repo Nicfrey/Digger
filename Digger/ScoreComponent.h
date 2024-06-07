@@ -9,6 +9,8 @@ public:
 	void AddScore(int score);
 	int GetScore() const;
 private:
-	int m_Score;
+	const int m_ScoreLifeUp{ 25000 };
+	int m_Score{ 0 };
+	int m_CanGainLife{ 0 };
 };
 

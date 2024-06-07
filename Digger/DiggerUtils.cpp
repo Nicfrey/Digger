@@ -1,7 +1,10 @@
 #include "DiggerUtils.h"
 
+#include <iostream>
+
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "HighScoreComponent.h"
 #include "LevelComponent.h"
 #include "Observer.h"
 #include "Scene.h"
@@ -40,15 +43,34 @@ void DiggerUtils::OnLoadLevel3()
 	EventManager::GetInstance().NotifyEvent("SelectLevel");
 }
 
+void DiggerUtils::LoadGameOver()
+{
+	int level;
+	GameInstance::GetInstance().GetValue("CurrentLevel", level);
+	for(int i{}; i < NUMBER_LEVEL_AVAILABLE; ++i)
+	{
+		auto scene =  dae::SceneManager::GetInstance().GetScene("Level" + std::to_string(i));
+		if(scene != nullptr)
+		{
+			scene->RemoveAll();
+		}
+	}
+	dae::SceneManager::GetInstance().CreateScene("GameOver");
+	dae::SceneManager::GetInstance().SetActiveScene("GameOver");
+	const auto go{ std::make_shared<dae::GameObject>() };
+	go->AddComponent(std::make_shared<HighScoreComponent>());
+	dae::SceneManager::GetInstance().Instantiate(go);
+}
+
 void DiggerUtils::NextLevel()
 {
 	int level;
 	GameInstance::GetInstance().GetValue("CurrentLevel", level);
 	dae::SceneManager::GetInstance().GetScene("Level"+std::to_string(level))->RemoveAll();
 	++level;
-	if(level > 3)
+	GameInstance::GetInstance().ChangeValue("CurrentLevel", level);
+	if(level > NUMBER_LEVEL_AVAILABLE)
 	{
-		// TODO handle end of game
 		return;
 	}
 	dae::SceneManager::GetInstance().CreateScene("Level" + std::to_string(level));
@@ -56,7 +78,6 @@ void DiggerUtils::NextLevel()
 	const auto go{ std::make_shared<dae::GameObject>() };
 	go->AddComponent(std::make_shared<LevelComponent>());
 	dae::SceneManager::GetInstance().Instantiate(go);
-	GameInstance::GetInstance().ChangeValue("CurrentLevel", level);
 }
 
 void DiggerUtils::SelectSinglePlayer()

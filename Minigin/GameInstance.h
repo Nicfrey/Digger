@@ -11,7 +11,7 @@ public:
 	template<typename T>
 	bool GetValue(const std::string& key, T& data);
 	template<typename T>
-	bool AddValue(const std::string& key, T& data);
+	bool AddValue(const std::string& key, T data);
 	template<typename T>
 	bool ChangeValue(const std::string& key, T data);
 private:
@@ -25,7 +25,7 @@ bool GameInstance::GetValue(const std::string& key, T& data)
 }
 
 template <typename T>
-bool GameInstance::AddValue(const std::string& key, T& data)
+bool GameInstance::AddValue(const std::string& key, T data)
 {
 	return m_pGameInstance.AddValue(key, data);
 }

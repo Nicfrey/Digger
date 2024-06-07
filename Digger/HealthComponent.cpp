@@ -19,6 +19,11 @@ std::shared_ptr<BaseComponent> HealthComponent::Clone() const
 	return std::make_shared<HealthComponent>(*this);
 }
 
+void HealthComponent::Init()
+{
+	EventManager::GetInstance().AddEvent("GainLife", this, &HealthComponent::GainOneLife);
+}
+
 
 void HealthComponent::LoseOneLife()
 {
@@ -42,7 +47,6 @@ void HealthComponent::LoseOneLife()
 void HealthComponent::GainOneLife()
 {
 	++m_LifeRemaining;
-	EventManager::GetInstance().NotifyEvent("LifeGained");
 }
 
 int HealthComponent::GetLifeRemaining() const
@@ -62,7 +66,7 @@ bool HealthComponent::IsDead() const
 
 void HealthComponent::OnDestroy()
 {
-
+	EventManager::GetInstance().RemoveEvent("GainLife", this, &HealthComponent::GainOneLife);
 }
 
 void HealthComponent::SetAlive()

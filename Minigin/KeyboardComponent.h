@@ -23,8 +23,9 @@ public:
 	void OnPressed() const;
 	template<typename ClassType>
 	void SetSaveEntry(ClassType* obj, void (ClassType::* funcPtr)(const std::string&));
-	void SaveEntry() const;
+	void SaveEntry();
 	void OnHover(const glm::vec3& vec);
+	void BindText(std::string* pText);
 
 private:
 	const std::string m_Alphabet[36] = { "A","B","C","D","E","F","G","H","I","J","K","L","M",
@@ -32,7 +33,7 @@ private:
 	std::unique_ptr<ButtonComponent> m_ButtonsLetter[36];
 	int m_CurrentSelected{};
 	int m_PreviousSelected{};
-	std::string m_CurrentWord{};
+	std::string* m_CurrentWord{};
 	DelegateFncString m_OnSaveEntryFunc;
 	void SelectTop();
 	void SelectDown();

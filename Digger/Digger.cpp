@@ -115,6 +115,7 @@ void load()
 	const auto moveDownKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{0,-1}) };
 	const auto moveRightKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{1,0}) };
 	const auto moveLeftKeyboardCommand{ std::make_shared<MoveKeyboardCommand>(glm::ivec2{-1,0}) };
+	const auto saveKeyboardCommand{ std::make_shared<SaveKeyboardCommand>() };
 	controller->BindAction(selectButtonCommand, XINPUT_GAMEPAD_A, TriggerType::KeyPressed);
 	controller->BindAction(moveUpButtonCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
 	controller->BindAction(moveDownButtonCommand, XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::KeyPressed);
@@ -122,7 +123,9 @@ void load()
 	controller->BindAction(moveDownKeyboardCommand, XINPUT_GAMEPAD_DPAD_UP, TriggerType::KeyPressed);
 	controller->BindAction(moveRightKeyboardCommand, XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::KeyPressed);
 	controller->BindAction(moveLeftKeyboardCommand, XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::KeyPressed);
+	controller->BindAction(saveKeyboardCommand, XINPUT_GAMEPAD_START, TriggerType::KeyPressed);
 	dae::InputManager::GetInstance().AddController(controller);
+	dae::InputManager::GetInstance().BindCommand(std::make_shared<SaveKeyboardCommand>(), SDL_SCANCODE_SPACE, TriggerType::KeyPressed);
 
 	const auto skipLevelCommand{ std::make_shared<SkipLevelCommand>() };
 	dae::InputManager::GetInstance().BindCommand(skipLevelCommand, SDL_SCANCODE_F1, TriggerType::KeyPressed);
@@ -161,17 +164,18 @@ void load()
 	gameState.AddParameter("hasLoadedLevel", false);
 	gameState.AddParameter("isPlayerDead", false);
 	gameState.AddParameter("hasWrittenHighScore", false);
-	gameState.AddParameter("hasExtraLife", false);
+	gameState.AddParameter("hasNoExtraLife", false);
 	gameState.AddParameter("levelRemaining", 2);
 	gameState.AddParameter("hasSkippedLevel", false);
+	gameState.AddParameter("hasPlayerWon", false);
 	// gameState.AddParameter("players", dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>());
 	gameState.SetStartState(menuState);
 
-	DiggerUtils::DiggerGameMode gameMode{ DiggerUtils::DiggerGameMode::SinglePlayer };
-	GameInstance::GetInstance().AddValue("CurrentGameMode", gameMode);
-	int levelSelection{};
-	GameInstance::GetInstance().AddValue("CurrentLevel",levelSelection);
+	GameInstance::GetInstance().AddValue("CurrentGameMode", DiggerUtils::DiggerGameMode::SinglePlayer);
+	GameInstance::GetInstance().AddValue("CurrentLevel",0);
+	GameInstance::GetInstance().AddValue("Score",0);
 	EventManager::GetInstance().AddEvent("NextLevel", DiggerUtils::NextLevel);
+	EventManager::GetInstance().AddEvent("GameOver", DiggerUtils::LoadGameOver);
 }
 
 int main()

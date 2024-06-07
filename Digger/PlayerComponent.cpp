@@ -116,6 +116,8 @@ void PlayerComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 void PlayerComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayerComponent::HandleDeath);
+	EventManager::GetInstance().RemoveEvent("ProjectileHit", this, &PlayerComponent::ProjectileHasCollide);
+	TimerManager::GetInstance().RemoveTimer(this, &PlayerComponent::ResetProjectile, 5.f);
 }
 
 void PlayerComponent::ShootProjectile()

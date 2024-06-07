@@ -582,7 +582,7 @@ void LevelComponent::HandleUpdateGraph(size_t index, const std::shared_ptr<dae::
 					const auto node{ background->GetWorldPosition() };
 					const auto closestNode{ GetGraph()->GetClosestNode(node) };
 					if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
-						background->GetWorldPosition()) < 7.f)
+						background->GetWorldPosition()) < 10.f)
 					{
 						background->Destroy();
 					}
