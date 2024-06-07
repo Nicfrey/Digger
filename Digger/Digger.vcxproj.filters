@@ -54,9 +54,6 @@
     <ClCompile Include="EmeraldComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameStateComponent.cpp">
-      <Filter>Fichiers sources\Components</Filter>
-    </ClCompile>
     <ClCompile Include="HighScoreComponent.cpp">
       <Filter>Fichiers sources\Components</Filter>
     </ClCompile>
@@ -129,9 +126,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="DiggerTransitions.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateComponent.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="BackgroundComponent.h">

@@ -16,7 +16,6 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "GameState.h"
-#include "GameStateComponent.h"
 #include "InputManager.h"
 #include "KeyboardComponent.h"
 #include "Minigin.h"
@@ -99,12 +98,18 @@ void load()
 	widgetManager.AddWidget(mainMenuWidget);
 	widgetManager.SetActiveWidget(mainMenuWidget);
 
-	placeholderTitle.topLeft.y = 100;
+	placeholderTitle.topLeft.y = 10;
 	const auto gameOverWidget{ std::make_shared<Widget>("GameOver") };
 	const auto titleGameOver{ std::make_shared<dae::TextComponent>("Game Over",fontBig) };
 	titleGameOver->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleGameOver->GetSize().x), static_cast<float>(titleGameOver->GetSize().y) }, placeholderTitle));
 	const auto keyboard = std::make_shared<KeyboardComponent>("Keyboard", 200.f);
+	placeholderTitle.topLeft.y += 60;
+	const auto name = std::make_shared<dae::TextComponent>("Enter Name",fontSmall);
+	name->SetColor(255, 255, 0);
+	name->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(name->GetSize().x), static_cast<float>(name->GetSize().y) }, placeholderTitle));
 	gameOverWidget->AddElement(keyboard);
+	gameOverWidget->AddElement(titleGameOver);
+	gameOverWidget->AddElement(name);
 	widgetManager.AddWidget(gameOverWidget);
 
 	GamepadController* controller{ new GamepadController{0}};

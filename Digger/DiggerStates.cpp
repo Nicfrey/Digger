@@ -253,7 +253,8 @@ void GameOverState::Exit(Blackboard* pBlackboard)
 	pBlackboard->ChangeValue("hasWrittenHighScore", false);
 	// Remove the widget GameOver and High-Score
 	WidgetManager::GetInstance().SetActiveWidget("MainMenu");
-	// Go back to the menu
+	m_HasSetName = false;
+	pBlackboard->ChangeValue("hasWrittenHighScore", m_HasSetName);
 }
 
 void GameOverState::Update(Blackboard* pBlackboard)

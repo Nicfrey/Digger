@@ -26,6 +26,8 @@ public:
 	void SaveEntry();
 	void OnHover(const glm::vec3& vec);
 	void BindText(std::string* pText);
+	template<typename ClassType>
+	void SetOnChange(ClassType* obj, void (ClassType::* funcPtr)());
 
 private:
 	const std::string m_Alphabet[36] = { "A","B","C","D","E","F","G","H","I","J","K","L","M",
@@ -35,11 +37,13 @@ private:
 	int m_PreviousSelected{};
 	std::string* m_CurrentWord{};
 	DelegateFncString m_OnSaveEntryFunc;
+	DelegateFnc m_OnChangeFunc;
 	void SelectTop();
 	void SelectDown();
 	void SelectLeft();
 	void SelectRight();
 	void SelectButton() const;
+	void OnChange() const;
 };
 
 template <typename ClassType>
@@ -49,5 +53,14 @@ void KeyboardComponent::SetSaveEntry(ClassType* obj, void(ClassType::* funcPtr)(
 	{
 		(obj->*funcPtr)(str);
 	};
+}
+
+template <typename ClassType>
+void KeyboardComponent::SetOnChange(ClassType* obj, void(ClassType::* funcPtr)())
+{
+	m_OnChangeFunc = [obj, funcPtr]()
+		{
+			(obj->*funcPtr)();
+		};
 }
 

@@ -53,13 +53,15 @@ void KeyboardComponent::DeletePreviousLetter()
 		return;
 	}
 	m_CurrentWord->pop_back();
+	OnChange();
 }
 
 void KeyboardComponent::AddLetter()
 {
 	const std::string letter{m_Alphabet[m_CurrentSelected]};
 	*m_CurrentWord += letter;
-	std::cout << m_CurrentWord << std::endl;
+	OnChange();
+	std::cout << *m_CurrentWord << "\n";
 }
 
 void KeyboardComponent::SelectTop()
@@ -106,6 +108,15 @@ void KeyboardComponent::SelectButton() const
 {
 	m_ButtonsLetter[m_PreviousSelected]->DeselectButton();
 	m_ButtonsLetter[m_CurrentSelected]->SelectButton();
+}
+
+void KeyboardComponent::OnChange() const
+{
+	if (m_OnChangeFunc)
+	{
+		m_OnChangeFunc();
+	}
+
 }
 
 void KeyboardComponent::OnClick(const glm::vec2& vec)
@@ -158,6 +169,10 @@ void KeyboardComponent::SaveEntry()
 	{
 		m_OnSaveEntryFunc(*m_CurrentWord);
 		m_OnSaveEntryFunc = nullptr;
+	}
+	if (m_OnChangeFunc)
+	{
+		m_OnChangeFunc = nullptr;
 	}
 }
 

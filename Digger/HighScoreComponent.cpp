@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
+#include "TextComponent.h"
 #include "Widget.h"
 #include "WidgetManager.h"
 
@@ -24,14 +25,15 @@ std::shared_ptr<BaseComponent> HighScoreComponent::Clone() const
 
 void HighScoreComponent::Init()
 {
-	WidgetManager::GetInstance().GetActiveWidget()->GetElement<KeyboardComponent>()->SetSaveEntry(this, &HighScoreComponent::SaveHighScore);
-	WidgetManager::GetInstance().GetActiveWidget()->GetElement<KeyboardComponent>()->BindText(&m_Text);
+	const auto keyboardComp{ WidgetManager::GetInstance().GetActiveWidget()->GetElement<KeyboardComponent>() };
+	keyboardComp->SetSaveEntry(this, &HighScoreComponent::SaveHighScore);
+	keyboardComp->BindText(&m_Text);
+	keyboardComp->SetOnChange(this, &HighScoreComponent::UpdateUI);
 }
 
 
 void HighScoreComponent::SaveHighScore(const std::string& name)
 {
-	std::cout << name << "\n";
 	int score{};
 	GameInstance::GetInstance().GetValue("Score",score);
 	// Get the current game mode
@@ -74,4 +76,10 @@ void HighScoreComponent::SaveToJson(const std::string& name, int score, const st
 	std::string str = jsonFile.dump(4);
 	file << str;
 	file.close();
+}
+
+void HighScoreComponent::UpdateUI()
+{
+	const auto textComponent{ WidgetManager::GetInstance().GetActiveWidget()->GetElement<dae::TextComponent>("Enter Name") };
+	textComponent->SetText(m_Text);
 }

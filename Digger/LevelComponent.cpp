@@ -175,7 +175,7 @@ void LevelComponent::FreeSpaceMoneyBag(GraphUtils::GraphNode* node) const
 			{
 				const auto currentNode{ background->GetWorldPosition() };
 				const auto closestNode{ GetGraph()->GetClosestNode(currentNode) };
-				if ((closestNode == node || closestNode == node->GetBottomNeighbor()) && glm::distance(currentNode,background->GetWorldPosition()) < 15.f)
+				if ((closestNode == node || closestNode == node->GetBottomNeighbor()) && glm::distance(closestNode->GetPosition(),background->GetWorldPosition()) < 20.f)
 				{
 					background->Destroy();
 				}
@@ -392,7 +392,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	auto scoreComponent{std::make_shared<ScoreComponent>()};
 	auto uiComponent{std::make_shared<UIPlayerComponent>(fontSmall)};
 	auto boxCollider{
-		std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width - 5, spritePlayer1->GetShape().height - 5)
+		std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width, spritePlayer1->GetShape().height - 5)
 	};
 	auto playerComponent{std::make_shared<PlayerComponent>()};
 	auto navMeshAgentComponent{std::make_shared<NavMeshAgentComponent>(m_pGraph, 80.f, true)};

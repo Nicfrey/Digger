@@ -12,6 +12,7 @@ public:
 	void SaveHighScore(const std::string& name);
 private:
 	void SaveToJson(const std::string& name, int score,const std::string& filename);
+	void UpdateUI();
 	std::string m_Text;
 };
 
