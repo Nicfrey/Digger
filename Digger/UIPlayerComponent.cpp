@@ -1,65 +1,10 @@
 #include "UIPlayerComponent.h"
 
+#include "GameInstance.h"
 #include "GameObject.h"
-#include "HealthComponent.h"
 #include "Observer.h"
-#include "ScoreComponent.h"
-
-UIPlayerComponent::UIPlayerComponent(const std::shared_ptr<dae::Font>& font): BaseComponent{ nullptr }, m_pLifeText{new dae::TextComponent{"#lives: ",font}}, m_pScoreText{new dae::TextComponent{"#score: ",font}}
-{
-}
-
-UIPlayerComponent::~UIPlayerComponent()
-{
-	delete m_pLifeText;
-	delete m_pScoreText;
-	m_pLifeText = nullptr;
-	m_pScoreText = nullptr;
-}
-
-UIPlayerComponent::UIPlayerComponent(const UIPlayerComponent& other): BaseComponent{ other }, m_pLifeText{ new dae::TextComponent{*other.m_pLifeText} }, m_pScoreText{ new dae::TextComponent{*other.m_pScoreText} }
-{
-}
-
-UIPlayerComponent::UIPlayerComponent(UIPlayerComponent&& other) noexcept: BaseComponent{ std::move(other) }
-{
-	m_pLifeText = other.m_pLifeText;
-	m_pScoreText = other.m_pScoreText;
-	other.m_pLifeText = nullptr;
-	other.m_pScoreText = nullptr;
-}
-
-UIPlayerComponent& UIPlayerComponent::operator=(const UIPlayerComponent& other)
-{
-	if (this != &other)
-	{
-		BaseComponent::operator=(other);
-		delete m_pLifeText;
-		m_pLifeText = nullptr;
-		delete m_pScoreText;
-		m_pScoreText = nullptr;
-		m_pLifeText = new dae::TextComponent{*other.m_pLifeText};
-		m_pScoreText = new dae::TextComponent{*other.m_pScoreText};
-	}
-	return *this;
-}
-
-UIPlayerComponent& UIPlayerComponent::operator=(UIPlayerComponent&& other) noexcept
-{
-	if (this != &other)
-	{
-		BaseComponent::operator=(std::move(other));
-		delete m_pLifeText;
-		m_pLifeText = nullptr;
-		delete m_pScoreText;
-		m_pScoreText = nullptr;
-		m_pLifeText = std::move(other.m_pLifeText);
-		m_pScoreText = std::move(other.m_pScoreText);
-		other.m_pLifeText = nullptr;
-		other.m_pScoreText = nullptr;
-	}
-	return *this;
-}
+#include "Widget.h"
+#include "WidgetManager.h"
 
 std::shared_ptr<BaseComponent> UIPlayerComponent::Clone() const
 {
@@ -68,81 +13,29 @@ std::shared_ptr<BaseComponent> UIPlayerComponent::Clone() const
 
 void UIPlayerComponent::Init()
 {
-	EventManager::GetInstance().AddEvent("LifeGained", this , &UIPlayerComponent::UpdateTextLife);
-	EventManager::GetInstance().AddEvent("LifeLost",this, &UIPlayerComponent::UpdateTextLife );
-	EventManager::GetInstance().AddEvent("ScoreAdded", this,&UIPlayerComponent::UpdateTextScore);
-
-	UpdateTextLife();
-	UpdateTextScore();
-}
-
-void UIPlayerComponent::Update()
-{
-	m_pLifeText->Update();
-	m_pScoreText->Update();
-}
-
-void UIPlayerComponent::Render() const
-{
-	m_pLifeText->Render();
-	m_pScoreText->Render();
+	m_WidgetUI = WidgetManager::GetInstance().GetWidget("GameUI");
+	EventManager::GetInstance().AddEvent("ScoreAdded",this,&UIPlayerComponent::UpdateScore);
+	EventManager::GetInstance().AddEvent("LifeLost", this, &UIPlayerComponent::UpdateLives);
+	UpdateLives();
+	UpdateScore();
 }
 
 void UIPlayerComponent::OnDestroy()
 {
-	EventManager::GetInstance().RemoveEvent("LifeGained", this, &UIPlayerComponent::UpdateTextLife);
-	EventManager::GetInstance().RemoveEvent("LifeLost", this, &UIPlayerComponent::UpdateTextLife);
-	EventManager::GetInstance().RemoveEvent("ScoreAdded", this, &UIPlayerComponent::UpdateTextScore);
+	EventManager::GetInstance().RemoveEvent("ScoreAdded", this, &UIPlayerComponent::UpdateScore);
+	EventManager::GetInstance().RemoveEvent("LifeLost", this, &UIPlayerComponent::UpdateLives);
 }
 
-void UIPlayerComponent::SetPosition(float x, float y) const
+void UIPlayerComponent::UpdateScore()
 {
-	SetPositionTextLife(x, y);
-	SetPositionTextScore(x, y + 20);
+	int score;
+	GameInstance::GetInstance().GetValue("Score",score);
+	m_WidgetUI->GetElement<dae::TextComponent>("Score")->SetText(std::to_string(score));
 }
 
-void UIPlayerComponent::SetPositionTextLife(float x, float y) const
+void UIPlayerComponent::UpdateLives()
 {
-	m_pLifeText->SetPositionOffset(x, y);
-}
-
-void UIPlayerComponent::SetPositionTextLife(const glm::vec3& pos) const
-{
-	SetPositionTextLife(pos.x, pos.y);
-}
-
-void UIPlayerComponent::SetPositionTextScore(const glm::vec3& pos) const
-{
-	SetPositionTextScore(pos.x, pos.y);
-}
-
-void UIPlayerComponent::SetPositionTextScore(float x, float y) const
-{
-	m_pScoreText->SetPositionOffset(x, y);
-}
-
-void UIPlayerComponent::UpdateTextLife()
-{
-	if(const auto healthComponent{ GetGameObject()->GetComponent<HealthComponent>() })
-	{
-		std::string newText{};
-		if (healthComponent->IsDead())
-		{
-			newText = "Player Is Dead";
-		}
-		else
-		{
-			newText = "#life: " + std::to_string(healthComponent->GetLifeRemaining());
-		}
-		m_pLifeText->SetText(newText);
-	}
-}
-
-void UIPlayerComponent::UpdateTextScore()
-{
-	if (const auto scoreComponent{ GetGameObject()->GetComponent<ScoreComponent>() })
-	{
-		const std::string newText{ "#score: " + std::to_string(scoreComponent->GetScore()) };
-		m_pScoreText->SetText(newText);
-	}
+	int lives;
+	GameInstance::GetInstance().GetValue("Lives", lives);
+	m_WidgetUI->GetElement<dae::TextComponent>("Life")->SetText(std::to_string(lives));
 }

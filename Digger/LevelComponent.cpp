@@ -230,7 +230,7 @@ void LevelComponent::InitializeLevel(const nlohmann::json& json)
 	CreateBackgroundLevel(numberLevel);
 
 	// Init the spawn point
-	const auto spawnEnemy = json["SpawnPointEnemy"];
+	const auto& spawnEnemy = json["SpawnPointEnemy"];
 	CreateSpawnerEnemy(GetIndexFromPosition(GetVectorFromJson(spawnEnemy), m_MaxColumn));
 
 
@@ -245,6 +245,7 @@ void LevelComponent::InitializeLevel(const nlohmann::json& json)
 		const glm::vec2 pos{ data.at("x"), data.at("y") };
 		CreateMoneyBagAtIndex(static_cast<int>(pos.y) * m_MaxColumn + static_cast<int>(pos.x));
 	}
+	CreateUIObject();
 	EventManager::GetInstance().NotifyEvent("LevelLoaded");
 }
 
@@ -392,7 +393,6 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	};
 	auto healthComponent{std::make_shared<HealthComponent>()};
 	auto scoreComponent{std::make_shared<ScoreComponent>()};
-	auto uiComponent{std::make_shared<UIPlayerComponent>(fontSmall)};
 	auto boxCollider{
 		std::make_shared<BoxCollider2D>(spritePlayer1->GetShape().width, spritePlayer1->GetShape().height - 5)
 	};
@@ -429,9 +429,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	{
 		std::cerr << "Failed to set start animation" << '\n';
 	}
-	uiComponent->SetPosition(0, 150);
 	go->AddComponent(healthComponent);
-	go->AddComponent(uiComponent);
 	go->AddComponent(scoreComponent);
 	go->AddComponent(spritePlayer1);
 	go->AddComponent(boxCollider);
@@ -591,4 +589,12 @@ void LevelComponent::HandleUpdateGraph(size_t index, const std::shared_ptr<dae::
 				}
 			});
 	}
+}
+
+void LevelComponent::CreateUIObject()
+{
+	const auto go{ std::make_shared<dae::GameObject>() };
+	const auto uiComp{ std::make_shared<UIPlayerComponent>() };
+	go->AddComponent(uiComp);
+	dae::SceneManager::GetInstance().Instantiate(go);
 }

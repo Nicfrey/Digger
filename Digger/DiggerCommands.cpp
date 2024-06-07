@@ -130,6 +130,11 @@ void MoveButtonCommand::Execute()
 	{
 		return;
 	}
+	if (buttons.size() == 1)
+	{
+		buttons[0]->SelectButton();
+		return;
+	}
 	if (m_Up)
 	{
 		for (size_t i{}; i < buttons.size(); ++i)

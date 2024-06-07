@@ -20,6 +20,7 @@ void ScoreComponent::AddScore(int score)
 		EventManager::GetInstance().NotifyEvent("GainLife");
 	}
 	GameInstance::GetInstance().ChangeValue("Score", totalScore);
+	EventManager::GetInstance().NotifyEvent("ScoreAdded");
 }
 
 int ScoreComponent::GetScore() const
