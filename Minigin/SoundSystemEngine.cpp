@@ -38,6 +38,7 @@ private:
 	std::jthread m_ThreadSound;
 	std::mutex m_MutexSound;
 
+	bool m_IsMute{ false };
 	void PlaySoundThread(Mix_Chunk* sound, const float& volume);
 	void LoadSoundThread(SoundId id, const std::string& filepath);
 };
@@ -134,7 +135,17 @@ void SoundSystemEngine::SoundSystemImpl::DoResumeAll()
 
 void SoundSystemEngine::SoundSystemImpl::DoMute()
 {
-	Mix_Volume(-1, 0);
+	if (m_IsMute)
+	{
+		m_IsMute = false;
+		Mix_Volume(-1, MIX_MAX_VOLUME);
+		return;
+	}
+	else
+	{
+		Mix_Volume(-1, 0);
+		m_IsMute = true;
+	}
 }
 
 void SoundSystemEngine::SoundSystemImpl::PlaySoundThread(Mix_Chunk* sound, const float& volume)
@@ -342,6 +353,7 @@ private:
 	};
 
 	std::vector<MusicSDL> m_Musics;
+	bool m_IsMute{ false };
 };
 
 MusicSystemEngine::MusicSystemImpl::~MusicSystemImpl()
@@ -382,7 +394,17 @@ bool MusicSystemEngine::MusicSystemImpl::DoIsPlaying() const
 
 void MusicSystemEngine::MusicSystemImpl::DoMute()
 {
-	Mix_VolumeMusic(0);
+	if(m_IsMute)
+	{
+		m_IsMute = false;
+		Mix_VolumeMusic(MIX_MAX_VOLUME);
+		return;
+	}
+	else
+	{
+		Mix_VolumeMusic(0);
+		m_IsMute = true;
+	}
 }
 
 void MusicSystemEngine::MusicSystemImpl::DoPlayMusic(MusicId id, bool loop)

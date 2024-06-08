@@ -98,7 +98,8 @@ void InitCommandUI()
 	controller->BindAction(moveLeftKeyboardCommand, XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::KeyPressed);
 	controller->BindAction(saveKeyboardCommand, XINPUT_GAMEPAD_START, TriggerType::KeyPressed);
 	dae::InputManager::GetInstance().AddController(controller);
-	dae::InputManager::GetInstance().BindCommand(std::make_shared<SaveKeyboardCommand>(), SDL_SCANCODE_SPACE, TriggerType::KeyPressed);
+	dae::InputManager::GetInstance().BindCommand(saveKeyboardCommand, SDL_SCANCODE_SPACE, TriggerType::KeyPressed);
+	dae::InputManager::GetInstance().BindCommand(std::make_shared<MuteCommand>(), SDL_SCANCODE_M, KeyPressed);
 
 	const auto skipLevelCommand{ std::make_shared<SkipLevelCommand>() };
 	dae::InputManager::GetInstance().BindCommand(skipLevelCommand, SDL_SCANCODE_F1, TriggerType::KeyPressed);
