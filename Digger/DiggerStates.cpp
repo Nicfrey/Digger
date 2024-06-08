@@ -52,6 +52,7 @@ void MenuState::Exit(Blackboard* pBlackboard)
 	m_HasSelectedGameMode = false;
 	pBlackboard->ChangeValue("hasSelectedLevel", m_HasSelectedLevel);
 	pBlackboard->ChangeValue("hasSelectedGameMode", m_HasSelectedGameMode);
+	GameInstance::GetInstance().ChangeValue("Life", 3);
 }
 
 void MenuState::HasSelectedGameMode()
@@ -118,7 +119,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	EventManager::GetInstance().AddEvent("NextLevel", this, &PlayState::SkipLevel);
-
+	WidgetManager::GetInstance().SetActiveWidget("GameUI");
 	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME), true);
 }
 
@@ -165,6 +166,8 @@ void PlayState::HandlePlayerDead()
 	{
 		TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerIsDead, 5.f);
 		ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), false);
+		GameInstance::GetInstance().ChangeValue("Lives", m_Players[0]->GetComponent<HealthComponent>()->GetLifeRemaining());
+		EventManager::GetInstance().NotifyEvent("LifeLost");
 	}
 }
 

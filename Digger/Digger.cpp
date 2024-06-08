@@ -215,6 +215,16 @@ void load()
 	scoreWidget->AddElement(mainMenuButton);
 	widgetManager.AddWidget(scoreWidget);
 
+	const auto gameUI{ std::make_shared<Widget>("GameUI") };
+	placeholderTitle.topLeft.y = dae::Minigin::m_Window.y - 50;
+	const auto scoreText{ std::make_shared<dae::TextComponent>("Score",fontSmall) };
+	scoreText->SetPositionOffset(glm::vec2{0.f,dae::Minigin::m_Window.y - 50.f});
+	const auto lifeText{ std::make_shared<dae::TextComponent>("Life",fontSmall) };
+	scoreText->SetPositionOffset(glm::vec2{ 0.f,dae::Minigin::m_Window.y - 50.f });
+	lifeText->SetPositionOffset(glm::vec2{ 200,dae::Minigin::m_Window.y - 50.f });
+	gameUI->AddElement(scoreText);
+	gameUI->AddElement(lifeText);
+	widgetManager.AddWidget(gameUI);
 
 	InitCommandUI();
 	InitGameStates();
@@ -222,6 +232,7 @@ void load()
 	GameInstance::GetInstance().AddValue("CurrentGameMode", DiggerUtils::DiggerGameMode::SinglePlayer);
 	GameInstance::GetInstance().AddValue("CurrentLevel",0);
 	GameInstance::GetInstance().AddValue("Score",0);
+	GameInstance::GetInstance().AddValue("Lives", 3);
 	EventManager::GetInstance().AddEvent("NextLevel", DiggerUtils::NextLevel);
 	EventManager::GetInstance().AddEvent("GameOver", DiggerUtils::LoadGameOver);
 }

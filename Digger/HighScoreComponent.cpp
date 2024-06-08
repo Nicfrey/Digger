@@ -95,11 +95,13 @@ void HighScoreComponent::DisplayTheTopFiveScore()
 	{
 		return a.second > b.second;
 	});
-	for (size_t i{1}; i <= scores.size() && i <= 5; ++i)
+	size_t i{};
+	while(i < scores.size() && i < 5)
 	{
 		std::string text = scores[i].first + " - " + std::to_string(scores[i].second);
-		const auto textComponent{ WidgetManager::GetInstance().GetActiveWidget()->GetElement<dae::TextComponent>("HighScore"+ std::to_string(i)) };
+		const auto textComponent{ WidgetManager::GetInstance().GetActiveWidget()->GetElement<dae::TextComponent>("HighScore"+ std::to_string(i+1)) };
 		textComponent->SetText(text);
+		++i;
 	}
 }
 

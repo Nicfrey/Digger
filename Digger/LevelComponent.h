@@ -64,5 +64,6 @@ private:
 	void CheckRemainingEmeralds();
 	void CheckRemainingEnemies();
 	void HandleUpdateGraph(size_t index, const std::shared_ptr<dae::GameObject>& object);
+	void CreateUIObject();
 };
 

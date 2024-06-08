@@ -12,7 +12,7 @@ void WidgetManager::AddWidget(const std::shared_ptr<Widget>& widget)
 		return;
 	}
 	m_Widgets.emplace_back(widget);
-	if(m_ActiveWidget == nullptr)
+	if (m_ActiveWidget == nullptr)
 	{
 		m_ActiveWidget = widget;
 	}
@@ -20,10 +20,12 @@ void WidgetManager::AddWidget(const std::shared_ptr<Widget>& widget)
 
 void WidgetManager::SetActiveWidget(const std::shared_ptr<Widget>& widget)
 {
-	const auto it{ std::ranges::find_if(m_Widgets, [widget](const std::shared_ptr<Widget>& other)
-	{
-		return widget.get() == other.get();
-	})};
+	const auto it{
+		std::ranges::find_if(m_Widgets, [widget](const std::shared_ptr<Widget>& other)
+		{
+			return widget.get() == other.get();
+		})
+	};
 	if (it != m_Widgets.end())
 	{
 		m_ActiveWidget = *it;
@@ -42,16 +44,18 @@ void WidgetManager::SetActiveWidget(int index)
 
 void WidgetManager::SetActiveWidget(const std::string& name)
 {
-	if(!HasElementWithName(name))
+	if (!HasElementWithName(name))
 	{
 		std::cerr << "Widget with name '" << name << "' does not exist\n";
 		return;
 	}
-	const auto it{ std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
-	{
-		return other->GetName() == name;
-	}) };
-	if(it != m_Widgets.end())
+	const auto it{
+		std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
+		{
+			return other->GetName() == name;
+		})
+	};
+	if (it != m_Widgets.end())
 	{
 		m_ActiveWidget = *it;
 	}
@@ -99,11 +103,28 @@ void WidgetManager::HandleOnHoverEvent(const glm::vec3& vec)
 	}
 }
 
+std::shared_ptr<Widget> WidgetManager::GetWidget(const std::string& name)
+{
+	const auto it{
+		std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
+		{
+			return other->GetName() == name;
+		})
+	};
+	if (it != m_Widgets.end())
+	{
+		return *it;
+	}
+	return nullptr;
+}
+
 bool WidgetManager::HasElementWithName(const std::string& name) const
 {
-	const auto it{ std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
-	{
-		return other->GetName() == name;
-	})};
+	const auto it{
+		std::ranges::find_if(m_Widgets, [name](const std::shared_ptr<Widget>& other)
+		{
+			return other->GetName() == name;
+		})
+	};
 	return it != m_Widgets.end();
 }
