@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 
+#include "NullSoundSystem.h"
 #include "ResourceManager.h"
 
 std::unique_ptr<SoundSystem> ServiceSoundLocator::m_SoundSystemInstance = nullptr;
@@ -37,6 +38,7 @@ private:
 	std::jthread m_ThreadSound;
 	std::mutex m_MutexSound;
 
+	bool m_IsMute{ false };
 	void PlaySoundThread(Mix_Chunk* sound, const float& volume);
 	void LoadSoundThread(SoundId id, const std::string& filepath);
 };
@@ -133,7 +135,16 @@ void SoundSystemEngine::SoundSystemImpl::DoResumeAll()
 
 void SoundSystemEngine::SoundSystemImpl::DoMute()
 {
-	Mix_Volume(-1, 0);
+	if (m_IsMute)
+	{
+		m_IsMute = false;
+		Mix_Volume(-1, MIX_MAX_VOLUME);
+	}
+	else
+	{
+		Mix_Volume(-1, 0);
+		m_IsMute = true;
+	}
 }
 
 void SoundSystemEngine::SoundSystemImpl::PlaySoundThread(Mix_Chunk* sound, const float& volume)
@@ -173,7 +184,14 @@ SoundSystem& ServiceSoundLocator::GetSoundSystem()
 
 void ServiceSoundLocator::RegisterSoundSystem(std::unique_ptr<SoundSystem>&& ss)
 {
-	m_SoundSystemInstance = std::move(ss);
+	if (m_SoundSystemInstance != nullptr)
+	{
+		m_SoundSystemInstance = std::make_unique<NullSoundSystem>();
+	}
+	else
+	{
+		m_SoundSystemInstance = std::move(ss);
+	}
 }
 
 LoggingSoundSystem::LoggingSoundSystem(std::unique_ptr<SoundSystem>&& ss): m_RealSoundSystem(std::move(ss))
@@ -205,7 +223,14 @@ MusicSystem& ServiceMusicLocator::GetMusicSystem()
 
 void ServiceMusicLocator::RegisterMusicSystem(std::unique_ptr<MusicSystem>&& ms)
 {
-	m_MusicSystemInstance = std::move(ms);
+	if (m_MusicSystemInstance != nullptr)
+	{
+		m_MusicSystemInstance = std::make_unique<NullMusicSystem>();
+	}
+	else
+	{
+		m_MusicSystemInstance = std::move(ms);
+	}
 }
 
 LoggingMusicSystem::LoggingMusicSystem(std::unique_ptr<MusicSystem>&& ms)
@@ -327,6 +352,7 @@ private:
 	};
 
 	std::vector<MusicSDL> m_Musics;
+	bool m_IsMute{ false };
 };
 
 MusicSystemEngine::MusicSystemImpl::~MusicSystemImpl()
@@ -367,7 +393,17 @@ bool MusicSystemEngine::MusicSystemImpl::DoIsPlaying() const
 
 void MusicSystemEngine::MusicSystemImpl::DoMute()
 {
-	Mix_VolumeMusic(0);
+	if(m_IsMute)
+	{
+		m_IsMute = false;
+		Mix_VolumeMusic(MIX_MAX_VOLUME);
+		return;
+	}
+	else
+	{
+		Mix_VolumeMusic(0);
+		m_IsMute = true;
+	}
 }
 
 void MusicSystemEngine::MusicSystemImpl::DoPlayMusic(MusicId id, bool loop)

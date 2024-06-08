@@ -45,8 +45,6 @@ private:
 	std::vector<GraphUtils::GraphNode*> m_ShortestPath;
 	glm::vec2 m_StartPos{20,20};
 	std::unique_ptr<ThreadPool> m_pThreadPool;
-	std::vector<GraphUtils::GraphNode*> m_pPlayersPreviousNode;
-	std::vector<GraphUtils::GraphNode*> m_pPlayersCurrentNode;
 
 	void CreateSpawnerEnemy(int index) const;
 	void LoadLevel();
@@ -58,12 +56,12 @@ private:
 	void CreateBackgroundLevel(int level);
 	void CreatePlayerAtIndex(int index, int player);
 	int GetIndexFromPosition(const glm::vec2& pos, int maxColumn);
-	void UpdateGraph();
+	void UpdateGraphPlayers();
+	void UpdateGraphEnemies();
 	void InitializeGraph(const nlohmann::json& json) const;
-	void ResetNodePlayers();
 	void CheckRemainingEmeralds();
 	void CheckRemainingEnemies();
-	void HandleUpdateGraph(size_t index, const std::shared_ptr<dae::GameObject>& object);
 	void CreateUIObject();
+	void HandleFreeSpace(GraphUtils::GraphNode*& previousNode, const std::shared_ptr<dae::GameObject>& object);
 };
 

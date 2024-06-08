@@ -240,6 +240,7 @@
     <ClInclude Include="Graph.h" />
     <ClInclude Include="KeyboardComponent.h" />
     <ClInclude Include="NavMeshAgentComponent.h" />
+    <ClInclude Include="NullSoundSystem.h" />
     <ClInclude Include="SpatialGrid.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MathUtils.h" />
@@ -297,6 +298,7 @@
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="KeyboardComponent.cpp" />
     <ClCompile Include="NavMeshAgentComponent.cpp" />
+    <ClCompile Include="NullSoundSystem.cpp" />
     <ClCompile Include="SpatialGrid.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MathUtils.cpp" />

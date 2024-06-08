@@ -92,7 +92,7 @@ bool TransitionMoneyBagIsDestroyedIdle::CalculateCondition(Blackboard* pBlackBoa
 bool TransitionEnemyIsDead::CalculateCondition(Blackboard* pBlackBoard) const
 {
 	bool isDead;
-	if(pBlackBoard->GetValue("EnemyIsDead",isDead))
+	if(pBlackBoard->GetValue("IsDead",isDead))
 	{
 		return isDead;
 	}

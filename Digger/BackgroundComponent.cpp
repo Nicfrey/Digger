@@ -1,5 +1,6 @@
 #include "BackgroundComponent.h"
 
+#include "DiggerUtils.h"
 #include "EnemyComponent.h"
 #include "GameObject.h"
 #include "Graph.h"
@@ -9,6 +10,7 @@
 #include "ProjectileComponent.h"
 #include "Scene.h"
 #include "SceneManager.h"
+#include "SoundSystemEngine.h"
 
 std::shared_ptr<BaseComponent> BackgroundComponent::Clone() const
 {
@@ -37,6 +39,7 @@ void BackgroundComponent::HandleProjectileCollision(std::shared_ptr<dae::GameObj
 		const auto projectile{ other->GetComponent<ProjectileComponent>() };
 		const auto playerComp{ projectile->GetShotBy()->GetComponent<PlayerComponent>() };
 		other->Destroy();
+		ServiceSoundLocator::GetSoundSystem().Play(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_HIT_WALL),50);
 		EventManager::GetInstance().NotifyEvent("ProjectileHit");
 	}
 }

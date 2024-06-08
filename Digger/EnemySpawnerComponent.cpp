@@ -75,7 +75,7 @@ void EnemySpawnerComponent::CreateNewEnemy()
 	TransitionEnemyIsDead* transitionDead{ new TransitionEnemyIsDead() };
 	TransitionEnemyNobbinsTransformed* transitionNobbins{ new TransitionEnemyNobbinsTransformed() };
 	TransitionEnemyHobbinsTransformed* transitionHobbins{ new TransitionEnemyHobbinsTransformed() };
-	animatorComponent->AddParameter("EnemyIsDead", false);
+	animatorComponent->AddParameter("IsDead", false);
 	animatorComponent->AddParameter("EnemyType", enemyComponent->GetType());
 	const auto levelObject = dae::SceneManager::GetInstance().GetGameObjectWithComponent<LevelComponent>();
 	const auto navMeshAgentComponent{ std::make_shared<NavMeshAgentComponent>(levelObject->GetComponent<LevelComponent>()->GetGraph()) };

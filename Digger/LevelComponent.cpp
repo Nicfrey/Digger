@@ -38,10 +38,10 @@ LevelComponent::LevelComponent() : BaseComponent(nullptr), m_pGraph{new GraphUti
                                    m_pThreadPool{std::make_unique<ThreadPool>(std::thread::hardware_concurrency())}
 {
 	EventManager::GetInstance().AddEvent("LoadLevel", this, &LevelComponent::LoadLevel);
-	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
+	EventManager::GetInstance().AddEvent("PlayerMoving", this, &LevelComponent::UpdateGraphPlayers);
+	EventManager::GetInstance().AddEvent("EnemyMoving", this, &LevelComponent::UpdateGraphEnemies);
 	EventManager::GetInstance().AddEvent("ReloadCurrentLevel", this, &LevelComponent::RespawnPlayers);
 	EventManager::GetInstance().AddEvent("EmeraldCollected", this, &LevelComponent::CheckRemainingEmeralds);
-	ResetNodePlayers();
 }
 
 LevelComponent::~LevelComponent()
@@ -132,10 +132,20 @@ void LevelComponent::RenderGUI()
 			                                            IM_COL32(0, 255, 255, 255));
 		for (const auto& neighbor : node->GetNeighbors())
 		{
-			const GraphUtils::GraphNode* neighborNode{neighbor.first};
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(node->GetPosition().x, node->GetPosition().y),
-			                                    ImVec2(neighborNode->GetPosition().x, neighborNode->GetPosition().y),
-			                                    IM_COL32(0, 255, 0, 255));
+			if (!node->GetTransitionCanBeVisited(neighbor.first))
+			{
+				ImGui::GetWindowDrawList()->AddLine(ImVec2(node->GetPosition().x, node->GetPosition().y),
+				                                    ImVec2(neighbor.first->GetPosition().x,
+				                                           neighbor.first->GetPosition().y),
+				                                    IM_COL32(255, 0, 0, 255));
+			}
+			else
+			{
+				const GraphUtils::GraphNode* neighborNode{ neighbor.first };
+				ImGui::GetWindowDrawList()->AddLine(ImVec2(node->GetPosition().x, node->GetPosition().y),
+					ImVec2(neighborNode->GetPosition().x, neighborNode->GetPosition().y),
+					IM_COL32(0, 255, 0, 255));
+			}
 		}
 	}
 	for (size_t i{}; i < m_ShortestPath.size(); ++i)
@@ -156,8 +166,9 @@ void LevelComponent::RenderGUI()
 void LevelComponent::OnDestroy()
 {
 	EventManager::GetInstance().RemoveEvent("LoadLevel", this, &LevelComponent::LoadLevel);
-	EventManager::GetInstance().RemoveEvent("PlayerMoving", this, &LevelComponent::UpdateGraph);
+	EventManager::GetInstance().RemoveEvent("PlayerMoving", this, &LevelComponent::UpdateGraphPlayers);
 	EventManager::GetInstance().RemoveEvent("ReloadCurrentLevel", this, &LevelComponent::RespawnPlayers);
+	EventManager::GetInstance().RemoveEvent("EnemyMoving", this, &LevelComponent::UpdateGraphEnemies);
 }
 
 void LevelComponent::FreeSpaceMoneyBag(GraphUtils::GraphNode* node) const
@@ -167,20 +178,21 @@ void LevelComponent::FreeSpaceMoneyBag(GraphUtils::GraphNode* node) const
 	node->GetBottomNeighbor()->SetTransitionCanBeVisited(node);
 	// Apply thread here
 	m_pThreadPool->EnqueueTask([this, node]
+	{
+		const auto backgrounds{
+			dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
+		};
+		for (const auto background : backgrounds)
 		{
-			const auto backgrounds{
-							dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
-			};
-			for (const auto background : backgrounds)
+			const auto currentNode{background->GetWorldPosition()};
+			const auto closestNode{GetGraph()->GetClosestNode(currentNode)};
+			if ((closestNode == node || closestNode == node->GetBottomNeighbor()) && glm::distance(
+				closestNode->GetPosition(), background->GetWorldPosition()) < 23.f)
 			{
-				const auto currentNode{ background->GetWorldPosition() };
-				const auto closestNode{ GetGraph()->GetClosestNode(currentNode) };
-				if ((closestNode == node || closestNode == node->GetBottomNeighbor()) && glm::distance(closestNode->GetPosition(),background->GetWorldPosition()) < 20.f)
-				{
-					background->Destroy();
-				}
+				background->Destroy();
 			}
-		});
+		}
+	});
 }
 
 void LevelComponent::CreateSpawnerEnemy(int index) const
@@ -189,7 +201,7 @@ void LevelComponent::CreateSpawnerEnemy(int index) const
 	const auto go{std::make_shared<dae::GameObject>()};
 	go->SetLocalPosition(pos);
 	const auto spawnerEnemy{std::make_shared<EnemySpawnerComponent>()};
-	if(m_GameMode == DiggerUtils::DiggerGameMode::Versus)
+	if (m_GameMode == DiggerUtils::DiggerGameMode::Versus)
 	{
 		spawnerEnemy->CanSpawnPlayer();
 	}
@@ -214,7 +226,7 @@ void LevelComponent::LoadLevel()
 		{
 			break;
 		}
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreatePlayerAtIndex(GetIndexFromPosition(pos, m_MaxColumn), indexPlayer);
 		++indexPlayer;
 	}
@@ -226,7 +238,7 @@ void LevelComponent::InitializeLevel(const nlohmann::json& json)
 	InitializeGraph(json);
 
 	// Init background
-	const int numberLevel{ json["NumberLevel"].get<int>() };
+	const int numberLevel{json["NumberLevel"].get<int>()};
 	CreateBackgroundLevel(numberLevel);
 
 	// Init the spawn point
@@ -236,13 +248,13 @@ void LevelComponent::InitializeLevel(const nlohmann::json& json)
 
 	for (auto data : json["Emerald"])
 	{
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreateEmeraldAtIndex(static_cast<int>(pos.y) * m_MaxColumn + static_cast<int>(pos.x));
 	}
 
 	for (auto data : json["Moneybag"])
 	{
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		CreateMoneyBagAtIndex(static_cast<int>(pos.y) * m_MaxColumn + static_cast<int>(pos.x));
 	}
 	CreateUIObject();
@@ -257,7 +269,7 @@ void LevelComponent::RespawnPlayers()
 	{
 		enemy->Destroy();
 	}
-	if(const auto spawner{dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>()})
+	if (const auto spawner{dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>()})
 	{
 		spawner->Destroy();
 	}
@@ -277,7 +289,8 @@ void LevelComponent::RespawnPlayers()
 			break;
 		}
 		const glm::vec2 pos{data.at("x"), data.at("y")};
-		players[indexPlayer]->SetLocalPosition(m_pGraph->GetNode(GetIndexFromPosition(pos, m_MaxColumn))->GetPosition());
+		players[indexPlayer]->
+			SetLocalPosition(m_pGraph->GetNode(GetIndexFromPosition(pos, m_MaxColumn))->GetPosition());
 		players[indexPlayer]->GetComponent<HealthComponent>()->SetAlive();
 		players[indexPlayer]->GetComponent<PlayerComponent>()->HandleRespawn();
 		++indexPlayer;
@@ -310,7 +323,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 	const auto pos{m_pGraph->GetNode(index)->GetPosition()};
 	const std::shared_ptr moneyBag{std::make_shared<dae::GameObject>()};
 	const auto sprite{std::make_shared<SpriteComponent>("MoneyBag", "SpritesItems.png", 3, 3)};
-	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width - 4, sprite->GetShape().height));
+	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width - 5, sprite->GetShape().height));
 	const auto item{std::make_shared<MoneyBagComponent>()};
 	const auto animator{std::make_shared<AnimatorComponent>()};
 	Animation idle{.name = "Idle", .frames = {1}, .loop = true, .spriteComponent = sprite};
@@ -329,12 +342,12 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 	TransitionMoneyBagCanFall* transitionCanFall{new TransitionMoneyBagCanFall{}};
 	TransitionMoneyBagIsDestroyed* transitionDestroyed{new TransitionMoneyBagIsDestroyed{}};
 	TransitionMoneyBagIsDestroyedIdle* transitionDestroyedIdle{new TransitionMoneyBagIsDestroyedIdle{}};
-	TransitionMoneyBagIsFalling* transitionIsFalling{ new TransitionMoneyBagIsFalling{} };
+	TransitionMoneyBagIsFalling* transitionIsFalling{new TransitionMoneyBagIsFalling{}};
 	animator->AddTransition(idle, isFalling, transitionCanFall);
 	animator->AddTransition(isFalling, idle, transitionIsFalling);
 	animator->AddTransition(idle, isDestroyed, transitionDestroyed);
 	animator->AddTransition(isDestroyed, isDestroyedIdle, transitionDestroyedIdle);
-	if(!animator->SetStartAnimation(idle))
+	if (!animator->SetStartAnimation(idle))
 	{
 		std::cerr << "Failed to set start animation MoneyBag" << '\n';
 	}
@@ -419,7 +432,7 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	TransitionPlayerNoProjectile* transitionNoProjectile{new TransitionPlayerNoProjectile()};
 	TransitionPlayerHasProjectile* transitionProjectile{new TransitionPlayerHasProjectile{}};
 	TransitionPlayerIsDead* transitionDead{new TransitionPlayerIsDead{}};
-	TransitionPlayerIsAlive* transitionPlayerAlive{ new TransitionPlayerIsAlive{} };
+	TransitionPlayerIsAlive* transitionPlayerAlive{new TransitionPlayerIsAlive{}};
 	animator->AddTransition(idlePlayer, idleWithoutShoot, transitionNoProjectile);
 	animator->AddTransition(idleWithoutShoot, idlePlayer, transitionProjectile);
 	animator->AddTransition(idlePlayer, deadAnim, transitionDead);
@@ -449,6 +462,15 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	gamepadController->BindAction(moveRightCommand, XINPUT_GAMEPAD_DPAD_RIGHT);
 	gamepadController->BindAction(shootCommand, XINPUT_GAMEPAD_B, KeyPressed);
 	dae::InputManager::GetInstance().AddController(gamepadController);
+	if (player == 0)
+	{
+		dae::InputManager::GetInstance().BindCommand(moveUpCommand, SDL_SCANCODE_UP);
+		dae::InputManager::GetInstance().BindCommand(moveDownCommand, SDL_SCANCODE_DOWN);
+		dae::InputManager::GetInstance().BindCommand(moveLeftCommand, SDL_SCANCODE_LEFT);
+		dae::InputManager::GetInstance().BindCommand(moveRightCommand, SDL_SCANCODE_RIGHT);
+		dae::InputManager::GetInstance().BindCommand(moveUpCommand, SDL_SCANCODE_UP);
+		dae::InputManager::GetInstance().BindCommand(shootCommand, SDL_SCANCODE_SPACE, KeyPressed);
+	}
 	go->SetLocalPosition(pos);
 	dae::SceneManager::GetInstance().Instantiate(go);
 }
@@ -458,20 +480,25 @@ int LevelComponent::GetIndexFromPosition(const glm::vec2& pos, int maxColumn)
 	return static_cast<int>(pos.y) * maxColumn + static_cast<int>(pos.x);
 }
 
-void LevelComponent::UpdateGraph()
+void LevelComponent::UpdateGraphPlayers()
 {
 	const auto players{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>()};
-	const auto enemies{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>() };
-	for(size_t i{}; i < enemies.size(); ++i)
-	{
-		if(enemies[i]->GetComponent<EnemyComponent>()->GetType() == EnemyComponent::EnemyType::Nobbins)
-		{
-			HandleUpdateGraph(1, enemies[i]); // Always the second player that plays the Nobbins
-		}
-	}
 	for (size_t i{}; i < players.size(); ++i)
 	{
-		HandleUpdateGraph(i, players[i]);
+		HandleFreeSpace(players[i]->GetComponent<PlayerComponent>()->GetPreviousNode(), players[i]);
+	}
+}
+
+void LevelComponent::UpdateGraphEnemies()
+{
+	const auto enemies{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>()};
+	for (size_t i{}; i < enemies.size(); ++i)
+	{
+		auto enemyComp{enemies[i]->GetComponent<EnemyComponent>()};
+		if (enemyComp->GetType() == EnemyComponent::EnemyType::Nobbins)
+		{
+			HandleFreeSpace(enemyComp->GetPreviousNode(), enemies[i]);
+		}
 	}
 }
 
@@ -481,7 +508,7 @@ void LevelComponent::InitializeGraph(const nlohmann::json& json) const
 	{
 		for (int j{}; j < m_MaxColumn; ++j)
 		{
-			const int currentIndex{ i * m_MaxColumn + j };
+			const int currentIndex{i * m_MaxColumn + j};
 			GraphUtils::GraphNode* current{
 				m_pGraph->AddNode(glm::vec3{
 					m_StartPos.x + 35 * static_cast<float>(j), m_StartPos.y + 35 * static_cast<float>(i), 0
@@ -490,25 +517,25 @@ void LevelComponent::InitializeGraph(const nlohmann::json& json) const
 			current->SetCanBeVisited(false);
 			if (j != 0)
 			{
-				GraphUtils::GraphNode* left{ m_pGraph->GetNode(currentIndex - 1) };
+				GraphUtils::GraphNode* left{m_pGraph->GetNode(currentIndex - 1)};
 				left->AddNeighbor(current, glm::distance(current->GetPosition(), left->GetPosition()));
 				current->AddNeighbor(left, glm::distance(current->GetPosition(), left->GetPosition()));
 			}
-			const int indexTop{ currentIndex - m_MaxColumn };
+			const int indexTop{currentIndex - m_MaxColumn};
 			if (i > 0)
 			{
-				GraphUtils::GraphNode* top{ m_pGraph->GetNode(indexTop) };
+				GraphUtils::GraphNode* top{m_pGraph->GetNode(indexTop)};
 				top->AddNeighbor(current, glm::distance(current->GetPosition(), top->GetPosition()));
 				current->AddNeighbor(top, glm::distance(current->GetPosition(), top->GetPosition()));
 			}
 		}
 	}
 
-	GraphUtils::GraphNode* currentNode{ nullptr };
-	GraphUtils::GraphNode* previousNode{ nullptr };
+	GraphUtils::GraphNode* currentNode{nullptr};
+	GraphUtils::GraphNode* previousNode{nullptr};
 	for (auto data : json["CanBeVisited"])
 	{
-		const glm::vec2 pos{ data.at("x"), data.at("y") };
+		const glm::vec2 pos{data.at("x"), data.at("y")};
 		currentNode = m_pGraph->GetNode(static_cast<int>(pos.y) * m_MaxColumn + static_cast<int>(pos.x));
 		currentNode->SetCanBeVisited(true);
 		if (previousNode != nullptr && currentNode->IsNodeNeighbor(previousNode))
@@ -520,25 +547,10 @@ void LevelComponent::InitializeGraph(const nlohmann::json& json) const
 	}
 }
 
-void LevelComponent::ResetNodePlayers()
-{
-	m_pPlayersCurrentNode.clear();
-	m_pPlayersPreviousNode.clear();
-	m_pPlayersCurrentNode.resize(2);
-	for (auto& node : m_pPlayersCurrentNode)
-	{
-		node = nullptr;
-	}
-	m_pPlayersPreviousNode.resize(2);
-	for (auto& node : m_pPlayersPreviousNode)
-	{
-		node = nullptr;
-	}
-}
-
 void LevelComponent::CheckRemainingEmeralds()
 {
-	const auto emeralds{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EmeraldComponent>() };
+	const auto emeralds{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EmeraldComponent>()};
+	std::cout << "Emeralds size: " << emeralds.size() << '\n';
 	if (emeralds.size() == 1)
 	{
 		EventManager::GetInstance().NotifyEvent("PlayerWon");
@@ -547,54 +559,58 @@ void LevelComponent::CheckRemainingEmeralds()
 
 void LevelComponent::CheckRemainingEnemies()
 {
-	const auto enemies{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>() };
-	const auto spawner{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>() };
+	const auto enemies{dae::SceneManager::GetInstance().GetGameObjectsWithComponent<EnemyComponent>()};
+	const auto spawner{dae::SceneManager::GetInstance().GetGameObjectWithComponent<EnemySpawnerComponent>()};
 	if (enemies.empty() && spawner == nullptr)
 	{
 		EventManager::GetInstance().NotifyEvent("PlayerWon");
 	}
 }
 
-void LevelComponent::HandleUpdateGraph(size_t index, const std::shared_ptr<dae::GameObject>& object)
-{
-	m_pPlayersCurrentNode[index] = m_pGraph->GetClosestNode(object->GetWorldPosition());
-	if (m_pPlayersPreviousNode[index] == nullptr)
-	{
-		m_pPlayersPreviousNode[index] = m_pPlayersCurrentNode[index];
-	}
-	if (m_pPlayersPreviousNode[index] != m_pPlayersCurrentNode[index])
-	{
-		m_pGraph->GetNode(m_pPlayersPreviousNode[index])->SetTransitionCanBeVisited(m_pPlayersCurrentNode[index]);
-		m_pGraph->GetNode(m_pPlayersCurrentNode[index])->SetTransitionCanBeVisited(m_pPlayersPreviousNode[index]);
-		m_pPlayersPreviousNode[index] = m_pPlayersCurrentNode[index];
-	}
-	if (!m_pPlayersCurrentNode[index]->CanBeVisited())
-	{
-		m_pPlayersCurrentNode[index]->SetCanBeVisited(true);
-		// Apply thread here
-		m_pThreadPool->EnqueueTask([this]
-			{
-				const auto backgrounds{
-					dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
-				};
-				for (const auto background : backgrounds)
-				{
-					const auto node{ background->GetWorldPosition() };
-					const auto closestNode{ GetGraph()->GetClosestNode(node) };
-					if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
-						background->GetWorldPosition()) < 10.f)
-					{
-						background->Destroy();
-					}
-				}
-			});
-	}
-}
-
 void LevelComponent::CreateUIObject()
 {
-	const auto go{ std::make_shared<dae::GameObject>() };
-	const auto uiComp{ std::make_shared<UIPlayerComponent>() };
+	const auto go{std::make_shared<dae::GameObject>()};
+	const auto uiComp{std::make_shared<UIPlayerComponent>()};
 	go->AddComponent(uiComp);
 	dae::SceneManager::GetInstance().Instantiate(go);
+}
+
+void LevelComponent::HandleFreeSpace(GraphUtils::GraphNode*& previousNode,
+                                     const std::shared_ptr<dae::GameObject>& object)
+{
+	auto currentNode = m_pGraph->GetClosestNode(object->GetWorldPosition());
+	if (previousNode == nullptr)
+	{
+		std::cout << "previous node is nullptr\n";
+		previousNode = currentNode;
+	}
+	if (previousNode != currentNode)
+	{
+		std::cout << "Update graph transition\n";
+		m_pGraph->GetNode(previousNode)->SetTransitionCanBeVisited(currentNode);
+		m_pGraph->GetNode(currentNode)->SetTransitionCanBeVisited(previousNode);
+		previousNode = currentNode;
+	}
+	if (!currentNode->CanBeVisited())
+	{
+		currentNode->SetCanBeVisited(true);
+		// Apply thread here
+		m_pThreadPool->EnqueueTask([this]
+		{
+			std::cout << "REMOVE BACKGROUNDS\n";
+			const auto backgrounds{
+				dae::SceneManager::GetInstance().GetGameObjectsWithComponent<BackgroundComponent>()
+			};
+			for (const auto& background : backgrounds)
+			{
+				const auto node{background->GetWorldPosition()};
+				const auto closestNode{GetGraph()->GetClosestNode(node)};
+				if (closestNode->CanBeVisited() && glm::distance(closestNode->GetPosition(),
+				                                                 background->GetWorldPosition()) < 10.f)
+				{
+					background->Destroy();
+				}
+			}
+		});
+	}
 }

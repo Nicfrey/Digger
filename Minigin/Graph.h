@@ -38,6 +38,7 @@ namespace GraphUtils
 		void SetTransitionCanBeVisited(GraphNode* neighbor);
 		void SetCanBeVisited(bool value) { m_CanBeVisited = value; }
 		bool IsNodeNeighbor(GraphNode* neighbor) const;
+		bool GetTransitionCanBeVisited(GraphNode* neighbor) const;
 		GraphNode* GetTopNeighbor() const;
 		GraphNode* GetRightNeighbor() const;
 		GraphNode* GetBottomNeighbor() const;

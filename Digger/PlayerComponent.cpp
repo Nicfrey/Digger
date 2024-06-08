@@ -97,7 +97,7 @@ void PlayerComponent::HandleCollisionEnemy(const std::shared_ptr<dae::GameObject
 	{
 		return;
 	}
-	if(other->HasComponent<EnemyComponent>())
+	if(other->HasComponent<EnemyComponent>() && !other->GetComponent<HealthComponent>()->IsDead())
 	{
 		health->LoseOneLife();
 		if(health->IsDead())
@@ -133,6 +133,7 @@ void PlayerComponent::ShootProjectile()
 			animator->SetParameter("HasProjectile", false);
 		}
 		EventManager::GetInstance().AddEvent("ProjectileHit", this, &PlayerComponent::ProjectileHasCollide);
+		ServiceSoundLocator::GetSoundSystem().Play(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_SHOOT), 50);
 	}
 }
 
@@ -221,4 +222,9 @@ void PlayerComponent::HandleRespawn() const
 			animator->SetParameter("PlayerDied", false);
 		}
 	}
+}
+
+GraphUtils::GraphNode*& PlayerComponent::GetPreviousNode()
+{
+	return m_pPreviousNode;
 }
