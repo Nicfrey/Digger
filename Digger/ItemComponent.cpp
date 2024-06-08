@@ -14,4 +14,21 @@ std::shared_ptr<BaseComponent> ItemComponent::Clone() const
 
 void ItemComponent::Init()
 {
+    if (GetGameObject()->HasComponent<SpriteComponent>())
+    {
+        const auto sprite{ GetGameObject()->GetComponent<SpriteComponent>() };
+        switch (m_Type)
+        {
+        case ItemType::Emerald:
+            sprite->SetCurrentRow(2);
+            break;
+        case ItemType::Gold:
+            sprite->SetCurrentRow(0);
+            sprite->SetCurrentCol(1);
+            break;
+        case ItemType::GoldNugget:
+            sprite->SetCurrentRow(1);
+            break;
+        }
+    }
 }

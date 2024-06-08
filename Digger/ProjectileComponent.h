@@ -16,12 +16,10 @@ public:
 	std::shared_ptr<BaseComponent> Clone() const override;
 	void Update() override;
 	void Init() override;
-	void OnDestroy() override;
 
 	void Activate(dae::GameObject* owner);
 	void SetDirection(const glm::vec2& direction) { m_Direction = direction; }
 	dae::GameObject* GetShotBy() const { return m_ShotBy; }
-	void PlaySoundHit();
 
 private:
 	bool m_IsActive;

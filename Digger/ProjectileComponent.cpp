@@ -9,7 +9,6 @@
 
 ProjectileComponent::ProjectileComponent(): BaseComponent{nullptr}, m_IsActive{}, m_RotationSpeed{15.f}, m_Velocity{}, m_Direction{}, m_ShotBy{nullptr}
 {
-	EventManager::GetInstance().AddEvent("ProjectileHit", this, &ProjectileComponent::PlaySoundHit);
 }
 
 ProjectileComponent::ProjectileComponent(const glm::vec2& direction): ProjectileComponent{}
@@ -80,18 +79,9 @@ void ProjectileComponent::Init()
 	}
 }
 
-void ProjectileComponent::OnDestroy()
-{
-	EventManager::GetInstance().RemoveEvent("ProjectileHit", this, &ProjectileComponent::PlaySoundHit);
-}
 
 void ProjectileComponent::Activate(dae::GameObject* owner)
 {
 	m_IsActive = true;
 	m_ShotBy = owner;
 }
-
-void ProjectileComponent::PlaySoundHit()
-{
-	ServiceSoundLocator::GetSoundSystem().Play(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), 1.f);
-}	

@@ -104,8 +104,15 @@ void InitCommandUI()
 	dae::InputManager::GetInstance().BindCommand(skipLevelCommand, SDL_SCANCODE_F1, TriggerType::KeyPressed);
 }
 
+void InitGameInstance()
+{
+	GameInstance::GetInstance().AddValue("CurrentGameMode", DiggerUtils::DiggerGameMode::SinglePlayer);
+	GameInstance::GetInstance().AddValue("CurrentLevel", 0);
+	GameInstance::GetInstance().AddValue("Score", 0);
+	GameInstance::GetInstance().AddValue("Lives", 3);
+}
 
-void load()
+void InitServicesLocators()
 {
 	dae::ResourceManager::GetInstance().Init("../Data/");
 #if _DEBUG
@@ -117,11 +124,17 @@ void load()
 #endif
 	auto& ss{ ServiceSoundLocator::GetSoundSystem() };
 	auto& ms{ ServiceMusicLocator::GetMusicSystem() };
-	ss.Add(static_cast<SoundId>(DiggerUtils::SoundDiggerID::PROJECTILE_HIT), "Sounds/ProjectileHitWall.wav");
-	ms.Add(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME),"Sounds/DiggerMusic.mp3");
-	ms.Add(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), "Sounds/GameOverMusic.mp3");
-	ms.Add(static_cast<MusicId>(DiggerUtils::MusicDiggerID::MAIN_MENU), "Sounds/MainMenuMusic.mp3");
-	ms.Add(static_cast<MusicId>(DiggerUtils::MusicDiggerID::WIN),"Sounds/LevelCompleteMusic.mp3");
+	ss.Add(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_HIT_ENTITIES), "Sounds/ProjectileHitEntities.wav");
+	ss.Add(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_HIT_WALL), "Sounds/ProjectileHitWall.wav");
+	ss.Add(TO_SOUND_ID(DiggerUtils::SoundDiggerID::COLLECT_EMERALD), "Sounds/EmeraldCollect.wav");
+	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::GAME), "Sounds/DiggerMusic.mp3");
+	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::PLAYER_DIED), "Sounds/GameOverMusic.mp3");
+	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::MAIN_MENU), "Sounds/MainMenuMusic.mp3");
+	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::WIN), "Sounds/LevelCompleteMusic.mp3");
+}
+
+void InitWidgets()
+{
 	dae::SceneManager::GetInstance().CreateScene("MenuDigger");
 	dae::SceneManager::GetInstance().SetActiveScene("MenuDigger");
 
@@ -133,7 +146,7 @@ void load()
 	titleDigger->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleDigger->GetSize().x),static_cast<float>(titleDigger->GetSize().y) }, placeholderTitle));
 
 	auto& widgetManager{ WidgetManager::GetInstance() };
-	const auto levelSelectionWidget{std::make_shared<Widget>("LevelMenu")};
+	const auto levelSelectionWidget{ std::make_shared<Widget>("LevelMenu") };
 	levelSelectionWidget->AddElement(titleDigger);
 
 	placeholderTitle.topLeft.y += 100;
@@ -141,12 +154,12 @@ void load()
 	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel1);
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	levelSelectionWidget->AddElement(newButton);
-	newButton = std::make_shared<ButtonComponent>("LoadLevel2Button",glm::vec3{100,120,0},"Level2",fontSmall);
+	newButton = std::make_shared<ButtonComponent>("LoadLevel2Button", glm::vec3{ 100,120,0 }, "Level2", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel2);
 	placeholderTitle.topLeft.y += 60;
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	levelSelectionWidget->AddElement(newButton);
-	newButton = std::make_shared<ButtonComponent>("LoadLevel3Button",glm::vec3{100,140,0},"Level3",fontSmall);
+	newButton = std::make_shared<ButtonComponent>("LoadLevel3Button", glm::vec3{ 100,140,0 }, "Level3", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::OnLoadLevel3);
 	placeholderTitle.topLeft.y += 60;
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
@@ -158,7 +171,7 @@ void load()
 	mainMenuWidget->AddElement(titleDigger);
 
 	placeholderTitle.topLeft.y += 100;
-	newButton = std::make_shared<ButtonComponent>("SinglePlayerButton", glm::vec3{100,100,0}, "SinglePlayer", fontSmall);
+	newButton = std::make_shared<ButtonComponent>("SinglePlayerButton", glm::vec3{ 100,100,0 }, "SinglePlayer", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::SelectSinglePlayer);
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	mainMenuWidget->AddElement(newButton);
@@ -167,7 +180,7 @@ void load()
 	placeholderTitle.topLeft.y += 60;
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
 	mainMenuWidget->AddElement(newButton);
-	newButton = std::make_shared<ButtonComponent>("VersusButton",glm::vec3{100,140,0},"Versus",fontSmall);
+	newButton = std::make_shared<ButtonComponent>("VersusButton", glm::vec3{ 100,140,0 }, "Versus", fontSmall);
 	newButton->SetOnButtonClick(DiggerUtils::SelectVersus);
 	placeholderTitle.topLeft.y += 60;
 	newButton->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(newButton->GetBox(), placeholderTitle));
@@ -185,7 +198,7 @@ void load()
 	totalScore->SetColor(255, 0, 0);
 	totalScore->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(totalScore->GetSize().x), static_cast<float>(totalScore->GetSize().y) }, placeholderTitle));
 	placeholderTitle.topLeft.y += 60;
-	const auto name = std::make_shared<dae::TextComponent>("Enter Name",fontSmall);
+	const auto name = std::make_shared<dae::TextComponent>("Enter Name", fontSmall);
 	name->SetColor(255, 255, 0);
 	name->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(name->GetSize().x), static_cast<float>(name->GetSize().y) }, placeholderTitle));
 	gameOverWidget->AddElement(keyboard);
@@ -200,7 +213,7 @@ void load()
 	titleScore->SetColor(255, 0, 0);
 	titleScore->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(titleScore->GetSize().x), static_cast<float>(titleScore->GetSize().y) }, placeholderTitle));
 	placeholderTitle.topLeft.y += 80;
-	for(int i{1}; i <= 5; ++i)
+	for (int i{ 1 }; i <= 5; ++i)
 	{
 		const auto score = std::make_shared<dae::TextComponent>("HighScore" + std::to_string(i), fontSmall);
 		score->SetPositionOffset(Utils::GetPositionForRectangleToBeCentered(Rectf{ static_cast<float>(score->GetSize().x), static_cast<float>(score->GetSize().y) }, placeholderTitle));
@@ -218,21 +231,22 @@ void load()
 	const auto gameUI{ std::make_shared<Widget>("GameUI") };
 	placeholderTitle.topLeft.y = dae::Minigin::m_Window.y - 50;
 	const auto scoreText{ std::make_shared<dae::TextComponent>("Score",fontSmall) };
-	scoreText->SetPositionOffset(glm::vec2{0.f,dae::Minigin::m_Window.y - 50.f});
+	scoreText->SetPositionOffset(glm::vec2{ 0.f,dae::Minigin::m_Window.y - 50.f });
 	const auto lifeText{ std::make_shared<dae::TextComponent>("Life",fontSmall) };
 	scoreText->SetPositionOffset(glm::vec2{ 0.f,dae::Minigin::m_Window.y - 50.f });
 	lifeText->SetPositionOffset(glm::vec2{ 200,dae::Minigin::m_Window.y - 50.f });
 	gameUI->AddElement(scoreText);
 	gameUI->AddElement(lifeText);
 	widgetManager.AddWidget(gameUI);
+}
 
+void load()
+{
+	InitServicesLocators();
+	InitWidgets();
 	InitCommandUI();
 	InitGameStates();
-
-	GameInstance::GetInstance().AddValue("CurrentGameMode", DiggerUtils::DiggerGameMode::SinglePlayer);
-	GameInstance::GetInstance().AddValue("CurrentLevel",0);
-	GameInstance::GetInstance().AddValue("Score",0);
-	GameInstance::GetInstance().AddValue("Lives", 3);
+	InitGameInstance();
 	EventManager::GetInstance().AddEvent("NextLevel", DiggerUtils::NextLevel);
 	EventManager::GetInstance().AddEvent("GameOver", DiggerUtils::LoadGameOver);
 }

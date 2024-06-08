@@ -22,6 +22,9 @@
     <Filter Include="Fichiers sources\DiggerCommon">
       <UniqueIdentifier>{692941d0-c755-491b-84ee-5ca8f7f86095}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DiggerCommon">
+      <UniqueIdentifier>{d3deb6b1-2657-450e-b809-f3fe03947c57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Digger.cpp">
@@ -104,38 +107,38 @@
     <ClInclude Include="PlayerComponent.h">
       <Filter>Fichiers d%27en-tête\Components</Filter>
     </ClInclude>
-    <ClInclude Include="DiggerCommands.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemComponent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="BackgroundComponent.h">
+      <Filter>Fichiers d%27en-tête\Components</Filter>
     </ClInclude>
     <ClInclude Include="EmeraldComponent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="DiggerTransitionAnim.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="DiggerUtils.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="MoneyBagComponent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="DiggerStates.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="DiggerTransitions.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="BackgroundComponent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Components</Filter>
     </ClInclude>
     <ClInclude Include="EnemySpawnerComponent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Components</Filter>
     </ClInclude>
     <ClInclude Include="HighScoreComponent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemComponent.h">
+      <Filter>Fichiers d%27en-tête\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MoneyBagComponent.h">
+      <Filter>Fichiers d%27en-tête\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="DiggerCommands.h">
+      <Filter>Fichiers d%27en-tête\DiggerCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DiggerStates.h">
+      <Filter>Fichiers d%27en-tête\DiggerCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DiggerTransitionAnim.h">
+      <Filter>Fichiers d%27en-tête\DiggerCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DiggerTransitions.h">
+      <Filter>Fichiers d%27en-tête\DiggerCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DiggerUtils.h">
+      <Filter>Fichiers d%27en-tête\DiggerCommon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
