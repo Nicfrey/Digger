@@ -52,7 +52,7 @@ void MenuState::Exit(Blackboard* pBlackboard)
 	m_HasSelectedGameMode = false;
 	pBlackboard->ChangeValue("hasSelectedLevel", m_HasSelectedLevel);
 	pBlackboard->ChangeValue("hasSelectedGameMode", m_HasSelectedGameMode);
-	GameInstance::GetInstance().ChangeValue("Life", 3);
+	GameInstance::GetInstance().ChangeValue("Lives", 3);
 }
 
 void MenuState::HasSelectedGameMode()
@@ -114,7 +114,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	m_Players = dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>();
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
-	pBlackboard->ChangeValue("hasExtraLife", true);
+	pBlackboard->ChangeValue("hasNoExtraLife", false);
 	pBlackboard->ChangeValue("hasSkippedLevel", false);
 	EventManager::GetInstance().AddEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
@@ -206,7 +206,7 @@ void PlayState::Exit(Blackboard* pBlackboard)
 {
 	pBlackboard->ChangeValue("isPlayerDead", false);
 	pBlackboard->ChangeValue("hasPlayerWon", false);
-	pBlackboard->ChangeValue("hasExtraLife", true);
+	pBlackboard->ChangeValue("hasNoExtraLife", false);
 	pBlackboard->ChangeValue("hasSkippedLevel", false);
 	m_PlayerHasWon = false;
 	m_PlayerIsDead = false;
@@ -214,6 +214,8 @@ void PlayState::Exit(Blackboard* pBlackboard)
 	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &PlayState::HandlePlayerDead);
 	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	EventManager::GetInstance().RemoveEvent("NextLevel", this, &PlayState::SkipLevel);
+	TimerManager::GetInstance().RemoveTimer(this, &PlayState::SetPlayerWon, 2.f);
+	TimerManager::GetInstance().RemoveTimer(this, &PlayState::SetPlayerIsDead, 5.f);
 }
 
 void RespawnState::Enter(Blackboard* pBlackboard)

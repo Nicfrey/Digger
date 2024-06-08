@@ -462,6 +462,15 @@ void LevelComponent::CreatePlayerAtIndex(int index, int player)
 	gamepadController->BindAction(moveRightCommand, XINPUT_GAMEPAD_DPAD_RIGHT);
 	gamepadController->BindAction(shootCommand, XINPUT_GAMEPAD_B, KeyPressed);
 	dae::InputManager::GetInstance().AddController(gamepadController);
+	if (player == 0)
+	{
+		dae::InputManager::GetInstance().BindCommand(moveUpCommand, SDL_SCANCODE_UP);
+		dae::InputManager::GetInstance().BindCommand(moveDownCommand, SDL_SCANCODE_DOWN);
+		dae::InputManager::GetInstance().BindCommand(moveLeftCommand, SDL_SCANCODE_LEFT);
+		dae::InputManager::GetInstance().BindCommand(moveRightCommand, SDL_SCANCODE_RIGHT);
+		dae::InputManager::GetInstance().BindCommand(moveUpCommand, SDL_SCANCODE_UP);
+		dae::InputManager::GetInstance().BindCommand(shootCommand, SDL_SCANCODE_SPACE, KeyPressed);
+	}
 	go->SetLocalPosition(pos);
 	dae::SceneManager::GetInstance().Instantiate(go);
 }

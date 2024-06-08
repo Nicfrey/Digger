@@ -133,6 +133,7 @@ void PlayerComponent::ShootProjectile()
 			animator->SetParameter("HasProjectile", false);
 		}
 		EventManager::GetInstance().AddEvent("ProjectileHit", this, &PlayerComponent::ProjectileHasCollide);
+		ServiceSoundLocator::GetSoundSystem().Play(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_SHOOT), 50);
 	}
 }
 
