@@ -35,12 +35,13 @@ void dae::Renderer::Init(SDL_Window* window)
 	{
 		throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
 	}
-
+#if _DEBUG
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImPlot::CreateContext();
 	ImGui_ImplSDL2_InitForOpenGL(window, SDL_GL_GetCurrentContext());
 	ImGui_ImplOpenGL3_Init();
+#endif
 }
 
 void dae::Renderer::Render() const
@@ -56,6 +57,7 @@ void dae::Renderer::Render() const
 	glPopMatrix();
 	WidgetManager::GetInstance().Render();
 
+#if _DEBUG
 	// Display Demo ImGui
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
@@ -64,6 +66,7 @@ void dae::Renderer::Render() const
 	ImGui::ShowDemoWindow();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
 
 
 	SDL_RenderPresent(m_renderer);
@@ -71,10 +74,12 @@ void dae::Renderer::Render() const
 
 void dae::Renderer::Destroy()
 {
+#if _DEBUG
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 	ImPlot::DestroyContext();
+#endif
 
 	if (m_renderer != nullptr)
 	{

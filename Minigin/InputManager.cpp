@@ -50,7 +50,9 @@ bool dae::InputManager::ProcessInput()
 			}
 		}
 		// etc...
+#if _DEBUG
 		ImGui_ImplSDL2_ProcessEvent(&e);
+#endif
 	}
 	
 	for (const auto& inputAction : m_InputsActionKeyboards)
