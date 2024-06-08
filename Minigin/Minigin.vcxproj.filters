@@ -264,6 +264,9 @@
     <ClInclude Include="KeyboardComponent.h">
       <Filter>Engine\Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="NullSoundSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Texture2D.cpp">
@@ -427,6 +430,9 @@
     </ClCompile>
     <ClCompile Include="KeyboardComponent.cpp">
       <Filter>Engine\Sources Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="NullSoundSystem.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

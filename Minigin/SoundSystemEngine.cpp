@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 
+#include "NullSoundSystem.h"
 #include "ResourceManager.h"
 
 std::unique_ptr<SoundSystem> ServiceSoundLocator::m_SoundSystemInstance = nullptr;
@@ -173,7 +174,14 @@ SoundSystem& ServiceSoundLocator::GetSoundSystem()
 
 void ServiceSoundLocator::RegisterSoundSystem(std::unique_ptr<SoundSystem>&& ss)
 {
-	m_SoundSystemInstance = std::move(ss);
+	if (m_SoundSystemInstance != nullptr)
+	{
+		m_SoundSystemInstance = std::make_unique<NullSoundSystem>();
+	}
+	else
+	{
+		m_SoundSystemInstance = std::move(ss);
+	}
 }
 
 LoggingSoundSystem::LoggingSoundSystem(std::unique_ptr<SoundSystem>&& ss): m_RealSoundSystem(std::move(ss))
@@ -205,7 +213,14 @@ MusicSystem& ServiceMusicLocator::GetMusicSystem()
 
 void ServiceMusicLocator::RegisterMusicSystem(std::unique_ptr<MusicSystem>&& ms)
 {
-	m_MusicSystemInstance = std::move(ms);
+	if (m_MusicSystemInstance != nullptr)
+	{
+		m_MusicSystemInstance = std::make_unique<NullMusicSystem>();
+	}
+	else
+	{
+		m_MusicSystemInstance = std::move(ms);
+	}
 }
 
 LoggingMusicSystem::LoggingMusicSystem(std::unique_ptr<MusicSystem>&& ms)
