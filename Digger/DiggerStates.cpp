@@ -23,7 +23,7 @@
 void MenuState::Enter(Blackboard* pBlackboard)
 {
 	std::cout << "MenuState Enter\n";
-	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::MAIN_MENU), true);
+	ServiceMusicLocator::GetMusicSystem().Play(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::MAIN_MENU), true);
 	// Add function to event
 	EventManager::GetInstance().AddEvent("SelectGameMode", this, &MenuState::HasSelectedGameMode);
 	EventManager::GetInstance().AddEvent("CancelGameMode", this, &MenuState::CancelGameMode);
@@ -120,7 +120,7 @@ void PlayState::Enter(Blackboard* pBlackboard)
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &PlayState::HandlePlayerWon);
 	EventManager::GetInstance().AddEvent("NextLevel", this, &PlayState::SkipLevel);
 	WidgetManager::GetInstance().SetActiveWidget("GameUI");
-	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::GAME), true);
+	ServiceMusicLocator::GetMusicSystem().Play(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::GAME), true);
 }
 
 void PlayState::Update(Blackboard* pBlackboard)
@@ -165,7 +165,7 @@ void PlayState::HandlePlayerDead()
 	if(indexDead == m_Players.size())
 	{
 		TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerIsDead, 5.f);
-		ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::PLAYER_DIED), false);
+		ServiceMusicLocator::GetMusicSystem().Play(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::PLAYER_DIED), false);
 		GameInstance::GetInstance().ChangeValue("Lives", m_Players[0]->GetComponent<HealthComponent>()->GetLifeRemaining());
 		EventManager::GetInstance().NotifyEvent("LifeLost");
 	}
@@ -180,7 +180,7 @@ void PlayState::HandlePlayerWon()
 {
 	// Wait 5 sec before setting the player to won
 	TimerManager::GetInstance().AddTimer(this, &PlayState::SetPlayerWon, 2.f);
-	ServiceMusicLocator::GetMusicSystem().Play(static_cast<MusicId>(DiggerUtils::MusicDiggerID::WIN), false);
+	ServiceMusicLocator::GetMusicSystem().Play(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::WIN), false);
 }
 
 void PlayState::SetPlayerWon()
@@ -250,6 +250,7 @@ void GameOverState::Enter(Blackboard* pBlackboard)
 	WidgetManager::GetInstance().SetActiveWidget("GameOver");
 	EventManager::GetInstance().AddEvent("SetNameHighScore", this, &GameOverState::HasSetName);
 	EventManager::GetInstance().NotifyEvent("GameOver");
+	ServiceMusicLocator::GetMusicSystem().Play(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::GAME_OVER), true);
 }
 
 void GameOverState::Exit(Blackboard* pBlackboard)

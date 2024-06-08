@@ -35,6 +35,7 @@ private:
 	void StopMoving();
 	void UpdateEnemyPossessed() const;
 	void UpdateEnemyNotPossessed() const;
+	void DestroyEnemy();
 	static int m_ScoreKilled;
 	EnemyType m_Type;
 	NavMeshAgentComponent* m_pNavMeshAgent;

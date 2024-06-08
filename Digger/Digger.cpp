@@ -127,10 +127,12 @@ void InitServicesLocators()
 	ss.Add(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_HIT_ENTITIES), "Sounds/ProjectileHitEntities.wav");
 	ss.Add(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_HIT_WALL), "Sounds/ProjectileHitWall.wav");
 	ss.Add(TO_SOUND_ID(DiggerUtils::SoundDiggerID::COLLECT_EMERALD), "Sounds/EmeraldCollect.wav");
+	ss.Add(TO_SOUND_ID(DiggerUtils::SoundDiggerID::COLLECT_MONEY_BAG), "Sounds/MoneyBagCollected.wav");
 	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::GAME), "Sounds/DiggerMusic.mp3");
 	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::PLAYER_DIED), "Sounds/GameOverMusic.mp3");
 	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::MAIN_MENU), "Sounds/MainMenuMusic.mp3");
 	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::WIN), "Sounds/LevelCompleteMusic.mp3");
+	ms.Add(TO_MUSIC_ID(DiggerUtils::MusicDiggerID::GAME_OVER), "Sounds/GameOverMenuMusic.mp3");
 }
 
 void InitWidgets()

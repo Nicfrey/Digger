@@ -97,7 +97,7 @@ void PlayerComponent::HandleCollisionEnemy(const std::shared_ptr<dae::GameObject
 	{
 		return;
 	}
-	if(other->HasComponent<EnemyComponent>())
+	if(other->HasComponent<EnemyComponent>() && !other->GetComponent<HealthComponent>()->IsDead())
 	{
 		health->LoseOneLife();
 		if(health->IsDead())

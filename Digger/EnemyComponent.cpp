@@ -1,6 +1,7 @@
 #include "EnemyComponent.h"
 
 #include "AnimatorComponent.h"
+#include "DiggerUtils.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
 #include "MathUtils.h"
@@ -11,6 +12,7 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #include "ScoreComponent.h"
+#include "SoundSystemEngine.h"
 #include "SpriteComponent.h"
 
 int EnemyComponent::m_ScoreKilled{ 250 };
@@ -70,6 +72,11 @@ void EnemyComponent::UpdateEnemyNotPossessed() const
 	}
 }
 
+void EnemyComponent::DestroyEnemy()
+{
+	GetGameObject()->Destroy();
+}
+
 void EnemyComponent::Init()
 {
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
@@ -123,7 +130,7 @@ void EnemyComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other)
 				health->LoseOneLife();
 			}
 			EventManager::GetInstance().NotifyEvent("ProjectileHit");
-			EventManager::GetInstance().NotifyEvent("EnemyDied");
+			ServiceSoundLocator::GetSoundSystem().Play(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_HIT_ENTITIES), 50);
 		}
 	}
 }
@@ -135,7 +142,9 @@ void EnemyComponent::HandleDeadEnemy()
 		const auto health{ GetGameObject()->GetComponent<HealthComponent>() };
 		if(health->IsDead())
 		{
-			GetGameObject()->Destroy();
+			TimerManager::GetInstance().AddTimer(this, &EnemyComponent::DestroyEnemy, 1.f);
+			GetGameObject()->GetComponent<AnimatorComponent>()->SetParameter("IsDead", true);
+			StopMoving();
 		}
 	}
 }
@@ -147,6 +156,7 @@ void EnemyComponent::OnDestroy()
 	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemyComponent::StopMoving);
 	TimerManager::GetInstance().RemoveTimer(this, &EnemyComponent::Transform,5.f);
 	TimerManager::GetInstance().RemoveTimer(this, &EnemyComponent::Transform, static_cast<float>(m_TimeBeforeTransform));
+	TimerManager::GetInstance().RemoveTimer(this, &EnemyComponent::DestroyEnemy, 1.f);
 }
 
 EnemyComponent::EnemyType EnemyComponent::GetType() const

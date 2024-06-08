@@ -63,6 +63,8 @@ void HighScoreComponent::SaveHighScore(const std::string& name)
 		SaveToJson(name, score, "Scores/HighScoreVersus.json");
 		break;
 	}
+	m_Text = "Enter Name";
+	UpdateUI();
 	GameInstance::GetInstance().ChangeValue("Score", 0);
 	EventManager::GetInstance().NotifyEvent("SetNameHighScore");
 }

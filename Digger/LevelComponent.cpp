@@ -187,7 +187,7 @@ void LevelComponent::FreeSpaceMoneyBag(GraphUtils::GraphNode* node) const
 			const auto currentNode{background->GetWorldPosition()};
 			const auto closestNode{GetGraph()->GetClosestNode(currentNode)};
 			if ((closestNode == node || closestNode == node->GetBottomNeighbor()) && glm::distance(
-				closestNode->GetPosition(), background->GetWorldPosition()) < 20.f)
+				closestNode->GetPosition(), background->GetWorldPosition()) < 23.f)
 			{
 				background->Destroy();
 			}
@@ -323,7 +323,7 @@ void LevelComponent::CreateMoneyBagAtIndex(int index)
 	const auto pos{m_pGraph->GetNode(index)->GetPosition()};
 	const std::shared_ptr moneyBag{std::make_shared<dae::GameObject>()};
 	const auto sprite{std::make_shared<SpriteComponent>("MoneyBag", "SpritesItems.png", 3, 3)};
-	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width - 4, sprite->GetShape().height));
+	moneyBag->AddComponent(std::make_shared<BoxCollider2D>(sprite->GetShape().width - 5, sprite->GetShape().height));
 	const auto item{std::make_shared<MoneyBagComponent>()};
 	const auto animator{std::make_shared<AnimatorComponent>()};
 	Animation idle{.name = "Idle", .frames = {1}, .loop = true, .spriteComponent = sprite};

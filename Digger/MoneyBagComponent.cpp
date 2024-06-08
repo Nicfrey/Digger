@@ -4,6 +4,7 @@
 #include "BackgroundComponent.h"
 #include "DiggerStates.h"
 #include "DiggerTransitionAnim.h"
+#include "DiggerUtils.h"
 #include "EnemyComponent.h"
 #include "GameObject.h"
 #include "HealthComponent.h"
@@ -14,6 +15,7 @@
 #include "LevelComponent.h"
 #include "Observer.h"
 #include "Scene.h"
+#include "SoundSystemEngine.h"
 
 MoneyBagComponent::StateMoneyBag MoneyBagComponent::GetState() const
 {
@@ -83,14 +85,15 @@ void MoneyBagComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other
 	case StateMoneyBag::IsFalling:
 		if(other->HasComponent<EnemyComponent>())
 		{
-			// TODO Set the animation of enemy to dead
-			// TODO Add sound for killing enemy
-			auto goPlayer{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<PlayerComponent>() };
-			if(goPlayer->HasComponent<ScoreComponent>())
+			if(!other->GetComponent<HealthComponent>()->IsDead())
 			{
-				goPlayer->GetComponent<ScoreComponent>()->AddScore(250);
+				auto goPlayer{ dae::SceneManager::GetInstance().GetGameObjectWithComponent<PlayerComponent>() };
+				if (goPlayer->HasComponent<ScoreComponent>())
+				{
+					goPlayer->GetComponent<ScoreComponent>()->AddScore(250);
+				}
+				other->GetComponent<HealthComponent>()->LoseOneLife();
 			}
-			other->GetComponent<HealthComponent>()->LoseOneLife();
 		}
 		if(other->HasComponent<BackgroundComponent>())
 		{
@@ -100,6 +103,7 @@ void MoneyBagComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other
 		{
 			const auto health{ other->GetComponent<HealthComponent>() };
 			health->LoseOneLife();
+			ServiceSoundLocator::GetSoundSystem().Play(TO_SOUND_ID(DiggerUtils::SoundDiggerID::PROJECTILE_HIT_ENTITIES), 50);
 			EventManager::GetInstance().NotifyEvent("PlayerDied");
 		}
 		break;
@@ -109,7 +113,7 @@ void MoneyBagComponent::OnCollisionEnter(std::shared_ptr<dae::GameObject>& other
 		{
 			const auto scorePlayer{ other->GetComponent<ScoreComponent>() };
 			scorePlayer->AddScore(m_Score);
-			// TODO Add sound for getting bag
+			ServiceSoundLocator::GetSoundSystem().Play(TO_SOUND_ID(DiggerUtils::SoundDiggerID::COLLECT_MONEY_BAG), 50);
 			GetGameObject()->Destroy();
 		}
 		break;
