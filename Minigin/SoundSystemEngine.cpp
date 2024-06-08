@@ -139,7 +139,6 @@ void SoundSystemEngine::SoundSystemImpl::DoMute()
 	{
 		m_IsMute = false;
 		Mix_Volume(-1, MIX_MAX_VOLUME);
-		return;
 	}
 	else
 	{
