@@ -69,7 +69,7 @@ void EnemyComponent::Update()
 	if(m_pNavMeshAgent->HasReachedDestination() && !m_StopMoving)
 	{
 		const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
-		const int index{MathUtils::Rand(0,players.size() - 1)};
+		const int index{MathUtils::Rand(0,static_cast<int>(players.size() - 1))};
 		m_pNavMeshAgent->SetPath(players[index]->GetWorldPosition());
 	}
 }
