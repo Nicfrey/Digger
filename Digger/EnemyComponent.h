@@ -1,6 +1,11 @@
 #pragma once
 #include "BaseComponent.h"
 
+namespace GraphUtils
+{
+	class GraphNode;
+}
+
 class NavMeshAgentComponent;
 
 class EnemyComponent : public BaseComponent
@@ -22,15 +27,21 @@ public:
 	EnemyType GetType() const;
 	void IsPossessed();
 	void Transform();
+	GraphUtils::GraphNode*& GetPreviousNode();
+
 private:
 	void HandleDeadEnemy();
 	void StopMovingPlayerDead();
 	void StopMoving();
+	void UpdateEnemyPossessed() const;
+	void UpdateEnemyNotPossessed() const;
 	static int m_ScoreKilled;
 	EnemyType m_Type;
 	NavMeshAgentComponent* m_pNavMeshAgent;
 	bool m_StopMoving{ false };
 	bool m_IsPossessed{ false };
 	bool m_CanTransform{ true };
+	int m_TimeBeforeTransform{};
+	GraphUtils::GraphNode* m_pPreviousNode{ nullptr };
 };
 

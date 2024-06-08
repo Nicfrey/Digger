@@ -20,6 +20,7 @@ public:
 	void ShootProjectile();
 	void ProjectileHasCollide();
 	void HandleRespawn() const;
+	GraphUtils::GraphNode*& GetPreviousNode();
 
 private:
 	dae::GameObject* m_pProjectile;
@@ -29,5 +30,6 @@ private:
 	void HandleCollisionProjectile(std::shared_ptr<dae::GameObject>& other);
 	std::shared_ptr<dae::GameObject> CreateProjectile() const;
 	void HandleDeath();
+	GraphUtils::GraphNode* m_pPreviousNode{ nullptr };
 };
 

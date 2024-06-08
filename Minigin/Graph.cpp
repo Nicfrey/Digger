@@ -95,6 +95,16 @@ bool GraphUtils::GraphNode::IsNodeNeighbor(GraphNode* neighbor) const
 	return m_Neighbors.contains(neighbor);
 }
 
+bool GraphUtils::GraphNode::GetTransitionCanBeVisited(GraphNode* neighbor) const
+{
+	if(IsNodeNeighbor(neighbor))
+	{
+		return m_Neighbors.at(neighbor).canVisit;
+	}
+	return false;
+}
+
+
 GraphUtils::GraphNode* GraphUtils::GraphNode::GetTopNeighbor() const
 {
 	const auto it = std::ranges::find_if(m_Neighbors, [this](const std::pair<GraphNode*, GraphTransition>& neighbor)

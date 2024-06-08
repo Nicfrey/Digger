@@ -48,29 +48,51 @@ void EnemyComponent::StopMoving()
 	m_pNavMeshAgent->StopMoving();
 }
 
+void EnemyComponent::UpdateEnemyPossessed() const
+{
+	if (!m_pNavMeshAgent->HasReachedDestination())
+	{
+		EventManager::GetInstance().NotifyEvent("PlayerMoving");
+	}
+}
+
+void EnemyComponent::UpdateEnemyNotPossessed() const
+{
+	if (m_pNavMeshAgent->HasReachedDestination() && !m_StopMoving)
+	{
+		const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
+		const int index{ MathUtils::Rand(0,static_cast<int>(players.size() - 1)) };
+		m_pNavMeshAgent->SetPath(players[index]->GetWorldPosition());
+	}
+	if (!m_pNavMeshAgent->HasReachedDestination() && !m_StopMoving)
+	{
+		EventManager::GetInstance().NotifyEvent("EnemyMoving");
+	}
+}
+
 void EnemyComponent::Init()
 {
 	EventManager::GetInstance().AddEvent("EnemyDied", this,&EnemyComponent::HandleDeadEnemy);
 	EventManager::GetInstance().AddEvent("PlayerDied", this, &EnemyComponent::StopMovingPlayerDead);
 	EventManager::GetInstance().AddEvent("PlayerWon", this, &EnemyComponent::StopMoving);
 	m_pNavMeshAgent = GetGameObject()->GetComponent<NavMeshAgentComponent>().get();
+	if(!m_IsPossessed)
+	{
+		// Set a random timer to transform to Nobbins
+		m_TimeBeforeTransform = MathUtils::Rand(5, 60);
+		TimerManager::GetInstance().AddTimer(this, &EnemyComponent::Transform, static_cast<float>(m_TimeBeforeTransform));
+	}
 }
 
 void EnemyComponent::Update()
 {
 	if(m_IsPossessed)
 	{
-		if (!m_pNavMeshAgent->HasReachedDestination())
-		{
-			EventManager::GetInstance().NotifyEvent("PlayerMoving");
-		}
-		return;
+		UpdateEnemyPossessed();
 	}
-	if(m_pNavMeshAgent->HasReachedDestination() && !m_StopMoving)
+	else
 	{
-		const auto players{ dae::SceneManager::GetInstance().GetGameObjectsWithComponent<PlayerComponent>() };
-		const int index{MathUtils::Rand(0,static_cast<int>(players.size() - 1))};
-		m_pNavMeshAgent->SetPath(players[index]->GetWorldPosition());
+		UpdateEnemyNotPossessed();
 	}
 }
 
@@ -124,6 +146,7 @@ void EnemyComponent::OnDestroy()
 	EventManager::GetInstance().RemoveEvent("PlayerDied", this, &EnemyComponent::StopMovingPlayerDead);
 	EventManager::GetInstance().RemoveEvent("PlayerWon", this, &EnemyComponent::StopMoving);
 	TimerManager::GetInstance().RemoveTimer(this, &EnemyComponent::Transform,5.f);
+	TimerManager::GetInstance().RemoveTimer(this, &EnemyComponent::Transform, static_cast<float>(m_TimeBeforeTransform));
 }
 
 EnemyComponent::EnemyType EnemyComponent::GetType() const
@@ -156,4 +179,9 @@ void EnemyComponent::Transform()
 		GetGameObject()->GetComponent<AnimatorComponent>()->SetParameter("EnemyType", m_Type);
 		m_pNavMeshAgent->SetCanAvoidObstacle(true);
 	}
+}
+
+GraphUtils::GraphNode*& EnemyComponent::GetPreviousNode()
+{
+	return m_pPreviousNode;
 }

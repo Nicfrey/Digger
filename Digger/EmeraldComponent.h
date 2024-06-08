@@ -12,7 +12,7 @@ public:
 private:
 	static void IncrementInARow();
 	static void ResetInARow();
-	void AddScoreInARow(const std::shared_ptr<ScoreComponent>& score);
+	void AddScoreInARow(const std::shared_ptr<ScoreComponent>& score) const;
 	int m_ScoreValue { 25 };
 	int m_ScoreInARow{ 250 };
 	static int m_CollectedInARow;

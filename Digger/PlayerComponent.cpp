@@ -222,3 +222,8 @@ void PlayerComponent::HandleRespawn() const
 		}
 	}
 }
+
+GraphUtils::GraphNode*& PlayerComponent::GetPreviousNode()
+{
+	return m_pPreviousNode;
+}

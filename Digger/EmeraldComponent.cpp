@@ -52,7 +52,7 @@ void EmeraldComponent::ResetInARow()
 	m_CollectedInARow = 0;
 }
 
-void EmeraldComponent::AddScoreInARow(const std::shared_ptr<ScoreComponent>& score)
+void EmeraldComponent::AddScoreInARow(const std::shared_ptr<ScoreComponent>& score) const
 {
 	if (m_CollectedInARow >= m_MaxCollectedInARow)
 	{
